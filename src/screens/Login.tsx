@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
 import {
   YELLOW,
@@ -17,6 +18,7 @@ import {
 import CustomInput from '../components/CustomInput';
 import {CustomButton} from '../components/CustomButton';
 import {forHorizontalIOS} from '@react-navigation/stack/lib/typescript/src/TransitionConfigs/CardStyleInterpolators';
+import showSnackbar from '../utils/snackbar';
 
 export interface LoginScreenProps {}
 
@@ -28,8 +30,21 @@ export const LoginScreen: React.SFC<LoginScreenProps> = (
 
   const [password, setPassword] = useState('');
 
+  const login = (): void => {
+    if (!mailFormat.test(email)) {
+      showSnackbar('Enter a valid email');
+    } else if (password.length < 4) {
+      showSnackbar('Enter a valid password');
+    } else {
+      // call login API
+    }
+  };
+
   return (
-    <View style={styles.mainContainer}>
+    <ImageBackground
+      source={require('../assets/background/1.png')}
+      style={styles.mainContainer}
+      resizeMode="stretch">
       <Text style={styles.heading}>AapkaSarthi</Text>
       <View style={styles.container}>
         <CustomInput
@@ -51,7 +66,7 @@ export const LoginScreen: React.SFC<LoginScreenProps> = (
           secureTextEntry
         />
 
-        <CustomButton text="Login" onPress={() => {}} style={styles.button} />
+        <CustomButton text="Login" onPress={login} style={styles.button} />
 
         <View style={styles.row}>
           <Text style={styles.text0}>Don't have an account? </Text>
@@ -60,7 +75,7 @@ export const LoginScreen: React.SFC<LoginScreenProps> = (
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 };
 

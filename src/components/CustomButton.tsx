@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     backgroundColor: YELLOW,
     paddingHorizontal: 40,
     borderRadius: 50,
-    elevation: 2,
+    elevation: 4,
   },
   text: {
     fontSize: 18,

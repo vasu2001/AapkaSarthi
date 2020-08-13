@@ -14,6 +14,8 @@ target 'AapkaSarthi' do
 
   pod 'react-native-immediate-phone-call', :path => '../node_modules/react-native-immediate-phone-call'
 
+  pod 'ReactNativeART', :path => '../node_modules/@react-native-community/art'
+
   target 'AapkaSarthiTests' do
     inherit! :complete
     # Pods for testing
