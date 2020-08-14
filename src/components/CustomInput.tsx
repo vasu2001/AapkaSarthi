@@ -1,15 +1,31 @@
 import React, {useState, useEffect} from 'react';
-import {TextInput, TextStyle, StyleSheet} from 'react-native';
-import {YELLOW, RED} from '../utils/colors';
+import {TextInput, TextStyle, StyleSheet, StyleProp} from 'react-native';
+import {YELLOW, RED, GRAY} from '../utils/colors';
 
 interface CustomInputProps {
   value: string;
   onChangeText: (text: string) => void;
-  style?: TextStyle;
+  style?: StyleProp<TextStyle>;
   validation?: (text: string) => boolean;
   placeholder?: string;
   placeholderTextColor?: string;
   secureTextEntry?: boolean;
+  maxLength?: number | undefined;
+  keyboardType?:
+    | 'default'
+    | 'email-address'
+    | 'numeric'
+    | 'phone-pad'
+    | 'number-pad'
+    | 'decimal-pad'
+    | 'visible-password'
+    | 'ascii-capable'
+    | 'numbers-and-punctuation'
+    | 'url'
+    | 'name-phone-pad'
+    | 'twitter'
+    | 'web-search'
+    | undefined;
 }
 
 const CustomInput: React.SFC<CustomInputProps> = ({
@@ -18,8 +34,10 @@ const CustomInput: React.SFC<CustomInputProps> = ({
   style,
   validation = (text) => true,
   placeholder = '',
-  placeholderTextColor = '',
+  placeholderTextColor = GRAY,
   secureTextEntry = false,
+  keyboardType,
+  maxLength,
 }: CustomInputProps) => {
   const [validated, setValidated] = useState(true);
   let timeout: NodeJS.Timeout | null = null;
@@ -53,6 +71,8 @@ const CustomInput: React.SFC<CustomInputProps> = ({
         placeholder,
         placeholderTextColor,
         secureTextEntry,
+        keyboardType,
+        maxLength,
       }}
     />
   );

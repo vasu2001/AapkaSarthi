@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   ImageBackground,
+  StatusBar,
 } from 'react-native';
 import {
   YELLOW,
@@ -45,7 +46,7 @@ export const LoginScreen: React.SFC<LoginScreenProps> = (
       source={require('../assets/background/1.png')}
       style={styles.mainContainer}
       resizeMode="stretch">
-      <Text style={styles.heading}>AapkaSarthi</Text>
+      <Text style={styles.heading}>Aapka Sarthi</Text>
       <View style={styles.container}>
         <CustomInput
           value={email}

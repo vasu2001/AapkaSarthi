@@ -1,14 +1,16 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet, FlatList} from 'react-native';
 import {GRAY_BACKGROUND} from '../utils/colors';
 import {PhoneGroupItem} from '../components/PhoneGroupItem';
 import {CustomButton} from '../components/CustomButton';
+import {AddNewListModal} from '../components/AddNewListModal';
 
 export interface PhoneListProps {}
 
 const dummyData = [
   {
     name: 'List#1',
+    id: '1',
     data: [
       {
         name: 'Person#1',
@@ -38,6 +40,7 @@ const dummyData = [
   },
   {
     name: 'List#2',
+    id: '2',
     data: [
       {
         name: 'Person#1',
@@ -68,23 +71,36 @@ const dummyData = [
 ];
 
 export function PhoneList(props: PhoneListProps) {
+  const [addModal, setAddModal] = useState(false);
+
   return (
-    <View style={styles.mainContainer}>
-      <Text style={styles.heading}>Phone List</Text>
-      <FlatList
-        data={dummyData}
-        renderItem={({item}) => (
-          <PhoneGroupItem name={item.name} noOfContacts={item.data.length} />
-        )}
-        ListFooterComponent={
-          <CustomButton
-            text="Add a new list"
-            onPress={() => {}}
-            style={styles.listFooter}
-          />
-        }
+    <>
+      <AddNewListModal
+        visible={addModal}
+        onCancel={() => {
+          setAddModal(false);
+        }}
       />
-    </View>
+      <View style={styles.mainContainer}>
+        <Text style={styles.heading}>Phone List</Text>
+        <FlatList
+          data={dummyData}
+          keyExtractor={({id}) => id}
+          renderItem={({item}) => (
+            <PhoneGroupItem name={item.name} noOfContacts={item.data.length} />
+          )}
+          ListFooterComponent={
+            <CustomButton
+              text="Add a new list"
+              onPress={() => {
+                setAddModal(true);
+              }}
+              style={styles.listFooter}
+            />
+          }
+        />
+      </View>
+    </>
   );
 }
 

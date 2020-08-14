@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ImageBackground} from 'react-native';
 import {YELLOW} from '../utils/colors';
 import {CustomButton} from '../components/CustomButton';
 import {NavigationProp} from '@react-navigation/native';
@@ -12,18 +12,23 @@ const WelcomeScreen: React.SFC<WelcomeScreenProps> = ({
   navigation,
 }: WelcomeScreenProps) => {
   return (
-    <View style={styles.mainContainer}>
-      <Text style={styles.text1}>Welcome</Text>
-      <Text style={styles.text2}>to</Text>
-      <Text style={styles.text1}>AapkaSarthi</Text>
-      <CustomButton
-        style={{marginTop: 50}}
-        text="Next"
-        onPress={() => {
-          navigation.navigate('Login');
-        }}
-      />
-    </View>
+    <ImageBackground
+      source={require('../assets/background/2.png')}
+      style={styles.mainContainer}>
+      <View style={styles.textContainer}>
+        <Text style={styles.text1}>Welcome</Text>
+        <Text style={styles.text2}>to</Text>
+        <Text style={styles.text1}>Aapka Sarthi</Text>
+      </View>
+      <View style={{flex: 1, justifyContent: 'center'}}>
+        <CustomButton
+          text="Next"
+          onPress={() => {
+            navigation.navigate('Login');
+          }}
+        />
+      </View>
+    </ImageBackground>
   );
 };
 
@@ -44,5 +49,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Raleway-Regular',
     color: 'black',
+  },
+  textContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

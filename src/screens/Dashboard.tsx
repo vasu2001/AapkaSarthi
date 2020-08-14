@@ -16,67 +16,69 @@ export interface DashboardProps {}
 
 export function Dashboard(props: DashboardProps) {
   return (
-    <View style={styles.mainContainer}>
-      <Text style={styles.heading}>My Dashboard</Text>
+    <>
+      <View style={styles.mainContainer}>
+        <Text style={styles.heading}>My Dashboard</Text>
 
-      {/* <View style={{height: 250, width: 300, backgroundColor: 'white'}} /> */}
-      <Pie
-        radius={70}
-        innerRadius={45}
-        sections={[
-          {
-            percentage: 20,
-            color: PINK,
-          },
-          {
-            percentage: 40,
-            color: PURPLE,
-          },
-          {
-            percentage: 40,
-            color: BLUE,
-          },
-        ]}
-        dividerSize={6}
-        strokeCap={'butt'}
-      />
+        {/* <View style={{height: 250, width: 300, backgroundColor: 'white'}} /> */}
+        <Pie
+          radius={70}
+          innerRadius={45}
+          sections={[
+            {
+              percentage: 20,
+              color: PINK,
+            },
+            {
+              percentage: 40,
+              color: PURPLE,
+            },
+            {
+              percentage: 40,
+              color: BLUE,
+            },
+          ]}
+          dividerSize={6}
+          strokeCap={'butt'}
+        />
 
-      <View style={styles.legendContainer}>
-        <View style={styles.legendRow}>
-          <View style={[styles.legendColor, {backgroundColor: PINK}]} />
-          <Text style={styles.legendLabel}>Pending</Text>
+        <View style={styles.legendContainer}>
+          <View style={styles.legendRow}>
+            <View style={[styles.legendColor, {backgroundColor: PINK}]} />
+            <Text style={styles.legendLabel}>Pending</Text>
+          </View>
+          <View style={styles.legendRow}>
+            <View style={[styles.legendColor, {backgroundColor: PURPLE}]} />
+            <Text style={styles.legendLabel}>Done</Text>
+          </View>
+          <View style={styles.legendRow}>
+            <View style={[styles.legendColor, {backgroundColor: BLUE}]} />
+            <Text style={styles.legendLabel}>Upcoming</Text>
+          </View>
         </View>
-        <View style={styles.legendRow}>
-          <View style={[styles.legendColor, {backgroundColor: PURPLE}]} />
-          <Text style={styles.legendLabel}>Done</Text>
-        </View>
-        <View style={styles.legendRow}>
-          <View style={[styles.legendColor, {backgroundColor: BLUE}]} />
-          <Text style={styles.legendLabel}>Upcoming</Text>
+
+        <CustomButton
+          text="Start Calling"
+          onPress={() => {}}
+          style={styles.startCalling}
+        />
+
+        <View style={styles.statConatiner}>
+          <View style={styles.statCard}>
+            <Text style={styles.statLabel}>Pending</Text>
+            <Text style={styles.statValue}>0</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statLabel}>Done</Text>
+            <Text style={styles.statValue}>3</Text>
+          </View>
+          <View style={[styles.statCard, {borderRightWidth: 0}]}>
+            <Text style={styles.statLabel}>Upcoming</Text>
+            <Text style={styles.statValue}>12</Text>
+          </View>
         </View>
       </View>
-
-      <CustomButton
-        text="Start Calling"
-        onPress={() => {}}
-        style={styles.startCalling}
-      />
-
-      <View style={styles.statConatiner}>
-        <View style={styles.statCard}>
-          <Text style={styles.statLabel}>Pending</Text>
-          <Text style={styles.statValue}>0</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statLabel}>Done</Text>
-          <Text style={styles.statValue}>3</Text>
-        </View>
-        <View style={[styles.statCard, {borderRightWidth: 0}]}>
-          <Text style={styles.statLabel}>Upcoming</Text>
-          <Text style={styles.statValue}>12</Text>
-        </View>
-      </View>
-    </View>
+    </>
   );
 }
 
