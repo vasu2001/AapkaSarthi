@@ -1,5 +1,12 @@
-import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useState, useCallback, useEffect} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  PermissionsAndroid,
+  AppState,
+  AppStateStatus,
+} from 'react-native';
 import {
   GRAY_LIGHT,
   GRAY_BACKGROUND,
@@ -11,12 +18,64 @@ import {
 } from '../utils/colors';
 import {CustomButton} from '../components/CustomButton';
 import Pie from 'react-native-pie';
+import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
+import {CallFeedbackModal} from '../components/CallFeeddackModal';
 
 export interface DashboardProps {}
 
 export function Dashboard(props: DashboardProps) {
+  const [modal, setModal] = useState(false);
+  let phoneNo = '1234567890';
+  let phoneCallInProgress: number = 0;
+
+  useEffect(() => {
+    const handler = (state: AppStateStatus) => {
+      // console.log(state, phoneCallInProgress);
+      if (state === 'active') {
+        if (phoneCallInProgress === 1) phoneCallInProgress++;
+        else if (phoneCallInProgress === 2) {
+          console.log('call ended');
+          setModal(true);
+          phoneCallInProgress = 0;
+        }
+      }
+    };
+
+    AppState.addEventListener('change', handler);
+
+    return () => {
+      AppState.removeEventListener('change', handler);
+    };
+  }, []);
+
+  const startCalling = useCallback(async () => {
+    try {
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+      );
+
+      phoneCallInProgress++;
+      RNImmediatePhoneCall.immediatePhoneCall(phoneNo);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [phoneNo]);
+
   return (
     <>
+      <CallFeedbackModal
+        visible={modal}
+        onCancel={() => {
+          setModal(false);
+        }}
+        nextCall={() => {
+          // do something for the current call and get new no
+          phoneNo = '22222222222222';
+          startCalling();
+        }}
+        submitFeedback={(text: string) => console.log(text)}
+        rescheduleCall={(text: string) => console.log(text)}
+      />
       <View style={styles.mainContainer}>
         <Text style={styles.heading}>My Dashboard</Text>
 
@@ -59,7 +118,7 @@ export function Dashboard(props: DashboardProps) {
 
         <CustomButton
           text="Start Calling"
-          onPress={() => {}}
+          onPress={startCalling}
           style={styles.startCalling}
         />
 

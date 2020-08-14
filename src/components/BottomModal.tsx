@@ -1,11 +1,9 @@
-import React, {useEffect, ReactNode} from 'react';
+import React, {useEffect, ReactNode, useRef} from 'react';
 import {
   View,
   Modal,
   TouchableWithoutFeedback,
-  Text,
   Animated,
-  Dimensions,
   StatusBar,
 } from 'react-native';
 import {LAVENDER} from '../utils/colors';
@@ -17,7 +15,7 @@ interface BottomModalProps {
   contentHeight: number;
 }
 
-const SPEED = 1;
+const SPEED = 2;
 
 const BottomModal = ({
   visible,
@@ -25,7 +23,7 @@ const BottomModal = ({
   contentHeight,
   children,
 }: BottomModalProps) => {
-  const animate = new Animated.Value(-contentHeight);
+  const animate = useRef(new Animated.Value(-contentHeight)).current;
 
   useEffect(() => {
     if (visible) {
@@ -37,7 +35,7 @@ const BottomModal = ({
     }
   }, [visible]);
 
-  const close = () => {
+  const close = (): void => {
     Animated.timing(animate, {
       toValue: -contentHeight,
       duration: Math.floor(contentHeight / SPEED),
@@ -46,7 +44,7 @@ const BottomModal = ({
   };
 
   return (
-    <Modal transparent visible={visible}>
+    <Modal transparent visible={visible} animationType="fade">
       <TouchableWithoutFeedback onPress={close}>
         <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.3)'}}>
           <Animated.View

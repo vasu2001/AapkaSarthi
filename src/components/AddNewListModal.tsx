@@ -12,12 +12,16 @@ export function AddNewListModal({visible, onCancel}: AddNewListModalProps) {
   const [name, setName] = useState('');
 
   return (
-    <BottomModal {...{visible, onCancel}} contentHeight={500}>
+    <BottomModal {...{visible, onCancel}} contentHeight={510}>
       <CustomInput
         value={name}
         onChangeText={setName}
         placeholder="List Name"
-        style={{width: '80%', fontSize: 17}}
+        style={{
+          width: '80%',
+          fontSize: 17,
+        }}
+        validation={(text) => text.length > 0}
       />
       <ImportComponent
         callback={(x) => {

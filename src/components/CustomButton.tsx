@@ -10,7 +10,7 @@ import {
 import {YELLOW} from '../utils/colors';
 
 export interface CustomButtonProps {
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   text: string;
   onPress: () => void;
 }
@@ -32,11 +32,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: YELLOW,
     paddingHorizontal: 40,
-    borderRadius: 50,
+    borderRadius: 25,
     elevation: 4,
   },
   text: {
     fontSize: 18,
     fontFamily: 'Raleway-Medium',
+    textAlign: 'center',
   },
 });

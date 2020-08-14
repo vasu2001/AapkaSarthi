@@ -57,7 +57,7 @@ export const LoginScreen: React.SFC<LoginScreenProps> = (
           style={styles.input}
         />
 
-        <CustomInput
+        {/* <CustomInput
           value={password}
           onChangeText={setPassword}
           validation={(text: string): boolean => text.length >= 4}
@@ -65,7 +65,7 @@ export const LoginScreen: React.SFC<LoginScreenProps> = (
           placeholderTextColor="grey"
           style={styles.input}
           secureTextEntry
-        />
+        /> */}
 
         <CustomButton text="Login" onPress={login} style={styles.button} />
 
