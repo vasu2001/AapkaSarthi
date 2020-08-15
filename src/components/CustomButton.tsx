@@ -7,20 +7,29 @@ import {
   ViewStyle,
   TouchableOpacity,
 } from 'react-native';
-import {YELLOW} from '../utils/colors';
+import {YELLOW, GRAY_LIGHT, GRAY, GRAY_BACKGROUND} from '../utils/colors';
 
 export interface CustomButtonProps {
   style?: StyleProp<ViewStyle>;
   text: string;
   onPress: () => void;
+  disabled?: boolean;
 }
 
-export function CustomButton({style, text, onPress}: CustomButtonProps) {
+export function CustomButton({
+  style,
+  text,
+  onPress,
+  disabled = false,
+}: CustomButtonProps) {
   return (
     <TouchableOpacity
       style={[styles.conatiner, style ?? null]}
+      disabled={disabled}
       onPress={onPress}>
-      <Text style={styles.text}>{text}</Text>
+      <Text style={[styles.text, {color: disabled ? GRAY : 'black'}]}>
+        {text}
+      </Text>
     </TouchableOpacity>
   );
 }
@@ -30,10 +39,10 @@ const styles = StyleSheet.create({
     padding: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: YELLOW,
     paddingHorizontal: 40,
     borderRadius: 25,
     elevation: 4,
+    backgroundColor: YELLOW,
   },
   text: {
     fontSize: 18,

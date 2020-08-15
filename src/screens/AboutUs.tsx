@@ -35,7 +35,7 @@ export function AboutUs(props: AboutUsProps) {
           text="Send"
           onPress={() => {
             if (query == '') {
-              showSnackbar('Enter a query to send');
+              showSnackbar('Enter a message to send');
               return;
             }
             Linking.openURL(

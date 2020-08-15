@@ -1,36 +1,25 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, PermissionsAndroid} from 'react-native';
 import {CustomButton} from './CustomButton';
-import CustomInput from './CustomInput';
 import {selectContactPhone} from 'react-native-select-contact';
-import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import showSnackbar from '../utils/snackbar';
 import {contactType} from '../redux/utils';
+import {NavigationProp} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 export interface ImportComponentProps {
   callback: (x: contactType[]) => void;
+  navigation: StackNavigationProp<any>;
+  onCancel: () => void;
+  name: string | undefined;
 }
 
-export function ImportComponent({callback}: ImportComponentProps) {
-  const initDetails: contactType = {
-    name: '',
-    phNo: '',
-    comment: '',
-    status: 'upcoming',
-    reschedule: null,
-  };
-
-  const [manualDetails, setManualDetails] = useState(initDetails);
-
-  const manualAdd = (): void => {
-    if (manualDetails.name.length === 0 || manualDetails.phNo.length !== 10) {
-      showSnackbar('Enter valid name or phone');
-      return;
-    }
-    callback([manualDetails]);
-    setManualDetails(initDetails);
-  };
-
+export function ImportComponent({
+  callback,
+  navigation,
+  onCancel,
+  name,
+}: ImportComponentProps) {
   return (
     <View style={styles.mainContainer}>
       <CustomButton
@@ -47,38 +36,17 @@ export function ImportComponent({callback}: ImportComponentProps) {
           fileImport(callback);
         }}
       />
-
-      <View style={styles.inputContainer}>
-        <CustomInput
-          value={manualDetails.name}
-          validation={(text) => text.length > 0}
-          style={styles.input}
-          onChangeText={(text) => {
-            setManualDetails({...manualDetails, name: text});
-          }}
-          placeholder="Name"
-        />
-        <CustomInput
-          value={manualDetails.phNo}
-          style={styles.input}
-          validation={(text) => text.length === 10}
-          maxLength={10}
-          onChangeText={(text) => {
-            setManualDetails({...manualDetails, phNo: text});
-          }}
-          placeholder="Phone Number"
-          keyboardType="phone-pad"
-        />
-        <CustomInput
-          value={manualDetails.comment ?? ''}
-          style={[styles.input, {marginBottom: 30}]}
-          onChangeText={(text) => {
-            setManualDetails({...manualDetails, comment: text});
-          }}
-          placeholder="Comments.."
-        />
-        <CustomButton text="Add" onPress={manualAdd} style={styles.button} />
-      </View>
+      <CustomButton
+        text="Add Contacts"
+        onPress={() => {
+          if (name === '') showSnackbar('Enter a name for the list');
+          else {
+            navigation.navigate('Add New List', {callback});
+            onCancel();
+          }
+        }}
+        style={styles.button}
+      />
     </View>
   );
 }
@@ -87,21 +55,9 @@ const styles = StyleSheet.create({
   mainContainer: {
     padding: 10,
   },
-  inputContainer: {
-    alignSelf: 'stretch',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    padding: 10,
-    borderRadius: 15,
-    elevation: 1,
-    paddingBottom: 5,
-  },
   button: {
     marginBottom: 15,
     elevation: 1,
-  },
-  input: {
-    width: '75%',
   },
 });
 

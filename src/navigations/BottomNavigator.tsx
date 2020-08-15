@@ -1,15 +1,16 @@
 import React from 'react';
 import {View, Text, StyleSheet, StatusBar} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import WelcomeScreen from '../screens/Welcome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Dashboard} from '../screens/Dashboard';
 import {YELLOW, GRAY, GRAY_DARK} from '../utils/colors';
-import {PhoneList} from '../screens/PhoneList';
 import {AboutUs} from '../screens/AboutUs';
+import {createStackNavigator} from '@react-navigation/stack';
+import {ListNavigation} from './ListNavigation';
 
 export interface BottomNavigatorProps {}
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 export function BottomNavigator() {
   return (
@@ -29,7 +30,7 @@ export function BottomNavigator() {
               case 'Home':
                 iconName = 'home';
                 break;
-              case 'Phone List':
+              case 'List':
                 iconName = 'team';
                 break;
               case 'About Us':
@@ -45,7 +46,7 @@ export function BottomNavigator() {
           },
         })}>
         <Tab.Screen name="Home" component={Dashboard} />
-        <Tab.Screen name="Phone List" component={PhoneList} />
+        <Tab.Screen name="List" component={ListNavigation} />
         <Tab.Screen name="About Us" component={AboutUs} />
       </Tab.Navigator>
     </>

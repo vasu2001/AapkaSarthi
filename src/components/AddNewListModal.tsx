@@ -6,13 +6,19 @@ import {useDispatch} from 'react-redux';
 import {contactType} from '../redux/utils';
 import {newListAction} from '../redux/actions';
 import showSnackbar from '../utils/snackbar';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 export interface AddNewListModalProps {
   visible: boolean;
   onCancel: () => void;
+  navigation: StackNavigationProp<any>;
 }
 
-export function AddNewListModal({visible, onCancel}: AddNewListModalProps) {
+export function AddNewListModal({
+  visible,
+  onCancel,
+  navigation,
+}: AddNewListModalProps) {
   const [name, setName] = useState('');
   const dispatch = useDispatch();
 
@@ -31,7 +37,13 @@ export function AddNewListModal({visible, onCancel}: AddNewListModalProps) {
   );
 
   return (
-    <BottomModal {...{visible, onCancel}} contentHeight={510}>
+    <BottomModal
+      {...{visible}}
+      onCancel={() => {
+        onCancel();
+        setName('');
+      }}
+      contentHeight={510}>
       <CustomInput
         value={name}
         onChangeText={setName}
@@ -42,7 +54,12 @@ export function AddNewListModal({visible, onCancel}: AddNewListModalProps) {
         }}
         validation={(text) => text.length > 0}
       />
-      <ImportComponent callback={addList} />
+      <ImportComponent
+        callback={addList}
+        navigation={navigation}
+        onCancel={onCancel}
+        name={name}
+      />
     </BottomModal>
   );
 }

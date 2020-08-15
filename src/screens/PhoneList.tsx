@@ -6,10 +6,13 @@ import {CustomButton} from '../components/CustomButton';
 import {AddNewListModal} from '../components/AddNewListModal';
 import {useSelector} from 'react-redux';
 import {stateType} from '../redux/utils';
+import {StackNavigationProp} from '@react-navigation/stack';
 
-export interface PhoneListProps {}
+export interface PhoneListProps {
+  navigation: StackNavigationProp<any>;
+}
 
-export function PhoneList(props: PhoneListProps) {
+export function PhoneList({navigation}: PhoneListProps) {
   const [addModal, setAddModal] = useState(false);
   const {callData} = useSelector((state: stateType) => state);
 
@@ -20,6 +23,7 @@ export function PhoneList(props: PhoneListProps) {
         onCancel={() => {
           setAddModal(false);
         }}
+        navigation={navigation}
       />
       <View style={styles.mainContainer}>
         <Text style={styles.heading}>Phone List</Text>
