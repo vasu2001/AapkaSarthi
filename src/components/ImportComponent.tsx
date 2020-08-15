@@ -5,23 +5,22 @@ import CustomInput from './CustomInput';
 import {selectContactPhone} from 'react-native-select-contact';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import showSnackbar from '../utils/snackbar';
-
-interface contact {
-  name: string;
-  phNo: string;
-  comment?: string;
-}
+import {contactType} from '../redux/utils';
 
 export interface ImportComponentProps {
-  callback: (x: [contact]) => void;
+  callback: (x: contactType[]) => void;
 }
 
 export function ImportComponent({callback}: ImportComponentProps) {
-  const [manualDetails, setManualDetails] = useState({
+  const initDetails: contactType = {
     name: '',
     phNo: '',
     comment: '',
-  });
+    status: 'upcoming',
+    reschedule: null,
+  };
+
+  const [manualDetails, setManualDetails] = useState(initDetails);
 
   const manualAdd = (): void => {
     if (manualDetails.name.length === 0 || manualDetails.phNo.length !== 10) {
@@ -29,6 +28,7 @@ export function ImportComponent({callback}: ImportComponentProps) {
       return;
     }
     callback([manualDetails]);
+    setManualDetails(initDetails);
   };
 
   return (
@@ -70,7 +70,7 @@ export function ImportComponent({callback}: ImportComponentProps) {
           keyboardType="phone-pad"
         />
         <CustomInput
-          value={manualDetails.comment}
+          value={manualDetails.comment ?? ''}
           style={[styles.input, {marginBottom: 30}]}
           onChangeText={(text) => {
             setManualDetails({...manualDetails, comment: text});
@@ -105,7 +105,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const phoneBook = async (callback: (x: [contact]) => void): Promise<void> => {
+const phoneBook = async (
+  callback: (x: [contactType]) => void,
+): Promise<void> => {
   try {
     await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
@@ -114,10 +116,12 @@ const phoneBook = async (callback: (x: [contact]) => void): Promise<void> => {
     const selection = await selectContactPhone();
     if (!selection) return;
 
-    const contacts: [contact] = [
+    const contacts: [contactType] = [
       {
         name: selection.contact.name,
         phNo: selection.selectedPhone.number,
+        reschedule: null,
+        status: 'upcoming',
       },
     ];
 
@@ -129,5 +133,5 @@ const phoneBook = async (callback: (x: [contact]) => void): Promise<void> => {
 };
 
 const fileImport = async (
-  callback: (x: [contact]) => void,
+  callback: (x: contactType[]) => void,
 ): Promise<void> => {};

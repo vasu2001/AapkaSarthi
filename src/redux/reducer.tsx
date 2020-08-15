@@ -1,4 +1,5 @@
-import {stateType, actionType, actionNames} from './utils';
+import {stateType, actionType, actionNames, contactGroupType} from './utils';
+import {newListAction} from './actions';
 
 const initialState: stateType = {
   email: null,
@@ -10,9 +11,18 @@ const initialState: stateType = {
 };
 
 export default (state = initialState, action: actionType): stateType => {
+  console.log(action);
+  let newState: stateType | null = null;
+
   switch (action.type) {
     case actionNames.login:
       return {...state, ...action.payload};
+
+    case actionNames.newList:
+      newState = {...state};
+      newState.callData.push(action.payload as contactGroupType);
+      return newState;
+
     default:
       return state;
   }

@@ -1,11 +1,10 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import AuthNavigator from './src/navigations/AuthNavigator';
-import {BottomNavigator} from './src/navigations/BottomNavigator';
 import {Provider} from 'react-redux';
 import {createStore, applyMiddleware} from 'redux';
 import reducer from './src/redux/reducer';
 import thunk from 'redux-thunk';
+import {MainNavigator} from './src/navigations/MainNavigator';
 
 declare const global: {HermesInternal: null | {}};
 
@@ -15,8 +14,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        {/* <AuthNavigator /> */}
-        <BottomNavigator />
+        <MainNavigator />
       </NavigationContainer>
     </Provider>
   );

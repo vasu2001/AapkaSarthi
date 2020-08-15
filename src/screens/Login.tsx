@@ -18,8 +18,10 @@ import {
 } from '../utils/colors';
 import CustomInput from '../components/CustomInput';
 import {CustomButton} from '../components/CustomButton';
-import {forHorizontalIOS} from '@react-navigation/stack/lib/typescript/src/TransitionConfigs/CardStyleInterpolators';
 import showSnackbar from '../utils/snackbar';
+import {useSelector, useDispatch} from 'react-redux';
+import {stateType} from '../redux/utils';
+import {loginAction} from '../redux/actions';
 
 export interface LoginScreenProps {}
 
@@ -27,17 +29,18 @@ export const LoginScreen: React.SFC<LoginScreenProps> = (
   props: LoginScreenProps,
 ) => {
   const [email, setEmail] = useState('');
-  const mailFormat: RegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-
   const [password, setPassword] = useState('');
+  const mailFormat: RegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  const dispatch = useDispatch();
 
   const login = (): void => {
     if (!mailFormat.test(email)) {
       showSnackbar('Enter a valid email');
-    } else if (password.length < 4) {
-      showSnackbar('Enter a valid password');
+      // } else if (password.length < 4) {
+      //   showSnackbar('Enter a valid password');
     } else {
       // call login API
+      dispatch(loginAction(email));
     }
   };
 
