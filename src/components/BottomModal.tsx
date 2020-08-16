@@ -46,7 +46,11 @@ const BottomModal = ({
   return (
     <Modal transparent visible={visible} animationType="fade">
       <TouchableWithoutFeedback onPress={close}>
-        <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.3)'}}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.3)',
+          }}>
           <Animated.View
             style={{
               position: 'absolute',

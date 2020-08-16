@@ -36,7 +36,7 @@ export const loginAction = (email: string): AppThunk => async (dispatch) => {
       userId: '9',
       firstName: 'a',
       lastName: 'b',
-      email: 'v@v.com',
+      email,
       gender: 'm',
     }),
   );
@@ -59,13 +59,13 @@ export const newListAction = (
 };
 
 export const submitCallAction = (
+  status: 'done' | 'rescheduled',
   comment: string,
   reschedule: string | null,
   contactIndex: number,
   listIndex: number,
   listId: string,
 ): AppThunk => (dispatch) => {
-  const status = reschedule && reschedule !== '' ? 'rescheduled' : 'done';
   //api call
 
   dispatch(

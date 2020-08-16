@@ -6,19 +6,24 @@ import showSnackbar from '../utils/snackbar';
 import {contactType} from '../redux/utils';
 import {NavigationProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import DocumentPicker, {
+  DocumentPickerOptions,
+} from 'react-native-document-picker';
+import {parse} from 'papaparse';
+import RNFS from 'react-native-fs';
 
 export interface ImportComponentProps {
   callback: (x: contactType[]) => void;
   navigation: StackNavigationProp<any>;
   onCancel: () => void;
-  name: string | undefined;
+  disabled?: boolean;
 }
 
 export function ImportComponent({
   callback,
   navigation,
   onCancel,
-  name,
+  disabled = true,
 }: ImportComponentProps) {
   return (
     <View style={styles.mainContainer}>
@@ -28,6 +33,7 @@ export function ImportComponent({
         onPress={() => {
           phoneBook(callback);
         }}
+        disabled={disabled}
       />
       <CustomButton
         style={styles.button}
@@ -35,17 +41,16 @@ export function ImportComponent({
         onPress={() => {
           fileImport(callback);
         }}
+        disabled={disabled}
       />
       <CustomButton
         text="Add Contacts"
         onPress={() => {
-          if (name === '') showSnackbar('Enter a name for the list');
-          else {
-            navigation.navigate('Add New List', {callback});
-            onCancel();
-          }
+          navigation.navigate('Add New List', {callback});
+          onCancel();
         }}
         style={styles.button}
+        disabled={disabled}
       />
     </View>
   );
@@ -90,4 +95,35 @@ const phoneBook = async (
 
 const fileImport = async (
   callback: (x: contactType[]) => void,
-): Promise<void> => {};
+): Promise<void> => {
+  const config: DocumentPickerOptions<'android'> = {
+    type: ['*/*'],
+  };
+  try {
+    const file = await DocumentPicker.pick(config);
+    console.log(file);
+
+    const data = await RNFS.readFile(file.uri);
+    // console.log(typeof data);
+
+    parse<any>(data, {
+      encoding: 'base64',
+      complete: function (res) {
+        if (res.errors.length > 0) {
+          showSnackbar('Select a valid file');
+        } else {
+          const regExp: RegExp = /([0-9]{10})/;
+          let hasHeaders = false;
+          res?.data[0]?.forEach((ele: string) => {
+            // console.log(ele);
+            hasHeaders = hasHeaders || regExp.test(ele);
+          });
+          // console.log(hasHeaders);
+          hasHeaders = !hasHeaders;
+        }
+      },
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};

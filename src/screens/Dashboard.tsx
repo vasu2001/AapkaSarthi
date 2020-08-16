@@ -22,7 +22,6 @@ import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import {CallFeedbackModal} from '../components/CallFeeddackModal';
 import {useSelector, useDispatch} from 'react-redux';
 import {stateType} from '../redux/utils';
-import {act} from 'react-test-renderer';
 import {submitCallAction} from '../redux/actions';
 import showSnackbar from '../utils/snackbar';
 
@@ -101,9 +100,13 @@ export function Dashboard(props: DashboardProps) {
   }, [activeIndex]);
 
   const endCall = useCallback(
-    (comment: string, rescheduled?: string): void => {
+    (
+      comment: string,
+      rescheduled: string,
+      status: 'done' | 'rescheduled',
+    ): void => {
       dispatch(
-        submitCallAction(comment, rescheduled ?? null, activeIndex, 0, '0'),
+        submitCallAction(status, comment, rescheduled, activeIndex, 0, '0'),
       );
     },
     [activeIndex],

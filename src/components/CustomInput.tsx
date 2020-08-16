@@ -26,6 +26,7 @@ interface CustomInputProps {
     | 'twitter'
     | 'web-search'
     | undefined;
+  editable?: boolean;
 }
 
 const CustomInput: React.SFC<CustomInputProps> = ({
@@ -38,6 +39,7 @@ const CustomInput: React.SFC<CustomInputProps> = ({
   secureTextEntry = false,
   keyboardType,
   maxLength,
+  editable = true,
 }: CustomInputProps) => {
   const [validated, setValidated] = useState(true);
   let timeout: NodeJS.Timeout | null = null;
@@ -73,6 +75,7 @@ const CustomInput: React.SFC<CustomInputProps> = ({
         secureTextEntry,
         keyboardType,
         maxLength,
+        editable,
       }}
     />
   );

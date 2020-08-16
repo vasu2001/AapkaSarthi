@@ -58,7 +58,7 @@ export function AddNewListModal({
         callback={addList}
         navigation={navigation}
         onCancel={onCancel}
-        name={name}
+        disabled={name.length === 0}
       />
     </BottomModal>
   );

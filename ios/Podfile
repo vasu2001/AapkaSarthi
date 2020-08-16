@@ -16,6 +16,8 @@ target 'AapkaSarthi' do
 
   pod 'ReactNativeART', :path => '../node_modules/@react-native-community/art'
 
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+
   target 'AapkaSarthiTests' do
     inherit! :complete
     # Pods for testing
