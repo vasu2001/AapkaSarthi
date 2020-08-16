@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import BottomModal from './BottomModal';
 import CustomInput from './CustomInput';
@@ -9,22 +9,20 @@ export interface CallFeedbackModalProps {
   visible: boolean;
   onCancel: () => void;
   nextCall: () => void;
-  submitFeedback: (x: string) => void;
-  rescheduleCall: (x: string) => void;
+  endCall: (comment: string, reschedule: string) => void;
 }
 
 export function CallFeedbackModal({
   visible,
   onCancel,
   nextCall,
-  submitFeedback,
-  rescheduleCall,
+  endCall,
 }: CallFeedbackModalProps) {
   const [comment, setComment] = useState('');
   const [reschedule, setReschedule] = useState('');
 
   const cancel = () => {
-    if (comment.length > 0) submitFeedback(comment);
+    endCall(comment, reschedule);
     onCancel();
   };
 
@@ -46,20 +44,20 @@ export function CallFeedbackModal({
           style={{flex: 1, marginRight: 10}}
           placeholder="Reschedule Date"
         />
-        <CustomButton
+        {/* <CustomButton
           text={'Reschedule\nCall'}
           onPress={() => {
             if (reschedule.length > 0) rescheduleCall(reschedule);
             else showSnackbar('Enter reschedule time');
           }}
           style={[styles.button, {elevation: 2}]}
-        />
+        /> */}
       </View>
       <View style={styles.buttonRow}>
         <CustomButton
           text="Next Call"
           onPress={() => {
-            if (comment.length > 0) submitFeedback(comment);
+            endCall(comment, reschedule);
             nextCall();
           }}
           style={styles.button}

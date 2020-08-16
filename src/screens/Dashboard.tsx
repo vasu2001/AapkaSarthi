@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -20,27 +20,44 @@ import {CustomButton} from '../components/CustomButton';
 import Pie from 'react-native-pie';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import {CallFeedbackModal} from '../components/CallFeeddackModal';
+import {useSelector, useDispatch} from 'react-redux';
+import {stateType} from '../redux/utils';
+import {act} from 'react-test-renderer';
+import {submitCallAction} from '../redux/actions';
+import showSnackbar from '../utils/snackbar';
 
 export interface DashboardProps {}
 
 export function Dashboard(props: DashboardProps) {
   const [modal, setModal] = useState(false);
-  let phoneNo = '1234567890';
-  let phoneCallInProgress: number = 0;
+  const [activeIndex, setActiveIndex] = useState(-1);
+
+  let phoneCallInProgress = useRef(0);
+
+  const state = useSelector((state: stateType) => state);
+  const phoneList = state.callData[0]?.list;
+  const dispatch = useDispatch();
+  // console.log('rerender');
+
+  const initFrequency = {
+    rescheduled: 0,
+    done: 0,
+    upcoming: 0,
+  };
+  const [frequency, setFrequency] = useState(initFrequency);
 
   useEffect(() => {
     const handler = (state: AppStateStatus) => {
       // console.log(state, phoneCallInProgress);
       if (state === 'active') {
-        if (phoneCallInProgress === 1) phoneCallInProgress++;
-        else if (phoneCallInProgress === 2) {
+        if (phoneCallInProgress.current === 1) phoneCallInProgress.current++;
+        else if (phoneCallInProgress.current === 2) {
           console.log('call ended');
           setModal(true);
-          phoneCallInProgress = 0;
+          phoneCallInProgress.current = 0;
         }
       }
     };
-
     AppState.addEventListener('change', handler);
 
     return () => {
@@ -48,18 +65,49 @@ export function Dashboard(props: DashboardProps) {
     };
   }, []);
 
+  useEffect(() => {
+    const newFrequency = {...initFrequency};
+    phoneList?.forEach((item) => {
+      ++newFrequency[item.status];
+    });
+
+    setFrequency(newFrequency);
+
+    const n = phoneList?.length ?? 0;
+    let setValue = -1;
+
+    for (let i = activeIndex + 1; i < n; i++) {
+      if (phoneList[i].status !== 'done') {
+        setValue = i;
+        break;
+      }
+    }
+
+    console.log('setting new active : ' + setValue);
+    setActiveIndex(setValue);
+  }, [state]);
+
   const startCalling = useCallback(async () => {
     try {
       await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CALL_PHONE,
       );
 
-      phoneCallInProgress++;
-      RNImmediatePhoneCall.immediatePhoneCall(phoneNo);
+      phoneCallInProgress.current++;
+      RNImmediatePhoneCall.immediatePhoneCall(phoneList[activeIndex].phNo);
     } catch (err) {
       console.log(err);
     }
-  }, [phoneNo]);
+  }, [activeIndex]);
+
+  const endCall = useCallback(
+    (comment: string, rescheduled?: string): void => {
+      dispatch(
+        submitCallAction(comment, rescheduled ?? null, activeIndex, 0, '0'),
+      );
+    },
+    [activeIndex],
+  );
 
   return (
     <>
@@ -69,12 +117,10 @@ export function Dashboard(props: DashboardProps) {
           setModal(false);
         }}
         nextCall={() => {
-          // do something for the current call and get new no
-          phoneNo = '22222222222222';
-          startCalling();
+          if (activeIndex === -1) showSnackbar('No calls remaining');
+          else startCalling();
         }}
-        submitFeedback={(text: string) => console.log(text)}
-        rescheduleCall={(text: string) => console.log(text)}
+        endCall={endCall}
       />
       <View style={styles.mainContainer}>
         <Text style={styles.heading}>My Dashboard</Text>
@@ -120,20 +166,21 @@ export function Dashboard(props: DashboardProps) {
           text="Start Calling"
           onPress={startCalling}
           style={styles.startCalling}
+          disabled={activeIndex === -1}
         />
 
         <View style={styles.statConatiner}>
           <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Pending</Text>
-            <Text style={styles.statValue}>0</Text>
+            <Text style={styles.statLabel}>Rescheduled</Text>
+            <Text style={styles.statValue}>{frequency['rescheduled']}</Text>
           </View>
           <View style={styles.statCard}>
             <Text style={styles.statLabel}>Done</Text>
-            <Text style={styles.statValue}>3</Text>
+            <Text style={styles.statValue}>{frequency['done']}</Text>
           </View>
           <View style={[styles.statCard, {borderRightWidth: 0}]}>
             <Text style={styles.statLabel}>Upcoming</Text>
-            <Text style={styles.statValue}>12</Text>
+            <Text style={styles.statValue}>{frequency['upcoming']}</Text>
           </View>
         </View>
       </View>
@@ -187,7 +234,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 15,
     elevation: 2,
-    marginHorizontal: 40,
+    marginHorizontal: 30,
     padding: 10,
     marginTop: 10,
   },

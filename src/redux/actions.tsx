@@ -6,6 +6,8 @@ import {
   contactGroupType,
   newListActionType,
   contactType,
+  submitCallActionType,
+  submitCallPayload,
 } from './utils';
 
 const login = (payload: loginActionPayload): loginActionType => {
@@ -21,6 +23,11 @@ const newList = (payload: contactGroupType): newListActionType => {
     payload,
   };
 };
+
+const submitCall = (payload: submitCallPayload): submitCallActionType => ({
+  type: actionNames.submitCall,
+  payload,
+});
 
 export const loginAction = (email: string): AppThunk => async (dispatch) => {
   // api call
@@ -49,4 +56,26 @@ export const newListAction = (
     }),
   );
   callback();
+};
+
+export const submitCallAction = (
+  comment: string,
+  reschedule: string | null,
+  contactIndex: number,
+  listIndex: number,
+  listId: string,
+): AppThunk => (dispatch) => {
+  const status = reschedule && reschedule !== '' ? 'rescheduled' : 'done';
+  //api call
+
+  dispatch(
+    submitCall({
+      comment,
+      reschedule,
+      contactIndex,
+      listIndex,
+      listId,
+      status,
+    }),
+  );
 };

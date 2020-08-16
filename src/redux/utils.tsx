@@ -4,13 +4,14 @@ import {Action} from 'redux';
 export const actionNames = {
   login: 'LOGIN',
   newList: 'ADD_LIST',
+  submitCall: 'SUBMIT_CALL',
 };
 
 export interface contactType {
   name: string;
   phNo: string;
   comment?: string | undefined;
-  status: 'pending' | 'done' | 'upcoming';
+  status: 'rescheduled' | 'done' | 'upcoming';
   reschedule: string | null;
 }
 
@@ -49,7 +50,25 @@ export interface newListActionType {
   payload: newListPayload;
 }
 
-export type actionType = newListActionType | loginActionType;
+export interface submitCallPayload {
+  contactIndex: number;
+  listIndex: number;
+  comment: string;
+  reschedule: string | null;
+  status: 'done' | 'rescheduled';
+  // contactId: string;
+  listId: string;
+}
+
+export interface submitCallActionType {
+  type: string;
+  payload: submitCallPayload;
+}
+
+export type actionType =
+  | newListActionType
+  | loginActionType
+  | submitCallActionType;
 
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,

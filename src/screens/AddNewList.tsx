@@ -23,18 +23,17 @@ export function AddNewList({route, navigation}: AddNewListProps) {
     status: 'upcoming',
     reschedule: null,
   };
-  const contactArray: contactType[] = [];
 
-  const [manualDetails, setManualDetails] = useState(initDetails);
-  const [noOfContacts, setNoOfContact] = useState(0);
+  const [manualDetails, setManualDetails] = useState([initDetails]);
+  const i = manualDetails.length - 1;
 
   const addContact = (): void => {
-    if (manualDetails.name === '' || manualDetails.phNo.length !== 10) {
+    if (manualDetails[i].name === '' || manualDetails[i].phNo.length !== 10) {
       showSnackbar('Enter valid data');
     } else {
-      contactArray.push(manualDetails);
-      setManualDetails(initDetails);
-      setNoOfContact(noOfContacts + 1);
+      const newDetails = [...manualDetails];
+      newDetails.push(initDetails);
+      setManualDetails(newDetails);
     }
   };
 
@@ -44,21 +43,25 @@ export function AddNewList({route, navigation}: AddNewListProps) {
 
       <View style={styles.inputContainer}>
         <CustomInput
-          value={manualDetails.name}
+          value={manualDetails[i].name}
           validation={(text) => text.length > 0}
           style={styles.input}
           onChangeText={(text) => {
-            setManualDetails({...manualDetails, name: text});
+            const newDetails = [...manualDetails];
+            manualDetails[i].name = text;
+            setManualDetails(newDetails);
           }}
           placeholder="Name"
         />
         <CustomInput
-          value={manualDetails.phNo}
+          value={manualDetails[i].phNo}
           style={styles.input}
           validation={(text) => text.length === 10}
           maxLength={10}
           onChangeText={(text) => {
-            setManualDetails({...manualDetails, phNo: text});
+            const newDetails = [...manualDetails];
+            manualDetails[i].phNo = text;
+            setManualDetails(newDetails);
           }}
           placeholder="Phone Number"
           keyboardType="phone-pad"
@@ -72,16 +75,17 @@ export function AddNewList({route, navigation}: AddNewListProps) {
 
       <View style={styles.row}>
         <Text style={styles.text0}>Number of Contacts: </Text>
-        <Text style={styles.text1}>{noOfContacts}</Text>
+        <Text style={styles.text1}>{i}</Text>
       </View>
 
       <CustomButton
         text="Add List"
         onPress={() => {
-          route.params.callback(contactArray);
+          manualDetails.pop();
+          route.params.callback(manualDetails);
           navigation.goBack();
         }}
-        disabled={noOfContacts === 0}
+        disabled={i === 0}
       />
     </View>
   );
