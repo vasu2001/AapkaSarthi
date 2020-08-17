@@ -22,9 +22,11 @@ export function AddNewList({route, navigation}: AddNewListProps) {
     comment: '',
     status: 'upcoming',
     reschedule: null,
+    id: null,
   };
 
   const [manualDetails, setManualDetails] = useState([initDetails]);
+  const [loading, setLoading] = useState(false);
   const i = manualDetails.length - 1;
 
   const addContact = (): void => {
@@ -81,11 +83,23 @@ export function AddNewList({route, navigation}: AddNewListProps) {
       <CustomButton
         text="Add List"
         onPress={() => {
-          manualDetails.pop();
-          route.params.callback(manualDetails);
-          navigation.goBack();
+          setLoading(true);
+          const newManualDetails = [...manualDetails];
+          // manualDetails.pop();
+          newManualDetails.pop();
+          route.params.callback(
+            newManualDetails,
+            () => {
+              setLoading(false);
+              // setManualDetails([initDetails])
+              navigation.goBack();
+            },
+            () => {
+              setLoading(false);
+            },
+          );
         }}
-        disabled={i === 0}
+        disabled={i === 0 || loading}
       />
     </View>
   );

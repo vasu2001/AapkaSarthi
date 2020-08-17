@@ -129,7 +129,6 @@ export function Dashboard(props: DashboardProps) {
           rescheduled,
           activeIndex,
           0,
-          '0',
           callback,
         ),
       );

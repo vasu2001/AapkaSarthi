@@ -19,5 +19,11 @@ export function ListNavigation(props: ListNavigationProps) {
 
 export type ListNavParamsList = {
   'Phone List': undefined;
-  'Add New List': {callback: (x: contactType[]) => void};
+  'Add New List': {
+    callback: (
+      x: contactType[],
+      successCallback: () => void,
+      failCallback: () => void,
+    ) => void;
+  };
 };

@@ -13,6 +13,7 @@ export interface contactType {
   comment?: string | undefined;
   status: 'rescheduled' | 'done' | 'upcoming';
   reschedule: string | null;
+  id: string | null;
 }
 
 export interface contactGroupType {
@@ -57,7 +58,7 @@ export interface submitCallPayload {
   reschedule: string | null;
   status: 'done' | 'rescheduled';
   // contactId: string;
-  listId: string;
+  // listId: string;
 }
 
 export interface submitCallActionType {

@@ -13,7 +13,7 @@ interface BottomModalProps {
   onCancel: () => void;
   children?: ReactNode;
   contentHeight: number;
-  validation: () => boolean;
+  validation?: () => boolean;
 }
 
 const SPEED = 2;
@@ -23,7 +23,7 @@ const BottomModal = ({
   onCancel,
   contentHeight,
   children,
-  validation,
+  validation = () => true,
 }: BottomModalProps) => {
   const animate = useRef(new Animated.Value(-contentHeight)).current;
 

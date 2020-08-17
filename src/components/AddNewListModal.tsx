@@ -23,13 +23,22 @@ export function AddNewListModal({
   const dispatch = useDispatch();
 
   const addList = useCallback(
-    (list: contactType[], callback: () => void): void => {
+    (
+      list: contactType[],
+      successCallback: () => void,
+      failCallback: () => void,
+    ): void => {
       dispatch(
-        newListAction(list, name, () => {
-          setName('');
-          onCancel();
-          callback();
-        }),
+        newListAction(
+          list,
+          name,
+          () => {
+            setName('');
+            onCancel();
+            successCallback();
+          },
+          failCallback,
+        ),
       );
     },
     [name],

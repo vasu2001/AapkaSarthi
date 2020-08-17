@@ -13,7 +13,11 @@ import {parse} from 'papaparse';
 import RNFS, {uploadFiles} from 'react-native-fs';
 
 export interface ImportComponentProps {
-  callback: (x: contactType[], callback: () => void) => void;
+  callback: (
+    x: contactType[],
+    successCallback: () => void,
+    failCallback: () => void,
+  ) => void;
   navigation: StackNavigationProp<any>;
   onCancel: () => void;
   disabled?: boolean;
@@ -71,7 +75,11 @@ const styles = StyleSheet.create({
 });
 
 const phoneBook = async (
-  callback: (x: [contactType], callback: () => void) => void,
+  callback: (
+    x: [contactType],
+    successCallback: () => void,
+    failCallback: () => void,
+  ) => void,
   setLoading: (x: boolean) => void,
 ): Promise<void> => {
   try {
@@ -89,13 +97,20 @@ const phoneBook = async (
         phNo: selection.selectedPhone.number,
         reschedule: null,
         status: 'upcoming',
+        id: null,
       },
     ];
 
     // console.log(contacts);
-    callback(contacts, () => {
-      setLoading(false);
-    });
+    callback(
+      contacts,
+      () => {
+        setLoading(false);
+      },
+      () => {
+        setLoading(false);
+      },
+    );
   } catch (err) {
     console.log(err);
     setLoading(false);
@@ -118,7 +133,7 @@ const fileImport = async (
     // console.log(typeof data);
 
     parse<any>(data, {
-      encoding: 'base64',
+      encoding: 'raw',
       complete: (res) => {
         if (res.errors.length > 0) {
           showSnackbar('Select a valid csv file');

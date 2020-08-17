@@ -9,8 +9,9 @@ import {
   submitCallActionType,
   submitCallPayload,
 } from './utils';
-import axiosConfig from '../axios/axiosConfig';
+import axiosConfig from '../utils/axiosConfig';
 import showSnackbar from '../utils/snackbar';
+import {Buffer} from 'buffer';
 
 const axios = axiosConfig();
 
@@ -67,28 +68,41 @@ export const loginAction = (email: string): AppThunk => async (dispatch) => {
 export const newListAction = (
   list: contactType[],
   name: string,
-  callback: () => void,
+  successCallback: () => void,
+  failCallback: () => void,
 ): AppThunk => async (dispatch, getState) => {
   try {
-    const state = getState();
-    const groupIdRes = await createList(name, state.userId ?? '');
+    const {userId} = getState();
+    const groupId: string = (
+      await createList(name, userId ?? '')
+    ).data.toString();
 
-    console.log(groupIdRes.data);
+    console.log(groupId);
 
-    //api call to submit the list
+    for (let i = 0; i < list.length; i++) {
+      const contactId = (
+        await axios.post(`/users/${userId}/groups/${groupId}/callees`, {
+          Name: list[i].name,
+          Contact: list[i].phNo,
+        })
+      ).data.toString();
+      list[i].id = contactId;
+    }
 
     dispatch(
       newList({
         name,
         list,
-        id: groupIdRes.data.toString(),
+        id: groupId,
       }),
     );
+
+    successCallback();
   } catch (err) {
     console.log(err);
     showSnackbar('Some Error Occured');
+    failCallback();
   }
-  callback();
 };
 
 export const submitCallAction = (
@@ -97,21 +111,33 @@ export const submitCallAction = (
   reschedule: string | null,
   contactIndex: number,
   listIndex: number,
-  listId: string,
   callback: () => void,
-): AppThunk => (dispatch) => {
-  //api call
+): AppThunk => async (dispatch, getState) => {
+  try {
+    const contactId: string =
+      getState().callData[listIndex].list[listIndex].id ?? '';
+    const {userId} = getState();
 
-  dispatch(
-    submitCall({
-      comment,
-      reschedule,
-      contactIndex,
-      listIndex,
-      listId,
-      status,
-    }),
-  );
+    await axios.post(`/users/${userId}/calls`, {
+      Notes: comment === '' ? 'none' : comment,
+      CalleeId: contactId,
+      Status: status === 'done' ? 'Done' : 'ReScheduled',
+      ReScheduledDate: reschedule ?? '',
+    });
+
+    dispatch(
+      submitCall({
+        comment,
+        reschedule,
+        contactIndex,
+        listIndex,
+        status,
+      }),
+    );
+  } catch (err) {
+    console.log(JSON.stringify(err));
+    showSnackbar('Some error occured');
+  }
   callback();
 };
 
@@ -127,15 +153,18 @@ export const uploadFileAction = (
       await createList(name, userId ?? '')
     ).data.toString();
 
+    const buffer = new Buffer(data);
+    // console.log(buffer.toString('base64'));
+
     const uploadRes = await axios.post(
       `/users/${userId}/groups/${groupId}/calleesfile`,
       {
         CountryCode: '+91',
         Callees: {
           Name: name,
-          Type: 'test',
+          Type: 'text/csv',
           HasHeaders: hasHeaders,
-          Base64Bytes: data,
+          Base64Bytes: buffer.toString('base64'),
         },
       },
     );
