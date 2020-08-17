@@ -10,13 +10,14 @@ import DocumentPicker, {
   DocumentPickerOptions,
 } from 'react-native-document-picker';
 import {parse} from 'papaparse';
-import RNFS from 'react-native-fs';
+import RNFS, {uploadFiles} from 'react-native-fs';
 
 export interface ImportComponentProps {
-  callback: (x: contactType[]) => void;
+  callback: (x: contactType[], callback: () => void) => void;
   navigation: StackNavigationProp<any>;
   onCancel: () => void;
   disabled?: boolean;
+  uploadFile: (data: string, hasHeaders: boolean, callback: () => void) => void;
 }
 
 export function ImportComponent({
@@ -24,24 +25,27 @@ export function ImportComponent({
   navigation,
   onCancel,
   disabled = true,
+  uploadFile,
 }: ImportComponentProps) {
+  const [loading, setLoading] = useState(false);
+
   return (
     <View style={styles.mainContainer}>
       <CustomButton
         style={styles.button}
         text="Import from PhoneBook"
         onPress={() => {
-          phoneBook(callback);
+          phoneBook(callback, setLoading);
         }}
-        disabled={disabled}
+        disabled={disabled || loading}
       />
       <CustomButton
         style={styles.button}
         text="Import from File"
         onPress={() => {
-          fileImport(callback);
+          fileImport(uploadFile, setLoading);
         }}
-        disabled={disabled}
+        disabled={disabled || loading}
       />
       <CustomButton
         text="Add Contacts"
@@ -50,7 +54,7 @@ export function ImportComponent({
           onCancel();
         }}
         style={styles.button}
-        disabled={disabled}
+        disabled={disabled || loading}
       />
     </View>
   );
@@ -67,9 +71,11 @@ const styles = StyleSheet.create({
 });
 
 const phoneBook = async (
-  callback: (x: [contactType]) => void,
+  callback: (x: [contactType], callback: () => void) => void,
+  setLoading: (x: boolean) => void,
 ): Promise<void> => {
   try {
+    setLoading(true);
     await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
     );
@@ -87,19 +93,24 @@ const phoneBook = async (
     ];
 
     // console.log(contacts);
-    callback(contacts);
+    callback(contacts, () => {
+      setLoading(false);
+    });
   } catch (err) {
     console.log(err);
+    setLoading(false);
   }
 };
 
 const fileImport = async (
-  callback: (x: contactType[]) => void,
+  uploadFile: (data: string, hasHeaders: boolean, callback: () => void) => void,
+  setLoading: (x: boolean) => void,
 ): Promise<void> => {
   const config: DocumentPickerOptions<'android'> = {
     type: ['*/*'],
   };
   try {
+    setLoading(true);
     const file = await DocumentPicker.pick(config);
     console.log(file);
 
@@ -108,9 +119,10 @@ const fileImport = async (
 
     parse<any>(data, {
       encoding: 'base64',
-      complete: function (res) {
+      complete: (res) => {
         if (res.errors.length > 0) {
-          showSnackbar('Select a valid file');
+          showSnackbar('Select a valid csv file');
+          setLoading(false);
         } else {
           const regExp: RegExp = /([0-9]{10})/;
           let hasHeaders = false;
@@ -120,10 +132,15 @@ const fileImport = async (
           });
           // console.log(hasHeaders);
           hasHeaders = !hasHeaders;
+          uploadFile(data, hasHeaders, () => {
+            setLoading(false);
+          });
         }
       },
     });
   } catch (err) {
     console.log(err);
+    showSnackbar('Select a valid csv file');
+    setLoading(false);
   }
 };

@@ -7,7 +7,6 @@ import showSnackbar from '../utils/snackbar';
 import DatePicker from 'react-native-datepicker';
 import {YELLOW, GRAY} from '../utils/colors';
 import RNPickerSelect from 'react-native-picker-select';
-import {stat} from 'react-native-fs';
 
 export interface CallFeedbackModalProps {
   visible: boolean;
@@ -17,6 +16,7 @@ export interface CallFeedbackModalProps {
     comment: string,
     reschedule: string,
     status: 'done' | 'rescheduled',
+    callback: () => void,
   ) => void;
 }
 
@@ -28,15 +28,32 @@ export function CallFeedbackModal({
 }: CallFeedbackModalProps) {
   const [comment, setComment] = useState('');
   const [reschedule, setReschedule] = useState('');
-  const [status, setStatus] = useState<'done' | 'rescheduled'>('rescheduled');
+  const [status, setStatus] = useState<'done' | 'rescheduled'>('done');
 
   const cancel = () => {
-    endCall(comment, reschedule, status);
-    onCancel();
+    endCall(comment, reschedule, status, () => {
+      // if (cleanUp())
+      onCancel();
+    });
+  };
+
+  const cleanUp = () => {
+    if (status === 'rescheduled' && reschedule === '') {
+      showSnackbar('Select a rescheduling date');
+      return false;
+    }
+    setComment('');
+    setReschedule('');
+    setStatus('done');
+    return true;
   };
 
   return (
-    <BottomModal {...{visible: true}} onCancel={cancel} contentHeight={360}>
+    <BottomModal
+      {...{visible}}
+      onCancel={cancel}
+      validation={cleanUp}
+      contentHeight={420}>
       <Text style={styles.heading}>Feedback</Text>
       {/* <View style={styles.card}> */}
       <RNPickerSelect
@@ -88,8 +105,10 @@ export function CallFeedbackModal({
         <CustomButton
           text="Next Call"
           onPress={() => {
-            endCall(comment, reschedule, status);
-            nextCall();
+            endCall(comment, reschedule, status, () => {
+              if (cleanUp()) setTimeout(nextCall, 1000);
+              // nextCall();
+            });
           }}
           style={styles.button}
         />

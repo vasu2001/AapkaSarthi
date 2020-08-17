@@ -6,6 +6,7 @@ import {
   submitCallPayload,
 } from './utils';
 import {newListAction} from './actions';
+// import {fromJS} from 'immutable';
 
 const initialState: stateType = {
   email: null,
@@ -18,7 +19,7 @@ const initialState: stateType = {
 
 export default (state = initialState, action: actionType): stateType => {
   // console.log(action, state);
-  console.log(JSON.stringify(state));
+  console.log(JSON.stringify(action));
   let newState: stateType | null = null;
 
   switch (action.type) {
@@ -27,7 +28,10 @@ export default (state = initialState, action: actionType): stateType => {
 
     case actionNames.newList:
       newState = {...state};
-      newState.callData.push(action.payload as contactGroupType);
+      newState.callData = [
+        ...newState.callData,
+        action.payload as contactGroupType,
+      ];
       return newState;
 
     case actionNames.submitCall:
@@ -39,10 +43,15 @@ export default (state = initialState, action: actionType): stateType => {
         reschedule,
       } = action.payload as submitCallPayload;
       newState = {...state};
+      newState.callData = [...newState.callData];
+      newState.callData[listIndex].list = [
+        ...newState.callData[listIndex].list,
+      ];
       newState.callData[listIndex].list[contactIndex] = {
         ...newState.callData[listIndex].list[contactIndex],
         ...{comment, status, reschedule},
       };
+      console.log(newState);
       return newState;
     default:
       return state;

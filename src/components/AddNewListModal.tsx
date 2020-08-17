@@ -4,7 +4,7 @@ import CustomInput from './CustomInput';
 import {ImportComponent} from './ImportComponent';
 import {useDispatch} from 'react-redux';
 import {contactType} from '../redux/utils';
-import {newListAction} from '../redux/actions';
+import {newListAction, uploadFileAction} from '../redux/actions';
 import showSnackbar from '../utils/snackbar';
 import {StackNavigationProp} from '@react-navigation/stack';
 
@@ -23,15 +23,27 @@ export function AddNewListModal({
   const dispatch = useDispatch();
 
   const addList = useCallback(
-    (list: contactType[]): void => {
-      if (name === '') showSnackbar('Enter a name for the list');
-      else
-        dispatch(
-          newListAction(list, name, () => {
-            setName('');
-            onCancel();
-          }),
-        );
+    (list: contactType[], callback: () => void): void => {
+      dispatch(
+        newListAction(list, name, () => {
+          setName('');
+          onCancel();
+          callback();
+        }),
+      );
+    },
+    [name],
+  );
+
+  const uploadFile = useCallback(
+    (data: string, hasHeaders: boolean, callback: () => void) => {
+      dispatch(
+        uploadFileAction(data, name, hasHeaders, () => {
+          setName('');
+          onCancel();
+          callback();
+        }),
+      );
     },
     [name],
   );
@@ -59,6 +71,7 @@ export function AddNewListModal({
         navigation={navigation}
         onCancel={onCancel}
         disabled={name.length === 0}
+        uploadFile={uploadFile}
       />
     </BottomModal>
   );

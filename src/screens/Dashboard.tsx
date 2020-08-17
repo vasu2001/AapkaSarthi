@@ -30,6 +30,7 @@ export interface DashboardProps {}
 export function Dashboard(props: DashboardProps) {
   const [modal, setModal] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [nextIndex, setNextIndex] = useState(-1);
 
   let phoneCallInProgress = useRef(0);
 
@@ -73,17 +74,32 @@ export function Dashboard(props: DashboardProps) {
     setFrequency(newFrequency);
 
     const n = phoneList?.length ?? 0;
-    let setValue = -1;
+    let setValueActive = -1;
+    let setValueNext = -1;
 
-    for (let i = activeIndex + 1; i < n; i++) {
+    if (activeIndex == -1) {
+      for (let i = 0; i < n; i++) {
+        if (phoneList[i].status !== 'done') {
+          setValueActive = i;
+          break;
+        }
+      }
+    } else {
+      setValueActive = nextIndex;
+    }
+
+    for (let i = setValueActive + 1; i < n; i++) {
       if (phoneList[i].status !== 'done') {
-        setValue = i;
+        setValueNext = i;
         break;
       }
     }
 
-    console.log('setting new active : ' + setValue);
-    setActiveIndex(setValue);
+    console.log(
+      'setting new active: ' + setValueActive + ' next: ' + setValueNext,
+    );
+    setActiveIndex(setValueActive);
+    setNextIndex(setValueNext);
   }, [state]);
 
   const startCalling = useCallback(async () => {
@@ -104,9 +120,18 @@ export function Dashboard(props: DashboardProps) {
       comment: string,
       rescheduled: string,
       status: 'done' | 'rescheduled',
+      callback: () => void,
     ): void => {
       dispatch(
-        submitCallAction(status, comment, rescheduled, activeIndex, 0, '0'),
+        submitCallAction(
+          status,
+          comment,
+          rescheduled,
+          activeIndex,
+          0,
+          '0',
+          callback,
+        ),
       );
     },
     [activeIndex],
@@ -120,7 +145,8 @@ export function Dashboard(props: DashboardProps) {
           setModal(false);
         }}
         nextCall={() => {
-          if (activeIndex === -1) showSnackbar('No calls remaining');
+          if (nextIndex === -1 || activeIndex === -1)
+            showSnackbar('No calls remaining');
           else startCalling();
         }}
         endCall={endCall}

@@ -5,12 +5,13 @@ import reducer from './reducer';
 import thunk from 'redux-thunk';
 import {stateType, actionType} from './utils';
 import hardSet from 'redux-persist/es/stateReconciler/hardSet';
-import {PersistGateProps} from 'redux-persist/integration/react';
+import setTransform from './transform';
 
 const persistConfig: PersistConfig<stateType> = {
   key: 'statePersist',
   storage: AsyncStorage,
   stateReconciler: hardSet,
+  transforms: [setTransform],
 };
 
 const persistedReducer = persistReducer<stateType, any>(persistConfig, reducer);
