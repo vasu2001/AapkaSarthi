@@ -159,7 +159,7 @@ export const uploadFileAction = (
     const uploadRes = await axios.post(
       `/users/${userId}/groups/${groupId}/calleesfile`,
       {
-        CountryCode: '+91',
+        CountryCode: 'IN',
         Callees: {
           Name: name,
           Type: 'text/csv',
@@ -168,9 +168,35 @@ export const uploadFileAction = (
         },
       },
     );
-    console.log(uploadRes.data);
+    // console.log(uploadRes.data);
+
+    const getList = await axios.get(
+      `/users/${userId}/groups/${groupId}/callees`,
+      {
+        params: {
+          isActive: true,
+          take: 100,
+        },
+      },
+    );
+
+    dispatch(
+      newList({
+        name,
+        id: groupId,
+        list: getList.data.Data.map(
+          (ele: any): contactType => ({
+            id: ele.CalleeId,
+            name: ele.Name,
+            phNo: ele.Contact,
+            status: 'upcoming',
+            reschedule: null,
+          }),
+        ),
+      }),
+    );
   } catch (err) {
-    console.log(err);
+    console.log(JSON.stringify(err));
     showSnackbar('Some Error Occured');
   }
   callback();
