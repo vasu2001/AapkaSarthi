@@ -1,16 +1,14 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, PermissionsAndroid} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {CustomButton} from './CustomButton';
-import {selectContactPhone} from 'react-native-select-contact';
 import showSnackbar from '../utils/snackbar';
 import {contactType} from '../redux/utils';
-import {NavigationProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import DocumentPicker, {
   DocumentPickerOptions,
 } from 'react-native-document-picker';
 import {parse} from 'papaparse';
-import RNFS, {uploadFiles} from 'react-native-fs';
+import RNFS from 'react-native-fs';
 
 export interface ImportComponentProps {
   callback: (
@@ -44,7 +42,9 @@ export function ImportComponent({
         style={styles.button}
         text="Import from PhoneBook"
         onPress={() => {
-          phoneBook(callback, setLoading);
+          // phoneBook(callback, setLoading);
+          navigation.navigate('Add New List Phonebook', {callback});
+          onCancel();
         }}
         disabled={disabled || loading}
       />
@@ -78,49 +78,6 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
 });
-
-const phoneBook = async (
-  callback: (
-    x: [contactType],
-    successCallback: () => void,
-    failCallback: () => void,
-  ) => void,
-  setLoading: (x: boolean) => void,
-): Promise<void> => {
-  try {
-    setLoading(true);
-    await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
-    );
-
-    const selection = await selectContactPhone();
-    if (!selection) return;
-
-    const contacts: [contactType] = [
-      {
-        name: selection.contact.name,
-        phNo: selection.selectedPhone.number,
-        reschedule: null,
-        status: 'upcoming',
-        id: null,
-      },
-    ];
-
-    // console.log(contacts);
-    callback(
-      contacts,
-      () => {
-        setLoading(false);
-      },
-      () => {
-        setLoading(false);
-      },
-    );
-  } catch (err) {
-    console.log(err);
-    setLoading(false);
-  }
-};
 
 const fileImport = async (
   uploadFile: (

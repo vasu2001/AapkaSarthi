@@ -6,7 +6,7 @@ import {
   Animated,
   StatusBar,
 } from 'react-native';
-import {LAVENDER} from '../utils/colors';
+import {LAVENDER, MODAL_BACKDROP} from '../utils/colors';
 
 interface BottomModalProps {
   visible: boolean;
@@ -53,7 +53,7 @@ const BottomModal = ({
         <View
           style={{
             flex: 1,
-            backgroundColor: 'rgba(0,0,0,0.3)',
+            backgroundColor: MODAL_BACKDROP,
           }}>
           <Animated.View
             style={{
@@ -67,7 +67,7 @@ const BottomModal = ({
               overflow: 'hidden',
               paddingBottom: 10,
             }}>
-            <StatusBar backgroundColor="rgba(0,0,0,0.3)" />
+            <StatusBar backgroundColor={MODAL_BACKDROP} />
             <TouchableWithoutFeedback onPress={() => {}}>
               <View style={{alignItems: 'center'}}>{children}</View>
             </TouchableWithoutFeedback>

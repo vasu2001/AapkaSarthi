@@ -16,15 +16,17 @@ import {useSelector, useDispatch} from 'react-redux';
 import {stateType} from '../redux/utils';
 import {submitCallAction} from '../redux/actions';
 import showSnackbar from '../utils/snackbar';
+import {TimerModal} from '../components/TimerModal';
 
 export interface DashboardProps {}
 
 export function Dashboard() {
   const [modal, setModal] = useState(false);
+  const [timerModal, setTimerModal] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
-  const [nextIndex, setNextIndex] = useState(-1);
 
-  let phoneCallInProgress = useRef(0);
+  let phoneCallInProgress = useRef<number>(0);
+  let timeoutRef = useRef<NodeJS.Timeout>(null);
 
   const state = useSelector((state: stateType) => state);
   const phoneList = state.callData[0]?.list ?? [];
@@ -40,6 +42,7 @@ export function Dashboard() {
   const totalNo = frequency.rescheduled + frequency.done + frequency.upcoming;
 
   useEffect(() => {
+    nextCall();
     const handler = (state: AppStateStatus) => {
       // console.log(state, phoneCallInProgress);
       if (state === 'active') {
@@ -66,47 +69,46 @@ export function Dashboard() {
 
     setFrequency(newFrequency);
 
-    const n = phoneList?.length ?? 0;
-    let setValueActive = -1;
-    let setValueNext = -1;
-
     if (activeIndex == -1) {
-      for (let i = 0; i < n; i++) {
+      for (let i = 0; i < phoneList.length; i++) {
         if (phoneList[i].status !== 'done') {
-          setValueActive = i;
+          setActiveIndex(i);
           break;
         }
       }
-    } else {
-      setValueActive = nextIndex;
     }
-
-    for (let i = setValueActive + 1; i < n; i++) {
-      if (phoneList[i].status !== 'done') {
-        setValueNext = i;
-        break;
-      }
-    }
-
-    console.log(
-      'setting new active: ' + setValueActive + ' next: ' + setValueNext,
-    );
-    setActiveIndex(setValueActive);
-    setNextIndex(setValueNext);
   }, [state]);
 
-  const startCalling = useCallback(async () => {
+  const startCalling = useCallback(async (activeIndex: number) => {
     try {
       await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CALL_PHONE,
       );
 
-      phoneCallInProgress.current++;
-      RNImmediatePhoneCall.immediatePhoneCall(phoneList[activeIndex].phNo);
+      setTimerModal(true);
+      timeoutRef.current = setTimeout(() => {
+        setTimerModal(false);
+        phoneCallInProgress.current++;
+        RNImmediatePhoneCall.immediatePhoneCall(phoneList[activeIndex].phNo);
+      }, 3000);
     } catch (err) {
       console.log(err);
     }
-  }, [activeIndex]);
+  }, []);
+
+  const nextCall = (): number => {
+    let newActiveIndex = -1;
+
+    for (let i = activeIndex + 1; i < phoneList.length; i++) {
+      if (phoneList[i].status !== 'done') {
+        newActiveIndex = i;
+        break;
+      }
+    }
+    setActiveIndex(newActiveIndex);
+    console.log('new activeIndex ' + newActiveIndex);
+    return newActiveIndex;
+  };
 
   const endCall = useCallback(
     (
@@ -114,6 +116,7 @@ export function Dashboard() {
       rescheduled: string,
       status: 'done' | 'rescheduled',
       callback: () => void,
+      closeModal: boolean = false,
     ): void => {
       dispatch(
         submitCallAction(
@@ -125,6 +128,7 @@ export function Dashboard() {
           callback,
         ),
       );
+      closeModal && nextCall();
     },
     [activeIndex],
   );
@@ -137,11 +141,21 @@ export function Dashboard() {
           setModal(false);
         }}
         nextCall={() => {
-          if (nextIndex === -1 || activeIndex === -1)
-            showSnackbar('No calls remaining');
-          else startCalling();
+          if (activeIndex === -1) showSnackbar('No calls remaining');
+          else {
+            const nextIndex = nextCall();
+            if (nextIndex !== -1) startCalling(nextIndex);
+            else showSnackbar('No calls remaining');
+          }
         }}
         endCall={endCall}
+      />
+      <TimerModal
+        visible={timerModal}
+        onCancel={() => {
+          timeoutRef.current && clearTimeout(timeoutRef.current);
+          setTimerModal(false);
+        }}
       />
       <View style={styles.mainContainer}>
         <Text style={styles.heading}>My Dashboard</Text>
@@ -198,7 +212,9 @@ export function Dashboard() {
 
         <CustomButton
           text="Start Calling"
-          onPress={startCalling}
+          onPress={() => {
+            startCalling(activeIndex);
+          }}
           style={styles.startCalling}
           disabled={activeIndex === -1}
         />

@@ -1,37 +1,19 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  ImageBackground,
-  StatusBar,
-} from 'react-native';
-import {
-  YELLOW,
-  ORANGE,
-  GRAY_LIGHT,
-  GRAY,
-  GRAY_DARK,
-  GRAY_BACKGROUND,
-} from '../utils/colors';
+import {View, Text, StyleSheet, ImageBackground} from 'react-native';
+import {ORANGE, GRAY_BACKGROUND} from '../utils/colors';
 import CustomInput from '../components/CustomInput';
 import {CustomButton} from '../components/CustomButton';
 import showSnackbar from '../utils/snackbar';
-import {useSelector, useDispatch} from 'react-redux';
-import {stateType} from '../redux/utils';
+import {useDispatch} from 'react-redux';
 import {loginAction} from '../redux/actions';
 
 export interface LoginScreenProps {}
 
-export const LoginScreen: React.SFC<LoginScreenProps> = (
-  props: LoginScreenProps,
-) => {
+export const LoginScreen: React.SFC<LoginScreenProps> = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [] = useState('');
   const [loading, setLoading] = useState(false);
-  const mailFormat: RegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  const mailFormat: RegExp = /^[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,4}$/;
   const dispatch = useDispatch();
 
   const login = (): void => {

@@ -10,6 +10,7 @@ export const PINK = '#e83e8c';
 export const PURPLE = '#6f42c1';
 export const LAVENDER = '#DAE0F2';
 export const DISABLED_YELLOW = '#fee386';
+export const MODAL_BACKDROP = 'rgba(0,0,0,0.3)';
 
 // --indigo: #6610f2;
 // --green: #28a745;

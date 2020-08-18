@@ -17,6 +17,7 @@ export interface CallFeedbackModalProps {
     reschedule: string,
     status: 'done' | 'rescheduled',
     callback: () => void,
+    closeModal?: boolean,
   ) => void;
 }
 
@@ -31,21 +32,22 @@ export function CallFeedbackModal({
   const [status, setStatus] = useState<'done' | 'rescheduled'>('done');
 
   const cancel = () => {
-    endCall(comment, reschedule, status, () => {
-      // if (cleanUp())
-      onCancel();
-    });
+    endCall(
+      comment,
+      reschedule,
+      status,
+      () => {
+        // if (cleanUp())
+        onCancel();
+      },
+      true,
+    );
   };
 
   const cleanUp = () => {
-    if (status === 'rescheduled' && reschedule === '') {
-      showSnackbar('Select a rescheduling date');
-      return false;
-    }
     setComment('');
     setReschedule('');
     setStatus('done');
-    return true;
   };
 
   return (
@@ -106,11 +108,15 @@ export function CallFeedbackModal({
           text="Next Call"
           onPress={() => {
             endCall(comment, reschedule, status, () => {
-              if (cleanUp()) setTimeout(nextCall, 1000);
+              cleanUp();
+              setTimeout(nextCall, 1000);
               // nextCall();
             });
           }}
           style={[styles.button, {marginRight: 8}]}
+          disabled={
+            status === 'rescheduled' && reschedule === '' ? true : false
+          }
         />
 
         <CustomButton
@@ -123,6 +129,7 @@ export function CallFeedbackModal({
         text="Close"
         onPress={cancel}
         style={[{elevation: 3, marginTop: 10}]}
+        disabled={status === 'rescheduled' && reschedule === '' ? true : false}
       />
     </BottomModal>
   );
