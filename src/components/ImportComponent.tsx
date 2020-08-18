@@ -21,7 +21,12 @@ export interface ImportComponentProps {
   navigation: StackNavigationProp<any>;
   onCancel: () => void;
   disabled?: boolean;
-  uploadFile: (data: string, hasHeaders: boolean, callback: () => void) => void;
+  uploadFile: (
+    data: string,
+    hasHeaders: boolean,
+    type: string,
+    callback: () => void,
+  ) => void;
 }
 
 export function ImportComponent({
@@ -118,44 +123,59 @@ const phoneBook = async (
 };
 
 const fileImport = async (
-  uploadFile: (data: string, hasHeaders: boolean, callback: () => void) => void,
+  uploadFile: (
+    data: string,
+    hasHeaders: boolean,
+    type: string,
+    callback: () => void,
+  ) => void,
   setLoading: (x: boolean) => void,
 ): Promise<void> => {
   const config: DocumentPickerOptions<'android'> = {
-    type: ['*/*'],
+    type: [
+      'text/csv',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ],
   };
   try {
     setLoading(true);
     const file = await DocumentPicker.pick(config);
     console.log(file);
 
-    const data = await RNFS.readFile(file.uri);
-    // console.log(typeof data);
+    const data = await RNFS.readFile(file.uri, 'base64');
+    console.log(data);
 
-    parse<any>(data, {
-      encoding: 'raw',
-      complete: (res) => {
-        if (res.errors.length > 0) {
-          showSnackbar('Select a valid csv file');
-          setLoading(false);
-        } else {
-          const regExp: RegExp = /([0-9]{10})/;
-          let hasHeaders = false;
-          res?.data[0]?.forEach((ele: string) => {
-            // console.log(ele);
-            hasHeaders = hasHeaders || regExp.test(ele);
-          });
-          // console.log(hasHeaders);
-          hasHeaders = !hasHeaders;
-          uploadFile(data, hasHeaders, () => {
+    if (file.type === 'text/csv')
+      parse<any>(data, {
+        encoding: 'raw',
+        delimiter: ' ',
+        complete: (res) => {
+          if (res.errors.length > 0) {
+            console.log(res.errors);
+            showSnackbar('Select a valid csv file');
             setLoading(false);
-          });
-        }
-      },
-    });
+          } else {
+            const regExp: RegExp = /([0-9]{10})/;
+            let hasHeaders = false;
+            res?.data[0]?.forEach((ele: string) => {
+              // console.log(ele);
+              hasHeaders = hasHeaders || regExp.test(ele);
+            });
+            // console.log(hasHeaders);
+            hasHeaders = !hasHeaders;
+            uploadFile(data, hasHeaders, file.type, () => {
+              setLoading(false);
+            });
+          }
+        },
+      });
+    else
+      uploadFile(data, true, file.type, () => {
+        setLoading(false);
+      });
   } catch (err) {
     console.log(err);
-    showSnackbar('Select a valid csv file');
+    showSnackbar('Invalid file format. Please upload a csv, xlsx or xls file.');
     setLoading(false);
   }
 };

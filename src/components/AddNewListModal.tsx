@@ -45,9 +45,9 @@ export function AddNewListModal({
   );
 
   const uploadFile = useCallback(
-    (data: string, hasHeaders: boolean, callback: () => void) => {
+    (data: string, hasHeaders: boolean, type: string, callback: () => void) => {
       dispatch(
-        uploadFileAction(data, name, hasHeaders, () => {
+        uploadFileAction(data, name, hasHeaders, type, () => {
           setName('');
           onCancel();
           callback();

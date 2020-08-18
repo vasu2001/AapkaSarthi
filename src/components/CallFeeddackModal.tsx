@@ -51,9 +51,9 @@ export function CallFeedbackModal({
   return (
     <BottomModal
       {...{visible}}
-      onCancel={cancel}
-      validation={cleanUp}
-      contentHeight={420}>
+      onCancel={() => {}}
+      validation={() => false}
+      contentHeight={480}>
       <Text style={styles.heading}>Feedback</Text>
       {/* <View style={styles.card}> */}
       <RNPickerSelect
@@ -110,15 +110,20 @@ export function CallFeedbackModal({
               // nextCall();
             });
           }}
-          style={styles.button}
+          style={[styles.button, {marginRight: 8}]}
         />
 
         <CustomButton
           text="Call Again"
           onPress={nextCall}
-          style={styles.button}
+          style={[styles.button, {marginLeft: 8}]}
         />
       </View>
+      <CustomButton
+        text="Close"
+        onPress={cancel}
+        style={[{elevation: 3, marginTop: 10}]}
+      />
     </BottomModal>
   );
 }
@@ -145,6 +150,7 @@ const styles = StyleSheet.create({
   },
   button: {
     elevation: 3,
+    paddingHorizontal: 30,
   },
   buttonRow: {
     flexDirection: 'row',

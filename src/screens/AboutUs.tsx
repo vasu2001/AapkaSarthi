@@ -1,17 +1,10 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, Linking} from 'react-native';
+import React from 'react';
+import {Text, StyleSheet, ScrollView} from 'react-native';
 import {GRAY_BACKGROUND} from '../utils/colors';
-import CustomInput from '../components/CustomInput';
-import {CustomButton} from '../components/CustomButton';
-import showSnackbar from '../utils/snackbar';
 
 export interface AboutUsProps {}
 
-const contactNo = '9876543210';
-
-export function AboutUs(props: AboutUsProps) {
-  const [query, setQuery] = useState('');
-
+export function AboutUs() {
   return (
     <ScrollView style={styles.mainContainer}>
       <Text style={styles.heading}>About Us</Text>
@@ -23,29 +16,6 @@ export function AboutUs(props: AboutUsProps) {
         voluptate pariatur consectetur laboris. Ea consectetur minim occaecat
         laborum ullamco.
       </Text>
-      <View style={styles.card}>
-        <Text style={styles.subHeading}>Contact Us</Text>
-        <CustomInput
-          value={query}
-          onChangeText={setQuery}
-          placeholder="Message us on Whatsapp"
-          style={styles.input}
-        />
-        <CustomButton
-          text="Send"
-          onPress={() => {
-            if (query == '') {
-              showSnackbar('Enter a message to send');
-              return;
-            }
-            Linking.openURL(
-              'whatsapp://send?text=' + query + '&phone=91' + contactNo,
-            ).catch((err) => {
-              showSnackbar('Make sure you have WhatsApp installed.');
-            });
-          }}
-        />
-      </View>
     </ScrollView>
   );
 }
@@ -70,23 +40,5 @@ const styles = StyleSheet.create({
     margin: 10,
     paddingHorizontal: 25,
     marginBottom: 30,
-  },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 15,
-    elevation: 2,
-    padding: 20,
-    marginHorizontal: 30,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  subHeading: {
-    fontFamily: 'Raleway-Medium',
-    fontSize: 18,
-    marginBottom: 20,
-  },
-  input: {
-    width: '90%',
-    marginBottom: 20,
   },
 });

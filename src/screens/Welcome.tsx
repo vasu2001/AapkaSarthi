@@ -22,7 +22,7 @@ const WelcomeScreen: React.SFC<WelcomeScreenProps> = ({
       </View>
       <View style={{flex: 1, justifyContent: 'center'}}>
         <CustomButton
-          text="Next"
+          text="Get Started"
           onPress={() => {
             navigation.navigate('Login');
           }}

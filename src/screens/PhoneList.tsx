@@ -4,9 +4,10 @@ import {GRAY_BACKGROUND} from '../utils/colors';
 import {PhoneGroupItem} from '../components/PhoneGroupItem';
 import {CustomButton} from '../components/CustomButton';
 import {AddNewListModal} from '../components/AddNewListModal';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {stateType} from '../redux/utils';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {deleteListAction} from '../redux/actions';
 
 export interface PhoneListProps {
   navigation: StackNavigationProp<any>;
@@ -15,6 +16,11 @@ export interface PhoneListProps {
 export function PhoneList({navigation}: PhoneListProps) {
   const [addModal, setAddModal] = useState(false);
   const {callData} = useSelector((state: stateType) => state);
+  const dispatch = useDispatch();
+
+  const deleteList = (listIndex: number) => {
+    dispatch(deleteListAction(listIndex));
+  };
 
   return (
     <>
@@ -30,10 +36,13 @@ export function PhoneList({navigation}: PhoneListProps) {
         <FlatList
           data={callData}
           keyExtractor={({id}) => id}
-          renderItem={({item}) => (
+          renderItem={({item, index}) => (
             <PhoneGroupItem
               name={item.name ?? ''}
               noOfContacts={item.list.length}
+              deleteContact={() => {
+                deleteList(index);
+              }}
             />
           )}
           ListFooterComponent={

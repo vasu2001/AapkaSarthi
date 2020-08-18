@@ -7,6 +7,7 @@ import {YELLOW, GRAY, GRAY_DARK} from '../utils/colors';
 import {AboutUs} from '../screens/AboutUs';
 import {createStackNavigator} from '@react-navigation/stack';
 import {ListNavigation} from './ListNavigation';
+import {ContactUs} from '../screens/ContactUs';
 
 export interface BottomNavigatorProps {}
 const Tab = createBottomTabNavigator();
@@ -31,10 +32,13 @@ export function BottomNavigator() {
                 iconName = 'home';
                 break;
               case 'List':
-                iconName = 'team';
+                iconName = 'bars';
                 break;
               case 'About Us':
-                iconName = 'customerservice';
+                iconName = 'team';
+                break;
+              case 'Contact Us':
+                iconName = 'phone';
                 break;
             }
             return <AntDesign name={iconName} {...{size, color}} />;
@@ -48,6 +52,7 @@ export function BottomNavigator() {
         <Tab.Screen name="Home" component={Dashboard} />
         <Tab.Screen name="List" component={ListNavigation} />
         <Tab.Screen name="About Us" component={AboutUs} />
+        <Tab.Screen name="Contact Us" component={ContactUs} />
       </Tab.Navigator>
     </>
   );

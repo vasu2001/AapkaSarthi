@@ -7,15 +7,7 @@ import {
   AppState,
   AppStateStatus,
 } from 'react-native';
-import {
-  GRAY_LIGHT,
-  GRAY_BACKGROUND,
-  GRAY,
-  YELLOW,
-  PINK,
-  PURPLE,
-  BLUE,
-} from '../utils/colors';
+import {GRAY_BACKGROUND, GRAY, PINK, PURPLE, BLUE} from '../utils/colors';
 import {CustomButton} from '../components/CustomButton';
 import Pie from 'react-native-pie';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
@@ -27,7 +19,7 @@ import showSnackbar from '../utils/snackbar';
 
 export interface DashboardProps {}
 
-export function Dashboard(props: DashboardProps) {
+export function Dashboard() {
   const [modal, setModal] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [nextIndex, setNextIndex] = useState(-1);
@@ -35,7 +27,7 @@ export function Dashboard(props: DashboardProps) {
   let phoneCallInProgress = useRef(0);
 
   const state = useSelector((state: stateType) => state);
-  const phoneList = state.callData[0]?.list;
+  const phoneList = state.callData[0]?.list ?? [];
   const dispatch = useDispatch();
   // console.log('rerender');
 
@@ -45,6 +37,7 @@ export function Dashboard(props: DashboardProps) {
     upcoming: 0,
   };
   const [frequency, setFrequency] = useState(initFrequency);
+  const totalNo = frequency.rescheduled + frequency.done + frequency.upcoming;
 
   useEffect(() => {
     const handler = (state: AppStateStatus) => {
@@ -159,15 +152,28 @@ export function Dashboard(props: DashboardProps) {
           innerRadius={45}
           sections={[
             {
-              percentage: 20,
+              percentage: Math.max(
+                2,
+                totalNo > 0
+                  ? Math.floor((frequency.rescheduled / totalNo) * 100)
+                  : 0,
+              ),
               color: PINK,
             },
             {
-              percentage: 40,
+              percentage: Math.max(
+                2,
+                totalNo > 0 ? Math.floor((frequency.done / totalNo) * 100) : 0,
+              ),
               color: PURPLE,
             },
             {
-              percentage: 40,
+              percentage: Math.max(
+                2,
+                totalNo > 0
+                  ? Math.floor((frequency.upcoming / totalNo) * 100)
+                  : 0,
+              ),
               color: BLUE,
             },
           ]}
@@ -178,7 +184,7 @@ export function Dashboard(props: DashboardProps) {
         <View style={styles.legendContainer}>
           <View style={styles.legendRow}>
             <View style={[styles.legendColor, {backgroundColor: PINK}]} />
-            <Text style={styles.legendLabel}>Pending</Text>
+            <Text style={styles.legendLabel}>Rescheduled</Text>
           </View>
           <View style={styles.legendRow}>
             <View style={[styles.legendColor, {backgroundColor: PURPLE}]} />
@@ -199,15 +205,21 @@ export function Dashboard(props: DashboardProps) {
 
         <View style={styles.statConatiner}>
           <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Rescheduled</Text>
+            <Text style={styles.statLabel} numberOfLines={1}>
+              Rescheduled
+            </Text>
             <Text style={styles.statValue}>{frequency['rescheduled']}</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Done</Text>
+            <Text style={styles.statLabel} numberOfLines={1}>
+              Done
+            </Text>
             <Text style={styles.statValue}>{frequency['done']}</Text>
           </View>
           <View style={[styles.statCard, {borderRightWidth: 0}]}>
-            <Text style={styles.statLabel}>Upcoming</Text>
+            <Text style={styles.statLabel} numberOfLines={1}>
+              Upcoming
+            </Text>
             <Text style={styles.statValue}>{frequency['upcoming']}</Text>
           </View>
         </View>

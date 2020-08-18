@@ -7,7 +7,13 @@ import {
   ViewStyle,
   TouchableOpacity,
 } from 'react-native';
-import {YELLOW, GRAY_LIGHT, GRAY, GRAY_BACKGROUND} from '../utils/colors';
+import {
+  YELLOW,
+  GRAY_LIGHT,
+  GRAY,
+  GRAY_BACKGROUND,
+  DISABLED_YELLOW,
+} from '../utils/colors';
 
 export interface CustomButtonProps {
   style?: StyleProp<ViewStyle>;
@@ -24,7 +30,11 @@ export function CustomButton({
 }: CustomButtonProps) {
   return (
     <TouchableOpacity
-      style={[styles.conatiner, style ?? null]}
+      style={[
+        styles.conatiner,
+        {backgroundColor: disabled ? DISABLED_YELLOW : YELLOW},
+        style ?? null,
+      ]}
       disabled={disabled}
       onPress={onPress}>
       <Text style={[styles.text, {color: disabled ? GRAY : 'black'}]}>

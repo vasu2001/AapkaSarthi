@@ -5,6 +5,7 @@ export const actionNames = {
   login: 'LOGIN',
   newList: 'ADD_LIST',
   submitCall: 'SUBMIT_CALL',
+  deleteList: 'DELETE_LIST',
 };
 
 export interface contactType {
@@ -57,8 +58,6 @@ export interface submitCallPayload {
   comment: string;
   reschedule: string | null;
   status: 'done' | 'rescheduled';
-  // contactId: string;
-  // listId: string;
 }
 
 export interface submitCallActionType {
@@ -66,10 +65,20 @@ export interface submitCallActionType {
   payload: submitCallPayload;
 }
 
+export interface deleteListPayload {
+  listIndex: number;
+}
+
+export interface deleteListActionType {
+  type: string;
+  payload: deleteListPayload;
+}
+
 export type actionType =
   | newListActionType
   | loginActionType
-  | submitCallActionType;
+  | submitCallActionType
+  | deleteListActionType;
 
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,

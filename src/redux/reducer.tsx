@@ -4,6 +4,7 @@ import {
   actionNames,
   contactGroupType,
   submitCallPayload,
+  deleteListPayload,
 } from './utils';
 import {newListAction} from './actions';
 // import {fromJS} from 'immutable';
@@ -53,6 +54,14 @@ export default (state = initialState, action: actionType): stateType => {
       };
       console.log(newState);
       return newState;
+
+    case actionNames.deleteList:
+      const {listIndex: deleteListIndex} = action.payload as deleteListPayload;
+      newState = {...state};
+      newState.callData = [...newState.callData];
+      newState.callData.splice(deleteListIndex, 1);
+      return newState;
+
     default:
       return state;
   }

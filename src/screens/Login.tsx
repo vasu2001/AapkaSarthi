@@ -30,6 +30,7 @@ export const LoginScreen: React.SFC<LoginScreenProps> = (
 ) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const mailFormat: RegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   const dispatch = useDispatch();
 
@@ -40,7 +41,12 @@ export const LoginScreen: React.SFC<LoginScreenProps> = (
       //   showSnackbar('Enter a valid password');
     } else {
       // call login API
-      dispatch(loginAction(email));
+      setLoading(true);
+      dispatch(
+        loginAction(email, () => {
+          setLoading(false);
+        }),
+      );
     }
   };
 
@@ -70,14 +76,19 @@ export const LoginScreen: React.SFC<LoginScreenProps> = (
           secureTextEntry
         /> */}
 
-        <CustomButton text="Login" onPress={login} style={styles.button} />
+        <CustomButton
+          text="Next"
+          onPress={login}
+          style={styles.button}
+          disabled={loading}
+        />
 
-        <View style={styles.row}>
+        {/* <View style={styles.row}>
           <Text style={styles.text0}>Don't have an account? </Text>
           <TouchableOpacity>
             <Text style={styles.text1}>SignUp</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
     </ImageBackground>
   );

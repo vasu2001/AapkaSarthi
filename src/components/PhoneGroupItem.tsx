@@ -1,20 +1,31 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {GRAY} from '../utils/colors';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 export interface PhoneGroupItemProps {
   name: string;
   noOfContacts: number;
+  deleteContact: () => void;
 }
 
-export function PhoneGroupItem({name, noOfContacts}: PhoneGroupItemProps) {
+export function PhoneGroupItem({
+  name,
+  noOfContacts,
+  deleteContact,
+}: PhoneGroupItemProps) {
   return (
     <View style={styles.mainContainer}>
-      <Text style={styles.text0}>{name}</Text>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Text style={styles.text1}>No of Contacts</Text>
-        <Text style={styles.text2}>{noOfContacts}</Text>
+      <View>
+        <Text style={styles.text0}>{name}</Text>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text style={styles.text1}>No of Contacts</Text>
+          <Text style={styles.text2}>{noOfContacts}</Text>
+        </View>
       </View>
+      <TouchableOpacity onPress={deleteContact}>
+        <AntDesign name="delete" size={30} color={GRAY} />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -28,6 +39,9 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     elevation: 2,
     paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   text0: {
     fontFamily: 'Raleway-SemiBold',

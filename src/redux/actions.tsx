@@ -8,6 +8,7 @@ import {
   contactType,
   submitCallActionType,
   submitCallPayload,
+  deleteListActionType,
 } from './utils';
 import axiosConfig from '../utils/axiosConfig';
 import showSnackbar from '../utils/snackbar';
@@ -37,7 +38,10 @@ const submitCall = (payload: submitCallPayload): submitCallActionType => ({
 const createList = async (GroupName: string, userId: string) =>
   axios.post(`/users/${userId}/calleesgroup`, {GroupName});
 
-export const loginAction = (email: string): AppThunk => async (dispatch) => {
+export const loginAction = (
+  email: string,
+  callback: () => void,
+): AppThunk => async (dispatch) => {
   // api call
   try {
     const res = await axios.post(
@@ -63,6 +67,7 @@ export const loginAction = (email: string): AppThunk => async (dispatch) => {
     console.log(JSON.stringify(err));
     showSnackbar('Login failed');
   }
+  callback();
 };
 
 export const newListAction = (
@@ -145,6 +150,7 @@ export const uploadFileAction = (
   data: string,
   name: string,
   hasHeaders: boolean,
+  type: string,
   callback: () => void,
 ): AppThunk => async (dispatch, getState) => {
   try {
@@ -153,7 +159,7 @@ export const uploadFileAction = (
       await createList(name, userId ?? '')
     ).data.toString();
 
-    const buffer = new Buffer(data);
+    const buffer = new Buffer(data).toString('base64');
     // console.log(buffer.toString('base64'));
 
     const uploadRes = await axios.post(
@@ -162,9 +168,9 @@ export const uploadFileAction = (
         CountryCode: 'IN',
         Callees: {
           Name: name,
-          Type: 'text/csv',
+          Type: type,
           HasHeaders: hasHeaders,
-          Base64Bytes: buffer.toString('base64'),
+          Base64Bytes: data,
         },
       },
     );
@@ -201,3 +207,10 @@ export const uploadFileAction = (
   }
   callback();
 };
+
+export const deleteListAction = (listIndex: number): deleteListActionType => ({
+  type: actionNames.deleteList,
+  payload: {
+    listIndex,
+  },
+});
