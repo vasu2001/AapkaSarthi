@@ -119,6 +119,11 @@ export const submitCallAction = (
   callback: () => void,
 ): AppThunk => async (dispatch, getState) => {
   try {
+    if (contactIndex < 0 || listIndex < 0) {
+      callback();
+      return;
+    }
+
     const contactId: string =
       getState().callData[listIndex].list[listIndex].id ?? '';
     const {userId} = getState();

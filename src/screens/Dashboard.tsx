@@ -25,11 +25,12 @@ export function Dashboard() {
   const [timerModal, setTimerModal] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
 
+  let prevIndex = useRef<number>(-1);
   let phoneCallInProgress = useRef<number>(0);
-  let timeoutRef = useRef<NodeJS.Timeout>(null);
+  let timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const state = useSelector((state: stateType) => state);
-  const phoneList = state.callData[0]?.list ?? [];
+  let phoneList = state.callData[0]?.list ?? [];
   const dispatch = useDispatch();
   // console.log('rerender');
 
@@ -62,6 +63,7 @@ export function Dashboard() {
   }, []);
 
   useEffect(() => {
+    // phoneList = state.callData[0]?.list ?? [];
     const newFrequency = {...initFrequency};
     phoneList?.forEach((item) => {
       ++newFrequency[item.status];
@@ -69,9 +71,12 @@ export function Dashboard() {
 
     setFrequency(newFrequency);
 
+    if (phoneList.length === 0) setActiveIndex(-1);
+
     if (activeIndex == -1) {
       for (let i = 0; i < phoneList.length; i++) {
         if (phoneList[i].status !== 'done') {
+          console.log('activeIndex after adding ' + i);
           setActiveIndex(i);
           break;
         }
@@ -79,25 +84,55 @@ export function Dashboard() {
     }
   }, [state]);
 
-  const startCalling = useCallback(async (activeIndex: number) => {
-    try {
-      await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CALL_PHONE,
-      );
+  const startCalling = useCallback(
+    async (activeIndex: number, callAgain?: boolean) => {
+      try {
+        callAgain && (prevIndex.current = activeIndex);
 
-      setTimerModal(true);
-      timeoutRef.current = setTimeout(() => {
-        setTimerModal(false);
-        phoneCallInProgress.current++;
-        RNImmediatePhoneCall.immediatePhoneCall(phoneList[activeIndex].phNo);
-      }, 3000);
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
+        await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+        );
+
+        if (activeIndex === -1) {
+          showSnackbar('No more calls remaining');
+          return;
+        }
+
+        setTimerModal(true);
+        timeoutRef.current = setTimeout(() => {
+          setTimerModal(false);
+          phoneCallInProgress.current++;
+          console.log(activeIndex);
+          RNImmediatePhoneCall.immediatePhoneCall(phoneList[activeIndex].phNo);
+        }, 3000);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [phoneList],
+  );
+
+  const endCall = useCallback(
+    (
+      comment: string,
+      rescheduled: string,
+      status: 'done' | 'rescheduled',
+      callback: (index: number) => void,
+      // closeModal: boolean = false,
+    ): void => {
+      dispatch(
+        submitCallAction(status, comment, rescheduled, activeIndex, 0, () => {
+          callback(nextCall());
+        }),
+      );
+    },
+    [activeIndex],
+  );
 
   const nextCall = (): number => {
     let newActiveIndex = -1;
+
+    prevIndex.current = activeIndex;
 
     for (let i = activeIndex + 1; i < phoneList.length; i++) {
       if (phoneList[i].status !== 'done') {
@@ -110,28 +145,10 @@ export function Dashboard() {
     return newActiveIndex;
   };
 
-  const endCall = useCallback(
-    (
-      comment: string,
-      rescheduled: string,
-      status: 'done' | 'rescheduled',
-      callback: () => void,
-      closeModal: boolean = false,
-    ): void => {
-      dispatch(
-        submitCallAction(
-          status,
-          comment,
-          rescheduled,
-          activeIndex,
-          0,
-          callback,
-        ),
-      );
-      closeModal && nextCall();
-    },
-    [activeIndex],
-  );
+  const setPrevIndex = () => {
+    console.log('setting to prevIndex ' + prevIndex.current);
+    setActiveIndex(prevIndex.current);
+  };
 
   return (
     <>
@@ -140,20 +157,18 @@ export function Dashboard() {
         onCancel={() => {
           setModal(false);
         }}
-        nextCall={() => {
-          if (activeIndex === -1) showSnackbar('No calls remaining');
-          else {
-            const nextIndex = nextCall();
-            if (nextIndex !== -1) startCalling(nextIndex);
-            else showSnackbar('No calls remaining');
-          }
-        }}
         endCall={endCall}
+        callAgain={() => {
+          startCalling(activeIndex, true);
+        }}
+        startCalling={startCalling}
+        callDisabled={activeIndex === -1}
       />
       <TimerModal
         visible={timerModal}
         onCancel={() => {
           timeoutRef.current && clearTimeout(timeoutRef.current);
+          modal && setPrevIndex();
           setTimerModal(false);
         }}
       />
