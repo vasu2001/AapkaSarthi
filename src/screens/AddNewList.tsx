@@ -1,5 +1,5 @@
-import React, {useState, useRef} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useState, useRef, useEffect} from 'react';
+import {View, Text, StyleSheet, TextInput} from 'react-native';
 import {GRAY_BACKGROUND, YELLOW} from '../utils/colors';
 import CustomInput from '../components/CustomInput';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -22,9 +22,15 @@ export function AddNewList({route, navigation}: AddNewListProps) {
   const [i, setI] = useState(0);
 
   let list = useRef<{[x: string]: string}>({}).current;
+  let nameRef = useRef<TextInput>().current;
+  let phNoRef = useRef<TextInput>().current;
+
+  useEffect(() => {
+    nameRef?.focus();
+  }, []);
 
   const addContact = (): void => {
-    if (details.name === '' || details.phNo.length !== 10) {
+    if (details.name === '' || !/^[0-9]{10}$/.test(details.phNo)) {
       showSnackbar('Enter valid data');
     } else {
       if (list[details.phNo]) {
@@ -33,6 +39,7 @@ export function AddNewList({route, navigation}: AddNewListProps) {
         list[details.phNo] = details.name;
         setDetails({name: '', phNo: ''});
         setI((i) => i + 1);
+        nameRef?.focus();
       }
     }
   };
@@ -52,17 +59,26 @@ export function AddNewList({route, navigation}: AddNewListProps) {
               setDetails({...details, name: text});
             }}
             placeholder="Name"
+            textRef={(ref) => {
+              nameRef = ref;
+            }}
+            onSubmitEditing={() => {
+              phNoRef?.focus();
+            }}
           />
           <CustomInput
             value={details.phNo}
             style={styles.input}
-            validation={(text) => text.length === 10}
+            validation={(text) => /^[0-9]{10}$/.test(text)}
             maxLength={10}
             onChangeText={(text) => {
               setDetails({...details, phNo: text});
             }}
             placeholder="Phone Number"
             keyboardType="phone-pad"
+            textRef={(ref) => {
+              phNoRef = ref;
+            }}
           />
           <View style={styles.addButtonContainer}>
             <TouchableOpacity style={styles.addButton} onPress={addContact}>

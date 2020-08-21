@@ -4,7 +4,7 @@ import BottomModal from './BottomModal';
 import CustomInput from './CustomInput';
 import {CustomButton} from './CustomButton';
 // import DatePicker from 'react-native-datepicker';
-import {YELLOW, GRAY} from '../utils/colors';
+import {YELLOW, GRAY, RED} from '../utils/colors';
 import RNPickerSelect from 'react-native-picker-select';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -85,6 +85,9 @@ export function CallFeedbackModal({
                 styles.dateInput,
                 styles.dateInputText,
                 status === 'done' || reschedule === '' ? {color: GRAY} : null,
+                status === 'rescheduled' && reschedule === ''
+                  ? {borderColor: RED}
+                  : null,
               ]}>
               {reschedule === ''
                 ? 'Reschedule Date'

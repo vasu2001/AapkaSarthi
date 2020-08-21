@@ -6,6 +6,7 @@ import {CustomButton} from '../components/CustomButton';
 import showSnackbar from '../utils/snackbar';
 import {useDispatch} from 'react-redux';
 import {loginAction} from '../redux/actions';
+import {LoadingModal} from '../components/LoadingModal';
 
 export interface LoginScreenProps {}
 
@@ -33,22 +34,23 @@ export const LoginScreen: React.SFC<LoginScreenProps> = () => {
   };
 
   return (
-    <ImageBackground
-      source={require('../assets/background/1.png')}
-      style={styles.mainContainer}
-      resizeMode="stretch">
-      <Text style={styles.heading}>Aapka Sarthi</Text>
-      <View style={styles.container}>
-        <CustomInput
-          value={email}
-          onChangeText={setEmail}
-          validation={(text: string): boolean => mailFormat.test(text)}
-          placeholder="Email"
-          placeholderTextColor="grey"
-          style={styles.input}
-        />
+    <>
+      <ImageBackground
+        source={require('../assets/background/1.png')}
+        style={styles.mainContainer}
+        resizeMode="stretch">
+        <Text style={styles.heading}>Aapka Sarthi</Text>
+        <View style={styles.container}>
+          <CustomInput
+            value={email}
+            onChangeText={setEmail}
+            validation={(text: string): boolean => mailFormat.test(text)}
+            placeholder="Email"
+            placeholderTextColor="grey"
+            style={styles.input}
+          />
 
-        {/* <CustomInput
+          {/* <CustomInput
           value={password}
           onChangeText={setPassword}
           validation={(text: string): boolean => text.length >= 4}
@@ -58,21 +60,23 @@ export const LoginScreen: React.SFC<LoginScreenProps> = () => {
           secureTextEntry
         /> */}
 
-        <CustomButton
-          text="Next"
-          onPress={login}
-          style={styles.button}
-          disabled={loading}
-        />
+          <CustomButton
+            text="Next"
+            onPress={login}
+            style={styles.button}
+            disabled={loading}
+          />
 
-        {/* <View style={styles.row}>
+          {/* <View style={styles.row}>
           <Text style={styles.text0}>Don't have an account? </Text>
           <TouchableOpacity>
             <Text style={styles.text1}>SignUp</Text>
           </TouchableOpacity>
         </View> */}
-      </View>
-    </ImageBackground>
+        </View>
+      </ImageBackground>
+      <LoadingModal visible={loading} />
+    </>
   );
 };
 

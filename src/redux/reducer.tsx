@@ -14,7 +14,7 @@ const initialState: stateType = {
   firstName: null,
   lastName: null,
   callData: [],
-  activeList: 0,
+  activeList: -1,
   gender: null,
 };
 
@@ -61,6 +61,7 @@ export default (state = initialState, action: actionType): stateType => {
       newState.callData = [...newState.callData];
       newState.callData.splice(deleteListIndex, 1);
       if (deleteListIndex === newState.activeList) newState.activeList = -1;
+      else if (deleteListIndex < newState.activeList) newState.activeList--;
       return newState;
 
     case actionNames.changeActiveList:

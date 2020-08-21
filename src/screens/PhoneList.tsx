@@ -89,6 +89,11 @@ export function PhoneList({navigation}: PhoneListProps) {
               style={styles.listFooter}
             />
           }
+          ListEmptyComponent={
+            <Text style={styles.emptyList}>
+              Add a new list to start calling
+            </Text>
+          }
         />
       </View>
     </>
@@ -119,5 +124,14 @@ const styles = StyleSheet.create({
     elevation: 2,
     right: 10,
     top: 20,
+  },
+  emptyList: {
+    alignSelf: 'center',
+    color: GRAY,
+    fontFamily: 'Montserrat-Regular',
+    fontSize: 18,
+    marginBottom: 10,
+    marginHorizontal: 25,
+    textAlign: 'center',
   },
 });

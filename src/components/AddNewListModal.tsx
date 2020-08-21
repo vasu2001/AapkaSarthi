@@ -69,8 +69,8 @@ export function AddNewListModal({
     <BottomModal
       {...{visible}}
       onCancel={() => {
-        onCancel();
         setName('');
+        onCancel();
       }}
       contentHeight={510}>
       <CustomInput
@@ -89,7 +89,10 @@ export function AddNewListModal({
       <ImportComponent
         callback={addList}
         navigation={navigation}
-        onCancel={onCancel}
+        onCancel={() => {
+          setName('');
+          onCancel();
+        }}
         disabled={name.length === 0}
         uploadFile={uploadFile}
         name={name}

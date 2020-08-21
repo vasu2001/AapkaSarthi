@@ -107,7 +107,8 @@ export function Dashboard({navigation}: DashboardProps) {
     setTimerModal(false);
     phoneCallInProgress.current++;
     console.log(activeIndex);
-    RNImmediatePhoneCall.immediatePhoneCall(phoneList[activeIndex].phNo);
+    phoneList[activeIndex].phNo &&
+      RNImmediatePhoneCall.immediatePhoneCall(phoneList[activeIndex].phNo);
   };
 
   const startCalling = useCallback(
@@ -119,7 +120,7 @@ export function Dashboard({navigation}: DashboardProps) {
           PermissionsAndroid.PERMISSIONS.CALL_PHONE,
         );
 
-        if (activeIndex === -1) {
+        if (activeIndex === -1 || activeIndex === phoneList.length) {
           showSnackbar('No more calls remaining');
           return;
         }
@@ -163,7 +164,13 @@ export function Dashboard({navigation}: DashboardProps) {
       }
     }
     setActiveIndex(newActiveIndex);
-    console.log('new activeIndex ' + newActiveIndex);
+
+    console.log('new activeIndex ' + activeIndex + ' -> ' + newActiveIndex);
+    if (newActiveIndex === -1)
+      setTimeout(() => {
+        showSnackbar('No more calls remaining');
+      }, 250);
+
     return newActiveIndex;
   };
 
@@ -278,7 +285,7 @@ export function Dashboard({navigation}: DashboardProps) {
         <TouchableOpacity
           style={{marginTop: 20}}
           onPress={() => {
-            navigation.navigate('Phone List');
+            navigation.navigate('List');
           }}>
           <Text style={styles.selectActiveListWarning}>
             {activeList === -1
@@ -362,7 +369,6 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   selectActiveListWarning: {
-    // marginTop: 15,
     color: RED,
     fontFamily: 'Montserrat-Regular',
     textDecorationLine: 'underline',

@@ -66,7 +66,10 @@ export const loginAction = (
     );
   } catch (err) {
     console.log(JSON.stringify(err));
-    showSnackbar('Login failed');
+    // console.log('showing login failed snackbar');
+    setTimeout(() => {
+      showSnackbar('User already registered');
+    }, 250);
   }
   callback();
 };
@@ -116,8 +119,8 @@ export const newListAction = (
     successCallback();
   } catch (err) {
     console.log(err);
-    showSnackbar('Some Error Occured');
     failCallback();
+    showSnackbar('Some Error Occured');
   }
 };
 
@@ -157,7 +160,9 @@ export const submitCallAction = (
     );
   } catch (err) {
     console.log(JSON.stringify(err));
-    showSnackbar('Some error occured');
+    setTimeout(() => {
+      showSnackbar('Some error occured');
+    }, 250);
   }
   callback();
 };
@@ -176,6 +181,16 @@ export const uploadFileAction = (
     ).data.toString();
 
     // console.log(uploadRes.data);
+
+    await axios.post(`/users/${userId}/groups/${groupId}/calleesfile`, {
+      CountryCode: 'IN',
+      Callees: {
+        Name: name,
+        Type: type,
+        HasHeaders: hasHeaders,
+        Base64Bytes: data,
+      },
+    });
 
     const getList = await axios.get(
       `/users/${userId}/groups/${groupId}/callees`,
@@ -204,7 +219,9 @@ export const uploadFileAction = (
     );
   } catch (err) {
     console.log(JSON.stringify(err));
-    showSnackbar('Some Error Occured');
+    setTimeout(() => {
+      showSnackbar('Some Error Occured');
+    }, 250);
   }
   callback();
 };

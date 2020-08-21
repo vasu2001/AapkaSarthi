@@ -28,6 +28,7 @@ interface CustomInputProps {
     | undefined;
   editable?: boolean;
   textRef?: (ref: TextInput) => void;
+  onSubmitEditing?: () => void;
 }
 
 const CustomInput: React.SFC<CustomInputProps> = ({
@@ -42,6 +43,7 @@ const CustomInput: React.SFC<CustomInputProps> = ({
   maxLength,
   editable = true,
   textRef,
+  onSubmitEditing,
 }: CustomInputProps) => {
   const [validated, setValidated] = useState(true);
   let timeout: NodeJS.Timeout | null = null;
@@ -79,6 +81,7 @@ const CustomInput: React.SFC<CustomInputProps> = ({
         maxLength,
         editable,
         ref: textRef,
+        onSubmitEditing,
       }}
     />
   );

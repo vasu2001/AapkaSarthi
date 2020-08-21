@@ -37,14 +37,21 @@ export function AddNewListPhonebook({
       );
 
       const selection = await selectContactPhone();
+
       if (!selection) {
         setLoading(false);
-        showSnackbar('Select a contact');
+        setTimeout(() => {
+          showSnackbar('Select a contact');
+        }, 250);
+
         return;
       }
 
       if (list[selection.selectedPhone.number]) {
-        showSnackbar('Dulicates not allowed');
+        // console.log('duplicate');
+        setTimeout(() => {
+          showSnackbar('Dulicates not allowed');
+        }, 250);
       } else {
         list[selection.selectedPhone.number] = selection.contact.name;
         setI((i) => i + 1);
