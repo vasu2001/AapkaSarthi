@@ -84,10 +84,11 @@ const styles = StyleSheet.create({
     backgroundColor: GRAY_BACKGROUND,
   },
   heading: {
-    fontFamily: 'Raleway-SemiBold',
+    fontFamily: 'Montserrat-SemiBold',
     position: 'absolute',
     top: 25,
     fontSize: 30,
+    color: 'black',
   },
   container: {
     alignItems: 'center',
@@ -111,11 +112,12 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   text0: {
-    fontFamily: 'Raleway-Medium',
+    fontFamily: 'Montserrat-Medium',
     fontSize: 13,
+    color: 'black',
   },
   text1: {
-    fontFamily: 'Raleway-SemiBold',
+    fontFamily: 'Montserrat-SemiBold',
     fontSize: 15,
     color: ORANGE,
   },

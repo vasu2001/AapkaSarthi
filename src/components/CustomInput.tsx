@@ -27,6 +27,7 @@ interface CustomInputProps {
     | 'web-search'
     | undefined;
   editable?: boolean;
+  textRef?: (ref: TextInput) => void;
 }
 
 const CustomInput: React.SFC<CustomInputProps> = ({
@@ -40,6 +41,7 @@ const CustomInput: React.SFC<CustomInputProps> = ({
   keyboardType,
   maxLength,
   editable = true,
+  textRef,
 }: CustomInputProps) => {
   const [validated, setValidated] = useState(true);
   let timeout: NodeJS.Timeout | null = null;
@@ -76,6 +78,7 @@ const CustomInput: React.SFC<CustomInputProps> = ({
         keyboardType,
         maxLength,
         editable,
+        ref: textRef,
       }}
     />
   );
@@ -87,9 +90,10 @@ const styles = StyleSheet.create({
   input: {
     width: 200,
     borderBottomWidth: 1,
-    fontFamily: 'Raleway-Medium',
+    fontFamily: 'Montserrat-Medium',
     padding: 5,
     fontSize: 16,
     marginBottom: 10,
+    color: 'black',
   },
 });

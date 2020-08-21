@@ -6,6 +6,8 @@ export const actionNames = {
   newList: 'ADD_LIST',
   submitCall: 'SUBMIT_CALL',
   deleteList: 'DELETE_LIST',
+  changeActiveList: 'ACTIVE_LIST',
+  deleteAll: 'DELETE_ALL',
 };
 
 export interface contactType {
@@ -29,6 +31,7 @@ export interface stateType {
   firstName: string | null;
   lastName: string | null;
   gender: 'm' | 'f' | null;
+  activeList: number;
   callData: contactGroupType[];
 }
 
@@ -74,11 +77,23 @@ export interface deleteListActionType {
   payload: deleteListPayload;
 }
 
+export interface changeActiveListActionType {
+  type: string;
+  payload: number;
+}
+
+export interface deleteAllActionType {
+  type: string;
+  payload: null;
+}
+
 export type actionType =
   | newListActionType
   | loginActionType
   | submitCallActionType
-  | deleteListActionType;
+  | deleteListActionType
+  | changeActiveListActionType
+  | deleteAllActionType;
 
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,

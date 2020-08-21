@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,6 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import {GRAY_BACKGROUND, YELLOW} from '../utils/colors';
-import {contactType} from '../redux/utils';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {CustomButton} from '../components/CustomButton';
 import showSnackbar from '../utils/snackbar';
@@ -15,6 +14,7 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 import {ListNavParamsList} from '../navigations/ListNavigation';
 import {selectContactPhone} from 'react-native-select-contact';
+import {LoadingModal} from '../components/LoadingModal';
 
 export interface AddNewListPhonebookProps {
   navigation: StackNavigationProp<any>;
@@ -25,9 +25,9 @@ export function AddNewListPhonebook({
   route,
   navigation,
 }: AddNewListPhonebookProps) {
-  const [manualDetails, setManualDetails] = useState<contactType[]>([]);
   const [loading, setLoading] = useState(false);
-  const i = manualDetails.length;
+  const [i, setI] = useState(0);
+  const list = useRef<{[x: string]: string}>({}).current;
 
   const addContact = async (): Promise<void> => {
     try {
@@ -43,15 +43,13 @@ export function AddNewListPhonebook({
         return;
       }
 
-      const contact: contactType = {
-        name: selection.contact.name,
-        phNo: selection.selectedPhone.number,
-        reschedule: null,
-        status: 'upcoming',
-        id: null,
-      };
+      if (list[selection.selectedPhone.number]) {
+        showSnackbar('Dulicates not allowed');
+      } else {
+        list[selection.selectedPhone.number] = selection.contact.name;
+        setI((i) => i + 1);
+      }
 
-      setManualDetails([...manualDetails, contact]);
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -60,39 +58,42 @@ export function AddNewListPhonebook({
   };
 
   return (
-    <View style={styles.mainContainer}>
-      <Text style={styles.heading}>Add New List</Text>
+    <>
+      <LoadingModal visible={loading} />
+      <View style={styles.mainContainer}>
+        <Text style={styles.heading}>Add New List</Text>
 
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={addContact}
-        disabled={loading}>
-        <AntDesign name="plus" size={35} color="white" />
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={addContact}
+          disabled={loading}>
+          <AntDesign name="plus" size={35} color="white" />
+        </TouchableOpacity>
 
-      <View style={styles.row}>
-        <Text style={styles.text0}>Number of Contacts: </Text>
-        <Text style={styles.text1}>{i}</Text>
+        <View style={styles.row}>
+          <Text style={styles.text0}>Number of Contacts: </Text>
+          <Text style={styles.text1}>{i}</Text>
+        </View>
+
+        <CustomButton
+          text={`Add Contacts to ${route.params.name}`}
+          onPress={() => {
+            setLoading(true);
+            route.params.callback(
+              list,
+              () => {
+                setLoading(false);
+                navigation.goBack();
+              },
+              () => {
+                setLoading(false);
+              },
+            );
+          }}
+          disabled={i === 0 || loading}
+        />
       </View>
-
-      <CustomButton
-        text="Add List"
-        onPress={() => {
-          setLoading(true);
-          route.params.callback(
-            manualDetails,
-            () => {
-              setLoading(false);
-              navigation.goBack();
-            },
-            () => {
-              setLoading(false);
-            },
-          );
-        }}
-        disabled={i === 0 || loading}
-      />
-    </View>
+    </>
   );
 }
 
@@ -102,13 +103,14 @@ const styles = StyleSheet.create({
     backgroundColor: GRAY_BACKGROUND,
   },
   heading: {
-    fontFamily: 'Raleway-SemiBold',
+    fontFamily: 'Montserrat-SemiBold',
     fontSize: 22,
     paddingVertical: 15,
     textAlign: 'center',
     backgroundColor: 'white',
     marginBottom: 15,
     elevation: 1,
+    color: 'black',
   },
   addButton: {
     zIndex: 99,
@@ -130,12 +132,14 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   text0: {
-    fontFamily: 'Raleway-Regular',
+    fontFamily: 'Montserrat-Regular',
     fontSize: 18,
     marginRight: 5,
+    color: 'black',
   },
   text1: {
-    fontFamily: 'Raleway-Medium',
+    fontFamily: 'Montserrat-Medium',
     fontSize: 20,
+    color: 'black',
   },
 });

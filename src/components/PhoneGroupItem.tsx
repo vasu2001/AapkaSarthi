@@ -1,23 +1,32 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {GRAY} from '../utils/colors';
+import {GRAY, ORANGE, LAVENDER} from '../utils/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 export interface PhoneGroupItemProps {
   name: string;
   noOfContacts: number;
   deleteContact: () => void;
+  active?: boolean;
+  onPress: () => void;
 }
 
 export function PhoneGroupItem({
   name,
   noOfContacts,
   deleteContact,
+  active,
+  onPress,
 }: PhoneGroupItemProps) {
   return (
-    <View style={styles.mainContainer}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.mainContainer, active && {borderWidth: 2}]}>
       <View>
-        <Text style={styles.text0}>{name}</Text>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text style={[styles.text0]}>{name}</Text>
+          {active && <Text style={styles.active}>Active</Text>}
+        </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={styles.text1}>No of Contacts</Text>
           <Text style={styles.text2}>{noOfContacts}</Text>
@@ -26,7 +35,7 @@ export function PhoneGroupItem({
       <TouchableOpacity onPress={deleteContact}>
         <AntDesign name="delete" size={30} color={GRAY} />
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -42,20 +51,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    borderColor: LAVENDER,
   },
   text0: {
-    fontFamily: 'Raleway-SemiBold',
+    fontFamily: 'Montserrat-SemiBold',
     fontSize: 18,
     marginBottom: 5,
+    color: 'black',
   },
   text1: {
-    fontFamily: 'Raleway-Regular',
+    fontFamily: 'Montserrat-Regular',
     fontSize: 14,
     color: GRAY,
     marginRight: 8,
   },
   text2: {
-    fontFamily: 'Raleway-Medium',
+    fontFamily: 'Montserrat-Medium',
     fontSize: 14,
+    color: 'black',
+  },
+  active: {
+    fontSize: 10,
+    marginLeft: 10,
+    color: ORANGE,
+    fontFamily: 'Montserrat-Regular',
   },
 });

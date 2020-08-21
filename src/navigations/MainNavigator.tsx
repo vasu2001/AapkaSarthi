@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {View, Text} from 'react-native';
 import {useSelector} from 'react-redux';
 import {stateType} from '../redux/utils';
 import {BottomNavigator} from './BottomNavigator';

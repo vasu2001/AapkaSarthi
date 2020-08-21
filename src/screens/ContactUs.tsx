@@ -45,13 +45,14 @@ const styles = StyleSheet.create({
     backgroundColor: GRAY_BACKGROUND,
   },
   heading: {
-    fontFamily: 'Raleway-SemiBold',
+    fontFamily: 'Montserrat-SemiBold',
     fontSize: 22,
     paddingVertical: 15,
     textAlign: 'center',
     backgroundColor: 'white',
     marginBottom: 15,
     elevation: 1,
+    color: 'black',
   },
   card: {
     backgroundColor: 'white',

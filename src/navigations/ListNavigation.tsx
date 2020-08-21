@@ -25,10 +25,11 @@ export type ListNavParamsList = {
   'Phone List': undefined;
   'Add New List': {
     callback: (
-      x: contactType[],
+      x: {[x: string]: string},
       successCallback: () => void,
       failCallback: () => void,
     ) => void;
+    name: string;
   };
   'Add New List Phonebook': {
     callback: (
@@ -36,5 +37,6 @@ export type ListNavParamsList = {
       successCallback: () => void,
       failCallback: () => void,
     ) => void;
+    name: string;
   };
 };

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {View, Text, StyleSheet, ImageBackground} from 'react-native';
-import {YELLOW} from '../utils/colors';
 import {CustomButton} from '../components/CustomButton';
 import {NavigationProp} from '@react-navigation/native';
 
@@ -41,13 +40,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text1: {
-    fontFamily: 'Raleway-SemiBold',
+    fontFamily: 'Montserrat-SemiBold',
     fontSize: 25,
     color: 'black',
   },
   text2: {
     fontSize: 20,
-    fontFamily: 'Raleway-Regular',
+    fontFamily: 'Montserrat-Regular',
     color: 'black',
   },
   textContainer: {

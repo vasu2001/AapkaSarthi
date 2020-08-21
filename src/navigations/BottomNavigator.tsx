@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, StatusBar} from 'react-native';
+import {Text, StyleSheet, StatusBar} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Dashboard} from '../screens/Dashboard';
@@ -8,10 +8,10 @@ import {AboutUs} from '../screens/AboutUs';
 import {createStackNavigator} from '@react-navigation/stack';
 import {ListNavigation} from './ListNavigation';
 import {ContactUs} from '../screens/ContactUs';
+import {ScheduledList} from '../screens/ScheduledList';
 
 export interface BottomNavigatorProps {}
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
 
 export function BottomNavigator() {
   return (
@@ -25,7 +25,7 @@ export function BottomNavigator() {
           inactiveBackgroundColor: GRAY_DARK,
         }}
         screenOptions={({route}) => ({
-          tabBarIcon: ({focused, color, size}) => {
+          tabBarIcon: ({color, size}) => {
             let iconName: string = '';
             switch (route.name) {
               case 'Home':
@@ -40,6 +40,9 @@ export function BottomNavigator() {
               case 'Contact Us':
                 iconName = 'phone';
                 break;
+              case 'Scheduled':
+                iconName = 'clockcircleo';
+                break;
             }
             return <AntDesign name={iconName} {...{size, color}} />;
           },
@@ -50,6 +53,7 @@ export function BottomNavigator() {
           },
         })}>
         <Tab.Screen name="Home" component={Dashboard} />
+        <Tab.Screen name="Scheduled" component={ScheduledList} />
         <Tab.Screen name="List" component={ListNavigation} />
         <Tab.Screen name="About Us" component={AboutUs} />
         <Tab.Screen name="Contact Us" component={ContactUs} />
@@ -60,7 +64,7 @@ export function BottomNavigator() {
 
 const styles = StyleSheet.create({
   label: {
-    fontFamily: 'Raleway-Regular',
+    fontFamily: 'Montserrat-Regular',
     color: YELLOW,
     fontSize: 11,
     margin: 0,

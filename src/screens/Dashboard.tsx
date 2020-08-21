@@ -6,8 +6,9 @@ import {
   PermissionsAndroid,
   AppState,
   AppStateStatus,
+  TouchableOpacity,
 } from 'react-native';
-import {GRAY_BACKGROUND, GRAY, PINK, PURPLE, BLUE} from '../utils/colors';
+import {GRAY_BACKGROUND, GRAY, PINK, PURPLE, BLUE, RED} from '../utils/colors';
 import {CustomButton} from '../components/CustomButton';
 import Pie from 'react-native-pie';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
@@ -17,22 +18,28 @@ import {stateType} from '../redux/utils';
 import {submitCallAction} from '../redux/actions';
 import showSnackbar from '../utils/snackbar';
 import {TimerModal} from '../components/TimerModal';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import {LoadingModal} from '../components/LoadingModal';
 
-export interface DashboardProps {}
+export interface DashboardProps {
+  navigation: BottomTabNavigationProp<any>;
+}
 
-export function Dashboard() {
+export function Dashboard({navigation}: DashboardProps) {
   const [modal, setModal] = useState(false);
   const [timerModal, setTimerModal] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [loading, setLoading] = useState(false);
 
   let prevIndex = useRef<number>(-1);
   let phoneCallInProgress = useRef<number>(0);
   let timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const state = useSelector((state: stateType) => state);
-  let phoneList = state.callData[0]?.list ?? [];
+  const activeList = state.activeList;
+
+  let phoneList = state.callData[activeList]?.list ?? [];
   const dispatch = useDispatch();
-  // console.log('rerender');
 
   const initFrequency = {
     rescheduled: 0,
@@ -63,6 +70,18 @@ export function Dashboard() {
   }, []);
 
   useEffect(() => {
+    let newIndex = -1;
+    for (let i = 0; i < phoneList.length; i++) {
+      if (phoneList[i].status === 'upcoming') {
+        newIndex = i;
+        break;
+      }
+    }
+    setActiveIndex(newIndex);
+    console.log('list change activeIndex ' + newIndex);
+  }, [activeList]);
+
+  useEffect(() => {
     // phoneList = state.callData[0]?.list ?? [];
     const newFrequency = {...initFrequency};
     phoneList?.forEach((item) => {
@@ -73,16 +92,23 @@ export function Dashboard() {
 
     if (phoneList.length === 0) setActiveIndex(-1);
 
-    if (activeIndex == -1) {
-      for (let i = 0; i < phoneList.length; i++) {
-        if (phoneList[i].status !== 'done') {
-          console.log('activeIndex after adding ' + i);
-          setActiveIndex(i);
-          break;
-        }
-      }
-    }
+    // if (activeIndex == -1) {
+    //   for (let i = 0; i < phoneList.length; i++) {
+    //     if (phoneList[i].status !== 'done') {
+    //       console.log('activeIndex after adding ' + i);
+    //       setActiveIndex(i);
+    //       break;
+    //     }
+    //   }
+    // }
   }, [state]);
+
+  const timeoutHandler = () => {
+    setTimerModal(false);
+    phoneCallInProgress.current++;
+    console.log(activeIndex);
+    RNImmediatePhoneCall.immediatePhoneCall(phoneList[activeIndex].phNo);
+  };
 
   const startCalling = useCallback(
     async (activeIndex: number, callAgain?: boolean) => {
@@ -99,12 +125,7 @@ export function Dashboard() {
         }
 
         setTimerModal(true);
-        timeoutRef.current = setTimeout(() => {
-          setTimerModal(false);
-          phoneCallInProgress.current++;
-          console.log(activeIndex);
-          RNImmediatePhoneCall.immediatePhoneCall(phoneList[activeIndex].phNo);
-        }, 3000);
+        timeoutRef.current = setTimeout(timeoutHandler, 3000);
       } catch (err) {
         console.log(err);
       }
@@ -118,10 +139,11 @@ export function Dashboard() {
       rescheduled: string,
       status: 'done' | 'rescheduled',
       callback: (index: number) => void,
-      // closeModal: boolean = false,
     ): void => {
+      setLoading(true);
       dispatch(
-        submitCallAction(status, comment, rescheduled, activeIndex, 0, () => {
+        submitCallAction(status, comment, rescheduled, activeIndex, () => {
+          setLoading(false);
           callback(nextCall());
         }),
       );
@@ -135,7 +157,7 @@ export function Dashboard() {
     prevIndex.current = activeIndex;
 
     for (let i = activeIndex + 1; i < phoneList.length; i++) {
-      if (phoneList[i].status !== 'done') {
+      if (phoneList[i].status === 'upcoming') {
         newActiveIndex = i;
         break;
       }
@@ -171,42 +193,40 @@ export function Dashboard() {
           modal && setPrevIndex();
           setTimerModal(false);
         }}
+        onSkip={() => {
+          timeoutRef.current && clearTimeout(timeoutRef.current);
+          timeoutHandler();
+        }}
       />
+      <LoadingModal visible={loading} />
       <View style={styles.mainContainer}>
         <Text style={styles.heading}>My Dashboard</Text>
 
-        {/* <View style={{height: 250, width: 300, backgroundColor: 'white'}} /> */}
         <Pie
           radius={70}
           innerRadius={45}
           sections={[
             {
-              percentage: Math.max(
-                2,
+              percentage:
                 totalNo > 0
                   ? Math.floor((frequency.rescheduled / totalNo) * 100)
                   : 0,
-              ),
               color: PINK,
             },
             {
-              percentage: Math.max(
-                2,
+              percentage:
                 totalNo > 0 ? Math.floor((frequency.done / totalNo) * 100) : 0,
-              ),
               color: PURPLE,
             },
             {
-              percentage: Math.max(
-                2,
+              percentage:
                 totalNo > 0
                   ? Math.floor((frequency.upcoming / totalNo) * 100)
                   : 0,
-              ),
               color: BLUE,
             },
           ]}
-          dividerSize={6}
+          // dividerSize={6}
           strokeCap={'butt'}
         />
 
@@ -254,6 +274,20 @@ export function Dashboard() {
             <Text style={styles.statValue}>{frequency['upcoming']}</Text>
           </View>
         </View>
+
+        <TouchableOpacity
+          style={{marginTop: 20}}
+          onPress={() => {
+            navigation.navigate('Phone List');
+          }}>
+          <Text style={styles.selectActiveListWarning}>
+            {activeList === -1
+              ? 'Select a list to work on'
+              : phoneList.length === 0
+              ? 'Add a new list to start calling'
+              : null}
+          </Text>
+        </TouchableOpacity>
       </View>
     </>
   );
@@ -266,7 +300,7 @@ const styles = StyleSheet.create({
     backgroundColor: GRAY_BACKGROUND,
   },
   heading: {
-    fontFamily: 'Raleway-SemiBold',
+    fontFamily: 'Montserrat-SemiBold',
     fontSize: 22,
     paddingVertical: 15,
     alignSelf: 'stretch',
@@ -274,11 +308,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginBottom: 25,
     elevation: 1,
+    color: 'black',
   },
   legendContainer: {
     marginBottom: 15,
     alignSelf: 'flex-end',
-    marginRight: 20,
+    marginRight: 10,
     marginTop: -25,
   },
   legendRow: {
@@ -287,14 +322,14 @@ const styles = StyleSheet.create({
     marginVertical: 3,
   },
   legendColor: {
-    height: 20,
-    width: 25,
+    height: 15,
+    width: 20,
     marginRight: 5,
     borderRadius: 5,
   },
   legendLabel: {
-    fontFamily: 'Raleway-Regular',
-    fontSize: 14,
+    fontFamily: 'Montserrat-Regular',
+    fontSize: 13,
     color: GRAY,
   },
   startCalling: {
@@ -311,18 +346,26 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    padding: 10,
+    paddingVertical: 10,
     borderRightWidth: 2,
     borderColor: GRAY,
     alignItems: 'center',
   },
   statLabel: {
-    fontFamily: 'Raleway-Medium',
-    fontSize: 14,
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 13,
     color: GRAY,
   },
   statValue: {
-    fontFamily: 'Raleway-SemiBold',
+    fontFamily: 'Montserrat-SemiBold',
     fontSize: 20,
+    color: 'black',
+  },
+  selectActiveListWarning: {
+    // marginTop: 15,
+    color: RED,
+    fontFamily: 'Montserrat-Regular',
+    textDecorationLine: 'underline',
+    fontSize: 17,
   },
 });

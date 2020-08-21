@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Text, View, StatusBar} from 'react-native';
+import {StatusBar} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import WelcomeScreen from '../screens/Welcome';
 import {LoginScreen} from '../screens/Login';
@@ -9,7 +9,7 @@ interface AuthNavigatorProps {}
 
 const Stack = createStackNavigator();
 
-const AuthNavigator: React.SFC<AuthNavigatorProps> = (props) => {
+const AuthNavigator: React.SFC<AuthNavigatorProps> = () => {
   return (
     <>
       <StatusBar backgroundColor={GRAY_BACKGROUND} barStyle="dark-content" />

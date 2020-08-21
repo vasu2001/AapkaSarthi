@@ -5,9 +5,8 @@ import {
   contactGroupType,
   submitCallPayload,
   deleteListPayload,
+  loginActionPayload,
 } from './utils';
-import {newListAction} from './actions';
-// import {fromJS} from 'immutable';
 
 const initialState: stateType = {
   email: null,
@@ -15,6 +14,7 @@ const initialState: stateType = {
   firstName: null,
   lastName: null,
   callData: [],
+  activeList: 0,
   gender: null,
 };
 
@@ -25,7 +25,7 @@ export default (state = initialState, action: actionType): stateType => {
 
   switch (action.type) {
     case actionNames.login:
-      return {...state, ...action.payload};
+      return {...state, ...(action.payload as loginActionPayload)};
 
     case actionNames.newList:
       newState = {...state};
@@ -60,7 +60,14 @@ export default (state = initialState, action: actionType): stateType => {
       newState = {...state};
       newState.callData = [...newState.callData];
       newState.callData.splice(deleteListIndex, 1);
+      if (deleteListIndex === newState.activeList) newState.activeList = -1;
       return newState;
+
+    case actionNames.changeActiveList:
+      return {...state, activeList: action.payload as number};
+
+    case actionNames.deleteAll:
+      return {...state, activeList: -1, callData: []};
 
     default:
       return state;

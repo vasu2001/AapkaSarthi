@@ -2,17 +2,17 @@ import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {CustomButton} from './CustomButton';
 import showSnackbar from '../utils/snackbar';
-import {contactType} from '../redux/utils';
 import {StackNavigationProp} from '@react-navigation/stack';
 import DocumentPicker, {
   DocumentPickerOptions,
 } from 'react-native-document-picker';
 import {parse} from 'papaparse';
 import RNFS from 'react-native-fs';
+import {LoadingModal} from './LoadingModal';
 
 export interface ImportComponentProps {
   callback: (
-    x: contactType[],
+    x: {[x: string]: string},
     successCallback: () => void,
     failCallback: () => void,
   ) => void;
@@ -25,6 +25,7 @@ export interface ImportComponentProps {
     type: string,
     callback: () => void,
   ) => void;
+  name?: string;
 }
 
 export function ImportComponent({
@@ -33,39 +34,43 @@ export function ImportComponent({
   onCancel,
   disabled = true,
   uploadFile,
+  name,
 }: ImportComponentProps) {
   const [loading, setLoading] = useState(false);
 
   return (
-    <View style={styles.mainContainer}>
-      <CustomButton
-        style={styles.button}
-        text="Import from PhoneBook"
-        onPress={() => {
-          // phoneBook(callback, setLoading);
-          navigation.navigate('Add New List Phonebook', {callback});
-          onCancel();
-        }}
-        disabled={disabled || loading}
-      />
-      <CustomButton
-        style={styles.button}
-        text="Import from File"
-        onPress={() => {
-          fileImport(uploadFile, setLoading);
-        }}
-        disabled={disabled || loading}
-      />
-      <CustomButton
-        text="Add Contacts"
-        onPress={() => {
-          navigation.navigate('Add New List', {callback});
-          onCancel();
-        }}
-        style={styles.button}
-        disabled={disabled || loading}
-      />
-    </View>
+    <>
+      <View style={styles.mainContainer}>
+        <CustomButton
+          style={styles.button}
+          text="Import from PhoneBook"
+          onPress={() => {
+            // phoneBook(callback, setLoading);
+            navigation.navigate('Add New List Phonebook', {callback, name});
+            onCancel();
+          }}
+          disabled={disabled || loading}
+        />
+        <CustomButton
+          style={styles.button}
+          text="Import from File"
+          onPress={() => {
+            fileImport(uploadFile, setLoading);
+          }}
+          disabled={disabled || loading}
+        />
+        <CustomButton
+          text="Add Manually"
+          onPress={() => {
+            navigation.navigate('Add New List', {callback, name});
+            onCancel();
+          }}
+          style={styles.button}
+          disabled={disabled || loading}
+        />
+      </View>
+      <LoadingModal visible={loading} />
+    </>
   );
 }
 
@@ -92,6 +97,7 @@ const fileImport = async (
     type: [
       'text/csv',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel',
     ],
   };
   try {

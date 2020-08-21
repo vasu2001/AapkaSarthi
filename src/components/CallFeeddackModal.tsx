@@ -1,13 +1,14 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import BottomModal from './BottomModal';
 import CustomInput from './CustomInput';
 import {CustomButton} from './CustomButton';
-import showSnackbar from '../utils/snackbar';
-import DatePicker from 'react-native-datepicker';
+// import DatePicker from 'react-native-datepicker';
 import {YELLOW, GRAY} from '../utils/colors';
 import RNPickerSelect from 'react-native-picker-select';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import moment from 'moment';
 
 export interface CallFeedbackModalProps {
   visible: boolean;
@@ -34,7 +35,8 @@ export function CallFeedbackModal({
   const [comment, setComment] = useState('');
   const [reschedule, setReschedule] = useState('');
   const [status, setStatus] = useState<'done' | 'rescheduled'>('done');
-  const [statusSubmit, setStatusSubmit] = useState(false);
+  const [dateTimeModal, setDateTimeModal] = useState(false);
+  // const [statusSubmit, setStatusSubmit] = useState(false);
 
   const cancel = () => {
     endCall(comment, reschedule, status, () => {
@@ -48,100 +50,113 @@ export function CallFeedbackModal({
     setComment('');
     setReschedule('');
     setStatus('done');
-    setStatusSubmit(false);
+    setDateTimeModal(false);
   };
 
   return (
-    <BottomModal
-      {...{visible}}
-      onCancel={() => {}}
-      validation={() => false}
-      contentHeight={450}>
-      <Text style={styles.heading}>Feedback</Text>
-      {/* <View style={styles.card}> */}
-      <RNPickerSelect
-        value={status}
-        onValueChange={setStatus}
-        items={[
-          {label: 'Done', value: 'done'},
-          {label: 'Reschedule', value: 'rescheduled'},
-        ]}
-        placeholder={{}}
-        style={dropDownStyles}
-      />
-      {/* </View> */}
-
-      <View style={[styles.card, {opacity: status === 'done' ? 0.75 : 1}]}>
-        <DatePicker
-          style={styles.dateInput}
-          date={reschedule}
-          mode="date"
-          placeholder="Reschedule Date"
-          format="YYYY-MM-DD"
-          minDate="2020-05-01"
-          maxDate="2021-06-01"
-          confirmBtnText="Confirm"
-          cancelBtnText="Cancel"
-          customStyles={{
-            dateText: styles.dateInputText,
-            dateInput: {
-              borderWidth: 0,
-              flex: 1,
-              alignItems: 'flex-start',
-            },
-            placeholderText: [styles.dateInputText, {color: GRAY}],
-          }}
-          onDateChange={setReschedule}
-          disabled={status === 'done'}
+    <>
+      <BottomModal
+        {...{visible}}
+        onCancel={() => {}}
+        validation={() => false}
+        contentHeight={450}>
+        <Text style={styles.heading}>Feedback</Text>
+        {/* <View style={styles.card}> */}
+        <RNPickerSelect
+          value={status}
+          onValueChange={setStatus}
+          items={[
+            {label: 'Done', value: 'done'},
+            {label: 'Reschedule', value: 'rescheduled'},
+          ]}
+          placeholder={{}}
+          style={dropDownStyles}
         />
-      </View>
-      <View style={styles.card}>
-        <CustomInput
-          value={comment}
-          onChangeText={setComment}
-          placeholder="Comments.."
-          style={styles.input}
-        />
-      </View>
 
-      <View style={styles.buttonRow}>
-        <CustomButton
-          text="Next Call"
-          onPress={() => {
-            endCall(comment, reschedule, status, (index) => {
+        <View style={[styles.card, {opacity: status === 'done' ? 0.75 : 1}]}>
+          <TouchableOpacity
+            onPress={() => {
+              setDateTimeModal(true);
+            }}
+            disabled={status === 'done'}
+            style={{flex: 1, flexDirection: 'row'}}>
+            <Text
+              style={[
+                styles.dateInput,
+                styles.dateInputText,
+                status === 'done' || reschedule === '' ? {color: GRAY} : null,
+              ]}>
+              {reschedule === ''
+                ? 'Reschedule Date'
+                : moment(reschedule).format('MMM Do, hh:mm:a')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.card}>
+          <CustomInput
+            value={comment}
+            onChangeText={setComment}
+            placeholder="Comments.."
+            style={styles.input}
+          />
+        </View>
+
+        <View style={styles.buttonRow}>
+          <CustomButton
+            text="Next Call"
+            onPress={() => {
+              endCall(comment, reschedule, status, (index) => {
+                cleanUp();
+                startCalling(index);
+              });
+            }}
+            style={[styles.button, {marginRight: 8}]}
+            disabled={
+              (status === 'rescheduled' && reschedule === '' ? true : false) ||
+              callDisabled
+            }
+          />
+
+          <CustomButton
+            text="Call Again"
+            onPress={() => {
               cleanUp();
-              startCalling(index);
-            });
-          }}
-          style={[styles.button, {marginRight: 8}]}
+              callAgain();
+            }}
+            style={[styles.button, {marginLeft: 8}]}
+            disabled={callDisabled}
+          />
+        </View>
+        <TouchableOpacity
+          onPress={cancel}
+          style={[styles.closeButton]}
           disabled={
-            (status === 'rescheduled' && reschedule === '' ? true : false) ||
-            callDisabled
-          }
-        />
-
-        <CustomButton
-          text="Call Again"
-          onPress={callAgain}
-          style={[styles.button, {marginLeft: 8}]}
-          disabled={callDisabled}
-        />
-      </View>
-      <TouchableOpacity
-        onPress={cancel}
-        style={[styles.closeButton]}
-        disabled={status === 'rescheduled' && reschedule === '' ? true : false}>
-        <AntDesign name="close" size={25} color={GRAY} />
-      </TouchableOpacity>
-    </BottomModal>
+            status === 'rescheduled' && reschedule === '' ? true : false
+          }>
+          <AntDesign name="close" size={25} color={GRAY} />
+        </TouchableOpacity>
+      </BottomModal>
+      <DateTimePickerModal
+        isVisible={dateTimeModal}
+        mode="datetime"
+        onConfirm={(date) => {
+          setReschedule(date.toISOString());
+          setDateTimeModal(false);
+        }}
+        onCancel={() => {
+          setDateTimeModal(false);
+        }}
+      />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   heading: {
-    fontFamily: 'Raleway-SemiBold',
+    fontFamily: 'Montserrat-SemiBold',
     fontSize: 24,
     marginBottom: 20,
+    color: 'black',
   },
   card: {
     padding: 10,
@@ -152,7 +167,6 @@ const styles = StyleSheet.create({
     elevation: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    // marginBottom: 50,
   },
   input: {
     flex: 1,
@@ -179,8 +193,9 @@ const styles = StyleSheet.create({
   },
   dateInputText: {
     fontSize: 16,
-    fontFamily: 'Raleway-Medium',
+    fontFamily: 'Montserrat-Medium',
     borderWidth: 0,
+    color: 'black',
   },
   closeButton: {
     position: 'absolute',

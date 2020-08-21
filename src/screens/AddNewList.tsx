@@ -1,7 +1,6 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useState, useRef} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 import {GRAY_BACKGROUND, YELLOW} from '../utils/colors';
-import {contactType} from '../redux/utils';
 import CustomInput from '../components/CustomInput';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {CustomButton} from '../components/CustomButton';
@@ -9,6 +8,8 @@ import showSnackbar from '../utils/snackbar';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 import {ListNavParamsList} from '../navigations/ListNavigation';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {LoadingModal} from '../components/LoadingModal';
 
 export interface AddNewListProps {
   navigation: StackNavigationProp<any>;
@@ -16,92 +17,85 @@ export interface AddNewListProps {
 }
 
 export function AddNewList({route, navigation}: AddNewListProps) {
-  const initDetails: contactType = {
-    name: '',
-    phNo: '',
-    comment: '',
-    status: 'upcoming',
-    reschedule: null,
-    id: null,
-  };
-
-  const [manualDetails, setManualDetails] = useState([initDetails]);
   const [loading, setLoading] = useState(false);
-  const i = manualDetails.length - 1;
+  const [details, setDetails] = useState({name: '', phNo: ''});
+  const [i, setI] = useState(0);
+
+  let list = useRef<{[x: string]: string}>({}).current;
 
   const addContact = (): void => {
-    if (manualDetails[i].name === '' || manualDetails[i].phNo.length !== 10) {
+    if (details.name === '' || details.phNo.length !== 10) {
       showSnackbar('Enter valid data');
     } else {
-      const newDetails = [...manualDetails];
-      newDetails.push(initDetails);
-      setManualDetails(newDetails);
+      if (list[details.phNo]) {
+        showSnackbar('Dulicates not allowed');
+      } else {
+        list[details.phNo] = details.name;
+        setDetails({name: '', phNo: ''});
+        setI((i) => i + 1);
+      }
     }
   };
 
   return (
-    <View style={styles.mainContainer}>
-      <Text style={styles.heading}>Add New List</Text>
+    <>
+      <LoadingModal visible={loading} />
+      <View style={styles.mainContainer}>
+        <Text style={styles.heading}>Add New List</Text>
 
-      <View style={styles.inputContainer}>
-        <CustomInput
-          value={manualDetails[i].name}
-          validation={(text) => text.length > 0}
-          style={styles.input}
-          onChangeText={(text) => {
-            const newDetails = [...manualDetails];
-            manualDetails[i].name = text;
-            setManualDetails(newDetails);
-          }}
-          placeholder="Name"
-        />
-        <CustomInput
-          value={manualDetails[i].phNo}
-          style={styles.input}
-          validation={(text) => text.length === 10}
-          maxLength={10}
-          onChangeText={(text) => {
-            const newDetails = [...manualDetails];
-            manualDetails[i].phNo = text;
-            setManualDetails(newDetails);
-          }}
-          placeholder="Phone Number"
-          keyboardType="phone-pad"
-        />
-        <View style={styles.addButtonContainer}>
-          <TouchableOpacity style={styles.addButton} onPress={addContact}>
-            <AntDesign name="plus" size={35} color="white" />
-          </TouchableOpacity>
+        <View style={styles.inputContainer}>
+          <CustomInput
+            value={details.name}
+            validation={(text) => text.length > 0}
+            style={styles.input}
+            onChangeText={(text) => {
+              setDetails({...details, name: text});
+            }}
+            placeholder="Name"
+          />
+          <CustomInput
+            value={details.phNo}
+            style={styles.input}
+            validation={(text) => text.length === 10}
+            maxLength={10}
+            onChangeText={(text) => {
+              setDetails({...details, phNo: text});
+            }}
+            placeholder="Phone Number"
+            keyboardType="phone-pad"
+          />
+          <View style={styles.addButtonContainer}>
+            <TouchableOpacity style={styles.addButton} onPress={addContact}>
+              <AntDesign name="plus" size={35} color="white" />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
 
-      <View style={styles.row}>
-        <Text style={styles.text0}>Number of Contacts: </Text>
-        <Text style={styles.text1}>{i}</Text>
-      </View>
+        <View style={styles.row}>
+          <Text style={styles.text0}>Number of Contacts: </Text>
+          <Text style={styles.text1}>{i}</Text>
+        </View>
 
-      <CustomButton
-        text="Add List"
-        onPress={() => {
-          setLoading(true);
-          const newManualDetails = [...manualDetails];
-          // manualDetails.pop();
-          newManualDetails.pop();
-          route.params.callback(
-            newManualDetails,
-            () => {
-              setLoading(false);
-              // setManualDetails([initDetails])
-              navigation.goBack();
-            },
-            () => {
-              setLoading(false);
-            },
-          );
-        }}
-        disabled={i === 0 || loading}
-      />
-    </View>
+        <CustomButton
+          text={`Add Contacts to ${route.params.name}`}
+          onPress={() => {
+            setLoading(true);
+            route.params.callback(
+              list,
+              () => {
+                setLoading(false);
+                // setManualDetails([initDetails])
+                navigation.goBack();
+              },
+              () => {
+                setLoading(false);
+              },
+            );
+          }}
+          disabled={i === 0 || loading}
+        />
+      </View>
+    </>
   );
 }
 
@@ -111,13 +105,14 @@ const styles = StyleSheet.create({
     backgroundColor: GRAY_BACKGROUND,
   },
   heading: {
-    fontFamily: 'Raleway-SemiBold',
+    fontFamily: 'Montserrat-SemiBold',
     fontSize: 22,
     paddingVertical: 15,
     textAlign: 'center',
     backgroundColor: 'white',
     marginBottom: 15,
     elevation: 1,
+    color: 'black',
   },
   inputContainer: {
     alignItems: 'center',
@@ -157,12 +152,14 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   text0: {
-    fontFamily: 'Raleway-Regular',
+    fontFamily: 'Montserrat-Regular',
     fontSize: 18,
     marginRight: 5,
+    color: 'black',
   },
   text1: {
-    fontFamily: 'Raleway-Medium',
+    fontFamily: 'Montserrat-Medium',
     fontSize: 20,
+    color: 'black',
   },
 });

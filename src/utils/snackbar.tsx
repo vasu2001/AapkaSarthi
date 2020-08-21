@@ -7,7 +7,7 @@ const showSnackbar = (text: string): void => {
     duration: Snackbar.LENGTH_SHORT,
     backgroundColor: GRAY_DARK,
     textColor: YELLOW,
-    fontFamily: 'Raleway-Regular',
+    fontFamily: 'Montserrat-Regular',
   });
 };
 

@@ -6,9 +6,10 @@ import {CustomButton} from './CustomButton';
 export interface TimerModalProps {
   visible: boolean;
   onCancel: () => void;
+  onSkip: () => void;
 }
 
-export function TimerModal({visible, onCancel}: TimerModalProps) {
+export function TimerModal({visible, onCancel, onSkip}: TimerModalProps) {
   const [remSec, setRemSec] = useState<number>(3);
   let intervalRef = useRef<NodeJS.Timeout>(null).current;
 
@@ -38,6 +39,7 @@ export function TimerModal({visible, onCancel}: TimerModalProps) {
         <StatusBar backgroundColor={MODAL_BACKDROP} />
         <View style={styles.container}>
           <Text style={styles.text}>Calling in {remSec}s</Text>
+          <CustomButton text="Skip" onPress={onSkip} style={styles.button} />
           <CustomButton
             text="Cancel"
             onPress={onCancel}
@@ -63,8 +65,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    fontFamily: 'Raleway-Medium',
+    fontFamily: 'Montserrat-Medium',
     fontSize: 18,
+    color: 'black',
   },
   button: {
     marginTop: 20,

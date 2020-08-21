@@ -1,12 +1,11 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useRef, useEffect} from 'react';
 import BottomModal from './BottomModal';
 import CustomInput from './CustomInput';
 import {ImportComponent} from './ImportComponent';
 import {useDispatch} from 'react-redux';
-import {contactType} from '../redux/utils';
 import {newListAction, uploadFileAction} from '../redux/actions';
-import showSnackbar from '../utils/snackbar';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {TextInput} from 'react-native';
 
 export interface AddNewListModalProps {
   visible: boolean;
@@ -22,9 +21,18 @@ export function AddNewListModal({
   const [name, setName] = useState('');
   const dispatch = useDispatch();
 
+  const inputRef = useRef<TextInput>();
+
+  useEffect(() => {
+    if (visible) {
+      inputRef.current?.focus();
+      // inputRef.current?.
+    }
+  }, [visible]);
+
   const addList = useCallback(
     (
-      list: contactType[],
+      list: {[x: string]: string},
       successCallback: () => void,
       failCallback: () => void,
     ): void => {
@@ -74,6 +82,9 @@ export function AddNewListModal({
           fontSize: 17,
         }}
         validation={(text) => text.length > 0}
+        textRef={(ref) => {
+          inputRef.current = ref;
+        }}
       />
       <ImportComponent
         callback={addList}
@@ -81,6 +92,7 @@ export function AddNewListModal({
         onCancel={onCancel}
         disabled={name.length === 0}
         uploadFile={uploadFile}
+        name={name}
       />
     </BottomModal>
   );

@@ -9,10 +9,11 @@ import {
   submitCallActionType,
   submitCallPayload,
   deleteListActionType,
+  changeActiveListActionType,
+  deleteAllActionType,
 } from './utils';
 import axiosConfig from '../utils/axiosConfig';
 import showSnackbar from '../utils/snackbar';
-import {Buffer} from 'buffer';
 
 const axios = axiosConfig();
 
@@ -71,7 +72,7 @@ export const loginAction = (
 };
 
 export const newListAction = (
-  list: contactType[],
+  list: {[x: string]: string},
   name: string,
   successCallback: () => void,
   failCallback: () => void,
@@ -81,23 +82,33 @@ export const newListAction = (
     const groupId: string = (
       await createList(name, userId ?? '')
     ).data.toString();
+    const finalList: contactType[] = [];
 
     console.log(groupId);
+    // console.log(list);
 
-    for (let i = 0; i < list.length; i++) {
+    for (const i in list) {
+      // console.log(i, list[i]);
       const contactId = (
         await axios.post(`/users/${userId}/groups/${groupId}/callees`, {
-          Name: list[i].name,
-          Contact: list[i].phNo,
+          Name: list[i],
+          Contact: i,
         })
       ).data.toString();
-      list[i].id = contactId;
+
+      finalList.push({
+        name: list[i],
+        phNo: i,
+        id: contactId,
+        reschedule: null,
+        status: 'upcoming',
+      });
     }
 
     dispatch(
       newList({
         name,
-        list,
+        list: finalList,
         id: groupId,
       }),
     );
@@ -115,18 +126,18 @@ export const submitCallAction = (
   comment: string,
   reschedule: string | null,
   contactIndex: number,
-  listIndex: number,
+  // listIndex: number,
   callback: () => void,
 ): AppThunk => async (dispatch, getState) => {
   try {
+    const {userId, activeList: listIndex} = getState();
     if (contactIndex < 0 || listIndex < 0) {
       callback();
       return;
     }
 
     const contactId: string =
-      getState().callData[listIndex].list[listIndex].id ?? '';
-    const {userId} = getState();
+      getState().callData[listIndex].list[contactIndex].id ?? '';
 
     await axios.post(`/users/${userId}/calls`, {
       Notes: comment === '' ? 'none' : comment,
@@ -164,21 +175,6 @@ export const uploadFileAction = (
       await createList(name, userId ?? '')
     ).data.toString();
 
-    const buffer = new Buffer(data).toString('base64');
-    // console.log(buffer.toString('base64'));
-
-    const uploadRes = await axios.post(
-      `/users/${userId}/groups/${groupId}/calleesfile`,
-      {
-        CountryCode: 'IN',
-        Callees: {
-          Name: name,
-          Type: type,
-          HasHeaders: hasHeaders,
-          Base64Bytes: data,
-        },
-      },
-    );
     // console.log(uploadRes.data);
 
     const getList = await axios.get(
@@ -218,4 +214,16 @@ export const deleteListAction = (listIndex: number): deleteListActionType => ({
   payload: {
     listIndex,
   },
+});
+
+export const changeActiveListAction = (
+  payload: number,
+): changeActiveListActionType => ({
+  type: actionNames.changeActiveList,
+  payload,
+});
+
+export const deleteAllAction = (): deleteAllActionType => ({
+  type: actionNames.deleteAll,
+  payload: null,
 });

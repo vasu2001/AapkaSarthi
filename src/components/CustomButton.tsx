@@ -1,19 +1,12 @@
 import * as React from 'react';
 import {
-  View,
   Text,
   StyleProp,
   StyleSheet,
   ViewStyle,
   TouchableOpacity,
 } from 'react-native';
-import {
-  YELLOW,
-  GRAY_LIGHT,
-  GRAY,
-  GRAY_BACKGROUND,
-  DISABLED_YELLOW,
-} from '../utils/colors';
+import {YELLOW, GRAY, DISABLED_YELLOW} from '../utils/colors';
 
 export interface CustomButtonProps {
   style?: StyleProp<ViewStyle>;
@@ -56,7 +49,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
-    fontFamily: 'Raleway-Medium',
+    fontFamily: 'Montserrat-Medium',
     textAlign: 'center',
   },
 });

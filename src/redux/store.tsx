@@ -3,7 +3,7 @@ import {persistStore, persistReducer, PersistConfig} from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
 import reducer from './reducer';
 import thunk from 'redux-thunk';
-import {stateType, actionType} from './utils';
+import {stateType} from './utils';
 import hardSet from 'redux-persist/es/stateReconciler/hardSet';
 import setTransform from './transform';
 
