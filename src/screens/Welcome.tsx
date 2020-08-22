@@ -4,28 +4,20 @@ import {CustomButton} from '../components/CustomButton';
 import {NavigationProp} from '@react-navigation/native';
 
 interface WelcomeScreenProps {
-  navigation: NavigationProp<any>;
+  width: number;
 }
 
 const WelcomeScreen: React.SFC<WelcomeScreenProps> = ({
-  navigation,
+  width,
 }: WelcomeScreenProps) => {
   return (
     <ImageBackground
       source={require('../assets/background/2.png')}
-      style={styles.mainContainer}>
+      style={[styles.mainContainer, {width}]}>
       <View style={styles.textContainer}>
         <Text style={styles.text1}>Welcome</Text>
         <Text style={styles.text2}>to</Text>
         <Text style={styles.text1}>Aapka Sarthi</Text>
-      </View>
-      <View style={{flex: 1, justifyContent: 'center'}}>
-        <CustomButton
-          text="Get Started"
-          onPress={() => {
-            navigation.navigate('Login');
-          }}
-        />
       </View>
     </ImageBackground>
   );

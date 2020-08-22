@@ -18,7 +18,7 @@ export const LoginScreen: React.SFC<LoginScreenProps> = () => {
   const dispatch = useDispatch();
 
   const login = (): void => {
-    if (!mailFormat.test(email)) {
+    if (!mailFormat.test(email.trim())) {
       showSnackbar('Enter a valid email');
       // } else if (password.length < 4) {
       //   showSnackbar('Enter a valid password');
@@ -26,7 +26,7 @@ export const LoginScreen: React.SFC<LoginScreenProps> = () => {
       // call login API
       setLoading(true);
       dispatch(
-        loginAction(email, () => {
+        loginAction(email.trim(), () => {
           setLoading(false);
         }),
       );
@@ -44,7 +44,7 @@ export const LoginScreen: React.SFC<LoginScreenProps> = () => {
           <CustomInput
             value={email}
             onChangeText={setEmail}
-            validation={(text: string): boolean => mailFormat.test(text)}
+            validation={(text: string): boolean => mailFormat.test(text.trim())}
             placeholder="Email"
             placeholderTextColor="grey"
             style={styles.input}

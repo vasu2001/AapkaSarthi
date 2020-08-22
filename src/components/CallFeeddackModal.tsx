@@ -3,12 +3,14 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import BottomModal from './BottomModal';
 import CustomInput from './CustomInput';
 import {CustomButton} from './CustomButton';
-// import DatePicker from 'react-native-datepicker';
 import {YELLOW, GRAY, RED} from '../utils/colors';
 import RNPickerSelect from 'react-native-picker-select';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
+import Autocomplete from 'react-native-autocomplete-input';
+
+const suggestionData = ['abcd', 'abcdef', 'eedasgsab', 'sdnksnuasfb'];
 
 export interface CallFeedbackModalProps {
   visible: boolean;
@@ -61,7 +63,7 @@ export function CallFeedbackModal({
         validation={() => false}
         contentHeight={450}>
         <Text style={styles.heading}>Feedback</Text>
-        {/* <View style={styles.card}> */}
+
         <RNPickerSelect
           value={status}
           onValueChange={setStatus}
@@ -73,7 +75,11 @@ export function CallFeedbackModal({
           style={dropDownStyles}
         />
 
-        <View style={[styles.card, {opacity: status === 'done' ? 0.75 : 1}]}>
+        <View
+          style={[
+            styles.card,
+            {opacity: status === 'done' ? 0.75 : 1, marginBottom: 90},
+          ]}>
           <TouchableOpacity
             onPress={() => {
               setDateTimeModal(true);
@@ -95,14 +101,14 @@ export function CallFeedbackModal({
             </Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.card}>
-          <CustomInput
+        {/* <View style={styles.card}>
+        <CustomInput
             value={comment}
             onChangeText={setComment}
             placeholder="Comments.."
             style={styles.input}
           />
-        </View>
+        </View> */}
 
         <View style={styles.buttonRow}>
           <CustomButton
@@ -130,6 +136,54 @@ export function CallFeedbackModal({
             disabled={callDisabled}
           />
         </View>
+
+        <View
+          style={{
+            position: 'absolute',
+            alignItems: 'stretch',
+            right: 0,
+            left: 0,
+            top: 205,
+          }}>
+          <Autocomplete
+            data={suggestionData.filter(
+              (data) =>
+                data.startsWith(comment.toLowerCase()) &&
+                data !== comment.toLowerCase() &&
+                comment !== '',
+            )}
+            onChangeText={setComment}
+            value={comment}
+            placeholder="Comments.."
+            renderItem={({item}) => (
+              <TouchableOpacity onPress={() => setComment(item)}>
+                <Text style={styles.suggestedText}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            inputContainerStyle={[
+              styles.card,
+              {
+                borderWidth: 0,
+                marginBottom: 0,
+              },
+            ]}
+            renderTextInput={({
+              value = '',
+              onChangeText = () => {},
+              placeholder = '',
+            }) => (
+              <CustomInput
+                {...{value, onChangeText, placeholder}}
+                style={styles.input}
+              />
+            )}
+            listContainerStyle={{
+              top: -10,
+              elevation: 1,
+            }}
+          />
+        </View>
+
         <TouchableOpacity
           onPress={cancel}
           style={[styles.closeButton]}
@@ -142,6 +196,7 @@ export function CallFeedbackModal({
       <DateTimePickerModal
         isVisible={dateTimeModal}
         mode="datetime"
+        minimumDate={moment().toDate()}
         onConfirm={(date) => {
           setReschedule(date.toISOString());
           setDateTimeModal(false);
@@ -205,6 +260,11 @@ const styles = StyleSheet.create({
     right: -10,
     top: -10,
     padding: 5,
+  },
+  suggestedText: {
+    color: GRAY,
+    fontFamily: 'Montserrat-Regular',
+    fontSize: 16,
   },
 });
 

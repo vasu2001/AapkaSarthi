@@ -29,6 +29,7 @@ export default (state = initialState, action: actionType): stateType => {
 
     case actionNames.newList:
       newState = {...state};
+      if (newState.callData.length === 0) newState.activeList = 0;
       newState.callData = [
         ...newState.callData,
         action.payload as contactGroupType,

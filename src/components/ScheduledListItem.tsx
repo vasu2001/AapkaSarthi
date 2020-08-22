@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {GRAY, LAVENDER} from '../utils/colors';
 import moment from 'moment';
 
@@ -7,15 +7,21 @@ export interface PhoneGroupItemProps {
   name: string;
   phNo: string;
   reschedule: string | null;
+  onPress: (number: string) => void;
 }
 
 export function ScheduledListItem({
   name,
   phNo,
   reschedule,
+  onPress,
 }: PhoneGroupItemProps) {
   return (
-    <View style={[styles.mainContainer]}>
+    <TouchableOpacity
+      style={[styles.mainContainer]}
+      onPress={() => {
+        onPress(phNo);
+      }}>
       <View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={[styles.text0]}>{name}</Text>
@@ -30,7 +36,7 @@ export function ScheduledListItem({
           {moment(reschedule).format('MMM Do, hh:mm:a')}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

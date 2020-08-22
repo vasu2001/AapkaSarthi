@@ -49,6 +49,7 @@ export function Dashboard({navigation}: DashboardProps) {
   const [frequency, setFrequency] = useState(initFrequency);
   const totalNo = frequency.rescheduled + frequency.done + frequency.upcoming;
 
+  //state useffect listeners for getting end call event
   useEffect(() => {
     nextCall();
     const handler = (state: AppStateStatus) => {
@@ -69,6 +70,7 @@ export function Dashboard({navigation}: DashboardProps) {
     };
   }, []);
 
+  //useEffect hook to reset the data when list changes
   useEffect(() => {
     let newIndex = -1;
     for (let i = 0; i < phoneList.length; i++) {
@@ -81,8 +83,8 @@ export function Dashboard({navigation}: DashboardProps) {
     console.log('list change activeIndex ' + newIndex);
   }, [activeList]);
 
+  //update frequency as the calls are being made
   useEffect(() => {
-    // phoneList = state.callData[0]?.list ?? [];
     const newFrequency = {...initFrequency};
     phoneList?.forEach((item) => {
       ++newFrequency[item.status];
@@ -90,7 +92,7 @@ export function Dashboard({navigation}: DashboardProps) {
 
     setFrequency(newFrequency);
 
-    if (phoneList.length === 0) setActiveIndex(-1);
+    // if (phoneList.length === 0) setActiveIndex(-1);
 
     // if (activeIndex == -1) {
     //   for (let i = 0; i < phoneList.length; i++) {
@@ -103,30 +105,34 @@ export function Dashboard({navigation}: DashboardProps) {
     // }
   }, [state]);
 
-  const timeoutHandler = () => {
+  //timeout handler for making calls
+  const timeoutHandler = (_activeIndex = activeIndex) => {
     setTimerModal(false);
-    phoneCallInProgress.current++;
-    console.log(activeIndex);
-    phoneList[activeIndex].phNo &&
-      RNImmediatePhoneCall.immediatePhoneCall(phoneList[activeIndex].phNo);
+    phoneCallInProgress.current = 1;
+    console.log('calling index at ' + _activeIndex);
+    phoneList[_activeIndex]?.phNo &&
+      RNImmediatePhoneCall.immediatePhoneCall(phoneList[_activeIndex].phNo);
   };
 
+  //request permission and setup timer modal to call after 3s
   const startCalling = useCallback(
-    async (activeIndex: number, callAgain?: boolean) => {
+    async (_activeIndex: number, callAgain?: boolean) => {
       try {
-        callAgain && (prevIndex.current = activeIndex);
+        callAgain && (prevIndex.current = _activeIndex);
 
         await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.CALL_PHONE,
         );
 
-        if (activeIndex === -1 || activeIndex === phoneList.length) {
+        if (_activeIndex === -1 || _activeIndex === phoneList.length) {
           showSnackbar('No more calls remaining');
           return;
         }
 
         setTimerModal(true);
-        timeoutRef.current = setTimeout(timeoutHandler, 3000);
+        timeoutRef.current = setTimeout(() => {
+          timeoutHandler(_activeIndex);
+        }, 3000);
       } catch (err) {
         console.log(err);
       }
@@ -134,6 +140,7 @@ export function Dashboard({navigation}: DashboardProps) {
     [phoneList],
   );
 
+  //submit the call status and prepare states for next call
   const endCall = useCallback(
     (
       comment: string,
@@ -152,6 +159,7 @@ export function Dashboard({navigation}: DashboardProps) {
     [activeIndex],
   );
 
+  //set activeIndex to next index after the call submission
   const nextCall = (): number => {
     let newActiveIndex = -1;
 
@@ -163,17 +171,20 @@ export function Dashboard({navigation}: DashboardProps) {
         break;
       }
     }
-    setActiveIndex(newActiveIndex);
+    if (newActiveIndex !== activeIndex) {
+      setActiveIndex(newActiveIndex);
 
-    console.log('new activeIndex ' + activeIndex + ' -> ' + newActiveIndex);
-    if (newActiveIndex === -1)
-      setTimeout(() => {
-        showSnackbar('No more calls remaining');
-      }, 250);
+      console.log('new activeIndex ' + activeIndex + ' -> ' + newActiveIndex);
+      if (newActiveIndex === -1)
+        setTimeout(() => {
+          showSnackbar('No more calls remaining');
+        }, 250);
+    }
 
     return newActiveIndex;
   };
 
+  //set activeIndex to prevIndex in case of cancel from timerModal
   const setPrevIndex = () => {
     console.log('setting to prevIndex ' + prevIndex.current);
     setActiveIndex(prevIndex.current);
@@ -347,8 +358,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 15,
     elevation: 2,
-    marginHorizontal: 30,
-    padding: 10,
+    marginHorizontal: 15,
+    paddingVertical: 10,
     marginTop: 10,
   },
   statCard: {
@@ -360,8 +371,9 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontFamily: 'Montserrat-Medium',
-    fontSize: 13,
+    fontSize: 12,
     color: GRAY,
+    marginBottom: 2,
   },
   statValue: {
     fontFamily: 'Montserrat-SemiBold',
