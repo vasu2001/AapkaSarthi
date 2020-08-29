@@ -15,6 +15,7 @@ import {
 import showSnackbar from '../utils/snackbar';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ConfirmationModal} from '../components/ConfirmationModal';
+import {StaticHeader} from '../components/StaticHeader';
 
 export interface PhoneListProps {
   navigation: StackNavigationProp<any>;
@@ -54,7 +55,8 @@ export function PhoneList({navigation}: PhoneListProps) {
       />
 
       <View style={styles.mainContainer}>
-        <Text style={styles.heading}>Phone List</Text>
+        {/* <Text style={styles.heading}>Phone List</Text> */}
+        <StaticHeader />
 
         <TouchableOpacity
           onPress={() => {

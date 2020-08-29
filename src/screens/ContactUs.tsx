@@ -4,15 +4,17 @@ import {GRAY_BACKGROUND} from '../utils/colors';
 import CustomInput from '../components/CustomInput';
 import {CustomButton} from '../components/CustomButton';
 import showSnackbar from '../utils/snackbar';
+import {StaticHeader} from '../components/StaticHeader';
 
 export interface ContactUsProps {}
-const contactNo = '8447944871';
+const contactNo = '7210626364';
 
 export function ContactUs(props: ContactUsProps) {
   const [query, setQuery] = useState('');
   return (
     <View style={styles.mainContainer}>
-      <Text style={styles.heading}>Contact Us</Text>
+      {/* <Text style={styles.heading}>Contact Us</Text> */}
+      <StaticHeader />
       <View style={styles.card}>
         <CustomInput
           value={query}

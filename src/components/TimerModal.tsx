@@ -2,6 +2,14 @@ import React, {useState, useRef, useEffect} from 'react';
 import {View, Text, Modal, StatusBar, StyleSheet} from 'react-native';
 import {MODAL_BACKDROP} from '../utils/colors';
 import {CustomButton} from './CustomButton';
+import {
+  InterstitialAd,
+  RewardedAd,
+  BannerAd,
+  TestIds,
+  BannerAdSize,
+} from '@react-native-firebase/admob';
+import {bannerUnitId} from '../utils/admob';
 
 export interface TimerModalProps {
   visible: boolean;
@@ -37,6 +45,15 @@ export function TimerModal({visible, onCancel, onSkip}: TimerModalProps) {
     <Modal visible={visible} transparent>
       <View style={styles.mainView}>
         <StatusBar backgroundColor={MODAL_BACKDROP} />
+        <View style={{position: 'absolute', top: 0}}>
+          <BannerAd
+            unitId={bannerUnitId}
+            size={BannerAdSize.FULL_BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
+          />
+        </View>
         <View style={styles.container}>
           <Text style={styles.text}>Calling in {remSec}s</Text>
           <CustomButton text="Skip" onPress={onSkip} style={styles.button} />
@@ -44,6 +61,15 @@ export function TimerModal({visible, onCancel, onSkip}: TimerModalProps) {
             text="Cancel"
             onPress={onCancel}
             style={styles.button}
+          />
+        </View>
+        <View style={{position: 'absolute', bottom: 0}}>
+          <BannerAd
+            unitId={bannerUnitId}
+            size={BannerAdSize.FULL_BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
           />
         </View>
       </View>

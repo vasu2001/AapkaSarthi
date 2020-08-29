@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
 import {CustomButton} from './CustomButton';
 import showSnackbar from '../utils/snackbar';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -9,6 +9,7 @@ import DocumentPicker, {
 import {parse} from 'papaparse';
 import RNFS from 'react-native-fs';
 import {LoadingModal} from './LoadingModal';
+import {RED, GRAY} from '../utils/colors';
 
 export interface ImportComponentProps {
   callback: (
@@ -59,6 +60,22 @@ export function ImportComponent({
           }}
           disabled={disabled || loading}
         />
+        <TouchableOpacity
+          disabled={disabled || loading}
+          onPress={() => {
+            navigation.navigate('Instructions');
+            onCancel();
+          }}
+          style={{marginBottom: 15, marginTop: -10, alignItems: 'center'}}>
+          <Text
+            style={{
+              fontFamily: 'Montserrat-Regular',
+              color: disabled || loading ? GRAY : RED,
+              fontSize: 14,
+            }}>
+            Cannot find the file?
+          </Text>
+        </TouchableOpacity>
         <CustomButton
           text="Add Manually"
           onPress={() => {

@@ -10,7 +10,12 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import Autocomplete from 'react-native-autocomplete-input';
 
-const suggestionData = ['abcd', 'abcdef', 'eedasgsab', 'sdnksnuasfb'];
+const suggestionData = [
+  'call not picked',
+  'not interested',
+  'switched off',
+  'invalid number',
+];
 
 export interface CallFeedbackModalProps {
   visible: boolean;

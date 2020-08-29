@@ -20,6 +20,7 @@ import showSnackbar from '../utils/snackbar';
 import {TimerModal} from '../components/TimerModal';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {LoadingModal} from '../components/LoadingModal';
+import {StaticHeader} from '../components/StaticHeader';
 
 export interface DashboardProps {
   navigation: BottomTabNavigationProp<any>;
@@ -218,7 +219,8 @@ export function Dashboard({navigation}: DashboardProps) {
       />
       <LoadingModal visible={loading} />
       <View style={styles.mainContainer}>
-        <Text style={styles.heading}>My Dashboard</Text>
+        {/* <Text style={styles.heading}>My Dashboard</Text> */}
+        <StaticHeader />
 
         <Pie
           radius={70}

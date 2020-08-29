@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, ImageBackground} from 'react-native';
-import {ORANGE, GRAY_BACKGROUND} from '../utils/colors';
+import {ORANGE, GRAY_BACKGROUND, GRAY, RED} from '../utils/colors';
 import CustomInput from '../components/CustomInput';
 import {CustomButton} from '../components/CustomButton';
 import showSnackbar from '../utils/snackbar';
@@ -73,6 +73,14 @@ export const LoginScreen: React.SFC<LoginScreenProps> = () => {
             <Text style={styles.text1}>SignUp</Text>
           </TouchableOpacity>
         </View> */}
+          <View style={{flexDirection: 'row', width: 220, marginTop: 10}}>
+            <Text style={{color: RED}}>* </Text>
+            <Text style={styles.tncText}>
+              The Aapka Sarthi Auto Caller service is currently free since it is
+              in the beta phase. The final version of the service, which is
+              expected to be launched soon, will be a paid service.
+            </Text>
+          </View>
         </View>
       </ImageBackground>
       <LoadingModal visible={loading} />
@@ -124,5 +132,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-SemiBold',
     fontSize: 15,
     color: ORANGE,
+  },
+  tncText: {
+    color: GRAY,
+    fontFamily: 'Montserrat-Regular',
+    fontSize: 12,
   },
 });

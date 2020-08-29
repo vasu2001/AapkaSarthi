@@ -6,6 +6,7 @@ import {stateType} from '../redux/utils';
 import {ScheduledListItem} from '../components/ScheduledListItem';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import {TimerModal} from '../components/TimerModal';
+import {StaticHeader} from '../components/StaticHeader';
 
 export interface AboutUsProps {}
 
@@ -49,7 +50,8 @@ export function ScheduledList() {
         }}
       />
       <View style={styles.mainContainer}>
-        <Text style={styles.heading}>Rescheduled Contacts</Text>
+        {/* <Text style={styles.heading}>Rescheduled Contacts</Text> */}
+        <StaticHeader />
 
         <FlatList
           data={list}

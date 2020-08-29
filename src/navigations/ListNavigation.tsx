@@ -4,6 +4,7 @@ import {AddNewList} from '../screens/AddNewList';
 import {PhoneList} from '../screens/PhoneList';
 import {contactType} from '../redux/utils';
 import {AddNewListPhonebook} from '../screens/AddNewListPhonebook';
+import {UploadFileInstructions} from '../screens/UploadFileInstructions';
 
 const Stack = createStackNavigator();
 export interface ListNavigationProps {}
@@ -17,6 +18,7 @@ export function ListNavigation(props: ListNavigationProps) {
         name="Add New List Phonebook"
         component={AddNewListPhonebook}
       />
+      <Stack.Screen name="Instructions" component={UploadFileInstructions} />
     </Stack.Navigator>
   );
 }

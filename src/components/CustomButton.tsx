@@ -6,7 +6,13 @@ import {
   ViewStyle,
   TouchableOpacity,
 } from 'react-native';
-import {YELLOW, GRAY, DISABLED_YELLOW} from '../utils/colors';
+import {
+  YELLOW,
+  GRAY,
+  DISABLED_YELLOW,
+  BUTTON_BLUE,
+  BLUE,
+} from '../utils/colors';
 
 export interface CustomButtonProps {
   style?: StyleProp<ViewStyle>;
@@ -25,12 +31,12 @@ export function CustomButton({
     <TouchableOpacity
       style={[
         styles.conatiner,
-        {backgroundColor: disabled ? DISABLED_YELLOW : YELLOW},
+        {backgroundColor: disabled ? BLUE : BUTTON_BLUE},
         style ?? null,
       ]}
       disabled={disabled}
       onPress={onPress}>
-      <Text style={[styles.text, {color: disabled ? GRAY : 'black'}]}>
+      <Text style={[styles.text, {color: disabled ? GRAY : 'white'}]}>
         {text}
       </Text>
     </TouchableOpacity>
@@ -43,9 +49,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 40,
-    borderRadius: 25,
+    borderRadius: 6,
     elevation: 4,
-    backgroundColor: YELLOW,
   },
   text: {
     fontSize: 18,
