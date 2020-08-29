@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, ImageBackground} from 'react-native';
+import {View, Text, StyleSheet, ImageBackground, Image} from 'react-native';
 import {ORANGE, GRAY_BACKGROUND, GRAY, RED} from '../utils/colors';
 import CustomInput from '../components/CustomInput';
 import {CustomButton} from '../components/CustomButton';
@@ -39,7 +39,11 @@ export const LoginScreen: React.SFC<LoginScreenProps> = () => {
         source={require('../assets/background/1.png')}
         style={styles.mainContainer}
         resizeMode="stretch">
-        <Text style={styles.heading}>Aapka Sarthi</Text>
+        <Image
+          source={require('../assets/logo/beta-dark.png')}
+          resizeMode="contain"
+          style={styles.heading}
+        />
         <View style={styles.container}>
           <CustomInput
             value={email}
@@ -96,11 +100,9 @@ const styles = StyleSheet.create({
     backgroundColor: GRAY_BACKGROUND,
   },
   heading: {
-    fontFamily: 'Montserrat-SemiBold',
     position: 'absolute',
     top: 25,
-    fontSize: 30,
-    color: 'black',
+    height: 40,
   },
   container: {
     alignItems: 'center',
