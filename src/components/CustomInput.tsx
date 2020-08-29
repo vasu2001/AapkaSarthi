@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {TextInput, TextStyle, StyleSheet, StyleProp} from 'react-native';
-import {YELLOW, RED, GRAY} from '../utils/colors';
+import {PRIMARY_BLUE, RED, GRAY} from '../utils/colors';
 
 interface CustomInputProps {
   value: string;
@@ -65,7 +65,7 @@ const CustomInput: React.SFC<CustomInputProps> = ({
     <TextInput
       style={[
         styles.input,
-        {borderColor: validated ? YELLOW : RED},
+        {borderColor: validated ? PRIMARY_BLUE : RED},
         style ?? null,
       ]}
       spellCheck={false}

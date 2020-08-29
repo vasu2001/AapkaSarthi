@@ -9,7 +9,7 @@ import DocumentPicker, {
 import {parse} from 'papaparse';
 import RNFS from 'react-native-fs';
 import {LoadingModal} from './LoadingModal';
-import {RED, GRAY} from '../utils/colors';
+import {GRAY, RED} from '../utils/colors';
 
 export interface ImportComponentProps {
   callback: (

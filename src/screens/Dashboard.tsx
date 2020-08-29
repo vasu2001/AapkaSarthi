@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   selectActiveListWarning: {
-    color: RED,
+    color: BLUE,
     fontFamily: 'Montserrat-Regular',
     textDecorationLine: 'underline',
     fontSize: 17,

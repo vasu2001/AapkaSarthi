@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {GRAY, ORANGE, LAVENDER} from '../utils/colors';
+import {GRAY, LAVENDER, BLUE} from '../utils/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 export interface PhoneGroupItemProps {
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   active: {
     fontSize: 10,
     marginLeft: 10,
-    color: ORANGE,
+    color: BLUE,
     fontFamily: 'Montserrat-Regular',
   },
 });

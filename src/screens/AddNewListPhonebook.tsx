@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   PermissionsAndroid,
 } from 'react-native';
-import {GRAY_BACKGROUND, YELLOW} from '../utils/colors';
+import {GRAY_BACKGROUND, PRIMARY_BLUE} from '../utils/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {CustomButton} from '../components/CustomButton';
 import showSnackbar from '../utils/snackbar';
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 25,
-    backgroundColor: YELLOW,
+    backgroundColor: PRIMARY_BLUE,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 3,

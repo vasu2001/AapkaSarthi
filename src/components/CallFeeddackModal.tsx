@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import BottomModal from './BottomModal';
 import CustomInput from './CustomInput';
 import {CustomButton} from './CustomButton';
-import {YELLOW, GRAY, RED} from '../utils/colors';
+import {PRIMARY_BLUE, GRAY, RED} from '../utils/colors';
 import RNPickerSelect from 'react-native-picker-select';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -11,10 +11,10 @@ import moment from 'moment';
 import Autocomplete from 'react-native-autocomplete-input';
 
 const suggestionData = [
-  'call not picked',
-  'not interested',
-  'switched off',
-  'invalid number',
+  'Call not Picked',
+  'Not Interested',
+  'Switched Off',
+  'Invalid Number',
 ];
 
 export interface CallFeedbackModalProps {
@@ -153,8 +153,8 @@ export function CallFeedbackModal({
           <Autocomplete
             data={suggestionData.filter(
               (data) =>
-                data.startsWith(comment.toLowerCase()) &&
-                data !== comment.toLowerCase() &&
+                data.toLowerCase().startsWith(comment.toLowerCase()) &&
+                data.toLowerCase() !== comment.toLowerCase() &&
                 comment !== '',
             )}
             onChangeText={setComment}
@@ -184,7 +184,7 @@ export function CallFeedbackModal({
             )}
             listContainerStyle={{
               top: -10,
-              elevation: 1,
+              elevation: 3,
             }}
           />
         </View>
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     padding: 5,
     marginBottom: 10,
     flex: 1,
-    borderColor: YELLOW,
+    borderColor: PRIMARY_BLUE,
   },
   dateInputText: {
     fontSize: 16,
@@ -270,6 +270,7 @@ const styles = StyleSheet.create({
     color: GRAY,
     fontFamily: 'Montserrat-Regular',
     fontSize: 16,
+    padding: 7,
   },
 });
 

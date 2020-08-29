@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {View, Text, StyleSheet, TextInput} from 'react-native';
-import {GRAY_BACKGROUND, YELLOW} from '../utils/colors';
+import {GRAY_BACKGROUND, PRIMARY_BLUE} from '../utils/colors';
 import CustomInput from '../components/CustomInput';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {CustomButton} from '../components/CustomButton';
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 25,
-    backgroundColor: YELLOW,
+    backgroundColor: PRIMARY_BLUE,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 3,
