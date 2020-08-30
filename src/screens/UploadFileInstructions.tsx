@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Image, ImageBackground} from 'react-native';
 import {GRAY_BACKGROUND} from '../utils/colors';
 
 export interface UploadFileInstructionsProps {}
@@ -8,7 +8,7 @@ export function UploadFileInstructions(props: UploadFileInstructionsProps) {
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.heading}>Upload File Instructions</Text>
-      <View style={styles.card}>
+      {/* <View style={styles.card}>
         <Text style={styles.cardHeading}>From WhatsApp</Text>
         <Text style={styles.aboutText}>
           {
@@ -25,7 +25,13 @@ export function UploadFileInstructions(props: UploadFileInstructionsProps) {
         <Text style={styles.aboutText}>
           {'Internal Storage -> Download -> Select the file'}
         </Text>
-      </View>
+      </View> */}
+
+      <ImageBackground
+        source={require('../assets/images/import.png')}
+        style={styles.image}
+        resizeMode="contain"
+      />
     </View>
   );
 }
@@ -64,5 +70,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
     color: 'black',
     fontSize: 14,
+  },
+  image: {
+    flex: 1,
+    alignSelf: 'stretch',
+    marginBottom: 25,
   },
 });

@@ -1,4 +1,4 @@
-export const YELLOW = '#fed136';
+export const WHITE = '#ffffff';
 export const RED = '#dc3545';
 export const GRAY = '#6c757d';
 export const GRAY_DARK = '#343a40';

@@ -3,7 +3,7 @@ import {Text, StyleSheet, StatusBar} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Dashboard} from '../screens/Dashboard';
-import {YELLOW, GRAY, GRAY_DARK} from '../utils/colors';
+import {WHITE, GRAY, GRAY_DARK} from '../utils/colors';
 import {AboutUs} from '../screens/AboutUs';
 import {createStackNavigator} from '@react-navigation/stack';
 import {ListNavigation} from './ListNavigation';
@@ -19,7 +19,7 @@ export function BottomNavigator() {
       <StatusBar barStyle="dark-content" backgroundColor="white" />
       <Tab.Navigator
         tabBarOptions={{
-          activeTintColor: YELLOW,
+          activeTintColor: WHITE,
           inactiveTintColor: GRAY,
           activeBackgroundColor: GRAY_DARK,
           inactiveBackgroundColor: GRAY_DARK,
@@ -65,7 +65,7 @@ export function BottomNavigator() {
 const styles = StyleSheet.create({
   label: {
     fontFamily: 'Montserrat-Regular',
-    color: YELLOW,
+    color: WHITE,
     fontSize: 11,
     margin: 0,
     padding: 0,

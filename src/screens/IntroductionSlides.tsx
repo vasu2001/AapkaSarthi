@@ -17,7 +17,7 @@ export interface IntroductionSlidesProps {
   navigation: NavigationProp<any>;
 }
 
-const N = 3;
+const N = 1;
 const {width} = Dimensions.get('screen');
 
 export function IntroductionSlides({navigation}: IntroductionSlidesProps) {
@@ -57,8 +57,8 @@ export function IntroductionSlides({navigation}: IntroductionSlidesProps) {
           setScrollPos(nativeEvent.contentOffset.x / width);
           //   console.log(scrollPos);
         }}>
-        <Intro1 width={width} />
-        <Intro1 width={width} />
+        {/* <Intro1 width={width} />
+        <Intro1 width={width} /> */}
         <WelcomeScreen width={width} />
       </ScrollView>
       {scrollPos > N - 1.01 && scrollPos < N - 0.99 && (
