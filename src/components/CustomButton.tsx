@@ -13,6 +13,7 @@ export interface CustomButtonProps {
   text: string;
   onPress: () => void;
   disabled?: boolean;
+  textColor?: string;
 }
 
 export function CustomButton({
@@ -20,6 +21,7 @@ export function CustomButton({
   text,
   onPress,
   disabled = false,
+  textColor,
 }: CustomButtonProps) {
   return (
     <TouchableOpacity
@@ -32,7 +34,9 @@ export function CustomButton({
       ]}
       disabled={disabled}
       onPress={onPress}>
-      <Text style={styles.text}>{text}</Text>
+      <Text style={[styles.text, textColor ? {color: textColor} : null]}>
+        {text}
+      </Text>
     </TouchableOpacity>
   );
 }

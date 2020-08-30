@@ -12,6 +12,7 @@ import {CustomButton} from '../components/CustomButton';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {NavigationProp} from '@react-navigation/native';
 import WelcomeScreen from './Welcome';
+import {PRIMARY_BLUE} from '../utils/colors';
 
 export interface IntroductionSlidesProps {
   navigation: NavigationProp<any>;
@@ -65,6 +66,7 @@ export function IntroductionSlides({navigation}: IntroductionSlidesProps) {
         <CustomButton
           text="Get Started"
           onPress={getStarted}
+          textColor={PRIMARY_BLUE}
           style={styles.lastButton}
         />
       )}
@@ -86,6 +88,7 @@ const styles = StyleSheet.create({
   lastButton: {
     position: 'absolute',
     bottom: 50,
+    backgroundColor: 'white',
   },
   rightButton: {
     position: 'absolute',
