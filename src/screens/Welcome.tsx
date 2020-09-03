@@ -17,8 +17,9 @@ const WelcomeScreen: React.SFC<WelcomeScreenProps> = ({
       style={[styles.mainContainer, {width}]}>
       <View style={styles.textContainer}>
         <Text style={styles.text1}>Welcome</Text>
-        <Text style={styles.text2}>to</Text>
-        <Text style={styles.text1}>Aapka Sarthi</Text>
+        <Text style={[styles.text2, {marginBottom: 20}]}>to</Text>
+        <Text style={styles.text1}>CallSpace</Text>
+        <Text style={styles.text2}>Aapka Sarthi Auto Dialler</Text>
       </View>
     </ImageBackground>
   );

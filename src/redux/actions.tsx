@@ -68,7 +68,11 @@ export const loginAction = (
     console.log(JSON.stringify(err));
     // console.log('showing login failed snackbar');
     setTimeout(() => {
-      showSnackbar('User already registered');
+      showSnackbar(
+        err.message == 'Network Error'
+          ? 'Network Error'
+          : 'User already registered',
+      );
     }, 250);
   }
   callback();
@@ -197,7 +201,7 @@ export const uploadFileAction = (
       {
         params: {
           isActive: true,
-          take: 100,
+          take: 500,
         },
       },
     );

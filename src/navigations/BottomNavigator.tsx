@@ -4,11 +4,10 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Dashboard} from '../screens/Dashboard';
 import {WHITE, GRAY, GRAY_DARK} from '../utils/colors';
-import {AboutUs} from '../screens/AboutUs';
-import {createStackNavigator} from '@react-navigation/stack';
 import {ListNavigation} from './ListNavigation';
 import {ContactUs} from '../screens/ContactUs';
 import {ScheduledList} from '../screens/ScheduledList';
+import {AboutUsDrawer} from './AboutUsDrawer';
 
 export interface BottomNavigatorProps {}
 const Tab = createBottomTabNavigator();
@@ -55,7 +54,7 @@ export function BottomNavigator() {
         <Tab.Screen name="Home" component={Dashboard} />
         <Tab.Screen name="Scheduled" component={ScheduledList} />
         <Tab.Screen name="List" component={ListNavigation} />
-        <Tab.Screen name="About Us" component={AboutUs} />
+        <Tab.Screen name="About Us" component={AboutUsDrawer} />
         <Tab.Screen name="Contact Us" component={ContactUs} />
       </Tab.Navigator>
     </>

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {StatusBar} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
-import WelcomeScreen from '../screens/Welcome';
 import {LoginScreen} from '../screens/Login';
 import {GRAY_BACKGROUND} from '../utils/colors';
 import {IntroductionSlides} from '../screens/IntroductionSlides';
