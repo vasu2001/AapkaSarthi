@@ -119,6 +119,7 @@ export function Dashboard({navigation}: DashboardProps) {
   const startCalling = useCallback(
     async (_activeIndex: number, callAgain?: boolean) => {
       try {
+        setModal(false);
         callAgain && (prevIndex.current = _activeIndex);
 
         await PermissionsAndroid.request(

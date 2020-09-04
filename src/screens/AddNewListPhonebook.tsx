@@ -47,13 +47,17 @@ export function AddNewListPhonebook({
         return;
       }
 
-      if (list[selection.selectedPhone.number]) {
+      const number = selection.selectedPhone.number
+        .replace(/[^0-9]/g, '')
+        .substr(-10);
+
+      if (list[number]) {
         // console.log('duplicate');
         setTimeout(() => {
           showSnackbar('Dulicates not allowed');
         }, 250);
       } else {
-        list[selection.selectedPhone.number] = selection.contact.name;
+        list[number] = selection.contact.name;
         setI((i) => i + 1);
       }
 
