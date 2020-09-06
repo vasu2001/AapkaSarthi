@@ -186,15 +186,18 @@ export const uploadFileAction = (
 
     // console.log(uploadRes.data);
 
-    await axios.post(`/users/${userId}/groups/${groupId}/calleesfile`, {
-      CountryCode: 'IN',
-      Callees: {
-        Name: name,
-        Type: type,
-        HasHeaders: hasHeaders,
-        Base64Bytes: data,
+    const uploadRes = await axios.post(
+      `/users/${userId}/groups/${groupId}/calleesfile`,
+      {
+        CountryCode: 'IN',
+        Callees: {
+          Name: name,
+          Type: type,
+          HasHeaders: hasHeaders,
+          Base64Bytes: data,
+        },
       },
-    });
+    );
 
     const getList = await axios.get(
       `/users/${userId}/groups/${groupId}/callees`,
@@ -206,6 +209,12 @@ export const uploadFileAction = (
       },
     );
 
+    // console.log(uploadRes.data);
+    if (uploadRes.data.TotalRecords > 500) {
+      setTimeout(() => {
+        showSnackbar('Only 500 records are supported in beta version');
+      }, 250);
+    }
     dispatch(
       newList({
         name,
@@ -222,7 +231,7 @@ export const uploadFileAction = (
       }),
     );
   } catch (err) {
-    console.log(JSON.stringify(err));
+    console.log(err);
     setTimeout(() => {
       showSnackbar('Some Error Occured');
     }, 250);

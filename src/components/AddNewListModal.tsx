@@ -24,10 +24,14 @@ export function AddNewListModal({
   const inputRef = useRef<TextInput>();
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     if (visible) {
-      inputRef.current?.focus();
-      // inputRef.current?.
+      timer = setTimeout(() => inputRef.current?.focus(), 250);
+      // inputRef.current?.focus();
     }
+    return () => {
+      clearTimeout(timer);
+    };
   }, [visible]);
 
   const addList = useCallback(

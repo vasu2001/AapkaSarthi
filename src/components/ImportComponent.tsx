@@ -123,7 +123,7 @@ const fileImport = async (
     console.log(file);
 
     const data = await RNFS.readFile(file.uri, 'base64');
-    console.log(data);
+    // console.log(data);
 
     if (file.type === 'text/csv')
       parse<any>(data, {
