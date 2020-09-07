@@ -60,15 +60,15 @@ export function IntroductionSlides({navigation}: IntroductionSlidesProps) {
           //   console.log(scrollPos);
         }}>
         <WelcomeScreen width={width} />
-        <Intro1 width={width} source={require('../assets/demo/screen1.png')} />
-        <Intro1 width={width} source={require('../assets/demo/screen2.png')} />
-        <Intro1 width={width} source={require('../assets/demo/screen3.png')} />
-        <Intro1 width={width} source={require('../assets/demo/screen4.png')} />
-        <Intro1 width={width} source={require('../assets/demo/screen5.png')} />
-        <Intro1 width={width} source={require('../assets/demo/screen6.png')} />
-        <Intro1 width={width} source={require('../assets/demo/screen7.png')} />
-        <Intro1 width={width} source={require('../assets/demo/screen8.png')} />
-        <Intro1 width={width} source={require('../assets/demo/screen9.png')} />
+        <Intro1 width={width} source={require('../assets/demo/screen1.webp')} />
+        <Intro1 width={width} source={require('../assets/demo/screen2.webp')} />
+        <Intro1 width={width} source={require('../assets/demo/screen3.webp')} />
+        <Intro1 width={width} source={require('../assets/demo/screen4.webp')} />
+        <Intro1 width={width} source={require('../assets/demo/screen5.webp')} />
+        <Intro1 width={width} source={require('../assets/demo/screen6.webp')} />
+        <Intro1 width={width} source={require('../assets/demo/screen7.webp')} />
+        <Intro1 width={width} source={require('../assets/demo/screen8.webp')} />
+        <Intro1 width={width} source={require('../assets/demo/screen9.webp')} />
       </ScrollView>
       {scrollPos > N - 1.01 && scrollPos < N - 0.99 && (
         <CustomButton

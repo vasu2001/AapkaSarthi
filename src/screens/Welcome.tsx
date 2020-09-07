@@ -13,7 +13,7 @@ const WelcomeScreen: React.SFC<WelcomeScreenProps> = ({
 }: WelcomeScreenProps) => {
   return (
     <ImageBackground
-      source={require('../assets/background/2.png')}
+      source={require('../assets/background/2.webp')}
       style={[styles.mainContainer, {width}]}>
       <View style={styles.textContainer}>
         <Text style={styles.text1}>Welcome</Text>

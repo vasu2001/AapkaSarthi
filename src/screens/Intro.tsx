@@ -10,7 +10,7 @@ export interface Intro1Props {
 export function Intro1({width, source}: Intro1Props) {
   return (
     <ImageBackground
-      source={require('../assets/background/2.png')}
+      source={require('../assets/background/2.webp')}
       style={{
         width,
         flex: 1,
