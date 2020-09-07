@@ -12,7 +12,7 @@ import {CustomButton} from '../components/CustomButton';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {NavigationProp} from '@react-navigation/native';
 import WelcomeScreen from './Welcome';
-import {PRIMARY_BLUE, WHITE} from '../utils/colors';
+import {PRIMARY_BLUE, WHITE, BLUE} from '../utils/colors';
 
 export interface IntroductionSlidesProps {
   navigation: NavigationProp<any>;
@@ -27,14 +27,14 @@ export function IntroductionSlides({navigation}: IntroductionSlidesProps) {
 
   const goRight = () => {
     scrollViewRef.current?.scrollTo({
-      x: (scrollPos + 1) * width,
+      x: (Math.round(scrollPos) + 1) * width,
       animated: true,
     });
   };
 
   const goLeft = () => {
     scrollViewRef.current?.scrollTo({
-      x: (scrollPos - 1) * width,
+      x: (Math.round(scrollPos) - 1) * width,
       animated: true,
     });
   };
@@ -74,11 +74,10 @@ export function IntroductionSlides({navigation}: IntroductionSlidesProps) {
         <CustomButton
           text="Get Started"
           onPress={getStarted}
-          textColor={PRIMARY_BLUE}
-          style={styles.lastButton}
+          style={styles.getStarted}
         />
       )}
-      {scrollPos < N - 1.01 && (
+      {scrollPos < N - 1.01 && scrollPos > 0.99 && (
         <TouchableOpacity style={styles.rightButton} onPress={goRight}>
           <AntDesign name="right" size={30} color={WHITE} />
         </TouchableOpacity>
@@ -90,10 +89,18 @@ export function IntroductionSlides({navigation}: IntroductionSlidesProps) {
       )}
       {scrollPos < 0.99 && (
         <CustomButton
-          text="Skip"
+          text="Skip Intro"
           onPress={getStarted}
           textColor={PRIMARY_BLUE}
           style={styles.lastButton}
+        />
+      )}
+      {scrollPos < 0.99 && (
+        <CustomButton
+          text="View Intro"
+          onPress={goRight}
+          textColor={PRIMARY_BLUE}
+          style={[styles.lastButton, {bottom: 100}]}
         />
       )}
     </>
@@ -103,7 +110,7 @@ export function IntroductionSlides({navigation}: IntroductionSlidesProps) {
 const styles = StyleSheet.create({
   lastButton: {
     position: 'absolute',
-    bottom: 50,
+    bottom: 30,
     backgroundColor: 'white',
   },
   rightButton: {
@@ -121,5 +128,11 @@ const styles = StyleSheet.create({
     backgroundColor: PRIMARY_BLUE,
     borderRadius: 20,
     padding: 5,
+  },
+  getStarted: {
+    position: 'absolute',
+    bottom: 30,
+    width: '80%',
+    backgroundColor: BLUE,
   },
 });
