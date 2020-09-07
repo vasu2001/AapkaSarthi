@@ -74,6 +74,7 @@ export function IntroductionSlides({navigation}: IntroductionSlidesProps) {
         <CustomButton
           text="Get Started"
           onPress={getStarted}
+          // textColor={PRIMARY_BLUE}
           style={styles.getStarted}
         />
       )}
@@ -132,7 +133,9 @@ const styles = StyleSheet.create({
   getStarted: {
     position: 'absolute',
     bottom: 30,
-    width: '80%',
-    backgroundColor: BLUE,
+    width: '100%',
+    // backgroundColor: WHITE,
+    borderWidth: 3,
+    borderColor: WHITE,
   },
 });

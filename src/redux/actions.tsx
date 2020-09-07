@@ -204,15 +204,15 @@ export const uploadFileAction = (
       {
         params: {
           isActive: true,
-          take: 500,
+          take: 1000,
         },
       },
     );
 
     // console.log(uploadRes.data);
-    if (uploadRes.data.TotalRecords > 500) {
+    if (parseInt(uploadRes.data.TotalRecords) > 1000) {
       setTimeout(() => {
-        showSnackbar('Only 500 records are supported in beta version');
+        showSnackbar('Only 1000 records are supported in beta version');
       }, 250);
     }
     dispatch(

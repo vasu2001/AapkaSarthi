@@ -62,3 +62,6 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+#signing keystore
+keystore.jks
