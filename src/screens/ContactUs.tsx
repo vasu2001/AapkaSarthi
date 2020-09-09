@@ -7,7 +7,7 @@ import showSnackbar from '../utils/snackbar';
 import {StaticHeader} from '../components/StaticHeader';
 
 export interface ContactUsProps {}
-const contactNo = '7210626364';
+const contactNo = '9379192021';
 
 export function ContactUs(props: ContactUsProps) {
   const [query, setQuery] = useState('');

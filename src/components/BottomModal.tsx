@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {LAVENDER, MODAL_BACKDROP} from '../utils/colors';
 import {BannerAd, TestIds, BannerAdSize} from '@react-native-firebase/admob';
-import {bannerUnitId} from '../utils/admob';
+import {bannerUnitId2} from '../utils/admob';
 
 interface BottomModalProps {
   visible: boolean;
@@ -59,7 +59,7 @@ const BottomModal = ({
           }}>
           <View style={{position: 'absolute', top: 0}}>
             <BannerAd
-              unitId={bannerUnitId}
+              unitId={bannerUnitId2}
               size={BannerAdSize.FULL_BANNER}
               requestOptions={{
                 requestNonPersonalizedAdsOnly: true,
