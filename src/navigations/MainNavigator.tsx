@@ -6,7 +6,8 @@ import AuthNavigator from './AuthNavigator';
 
 export interface MainNavigatorProps {}
 
-export function MainNavigator(props: MainNavigatorProps) {
+export function MainNavigator() {
   const {userId} = useSelector((state: stateType) => state);
+
   return userId ? <BottomNavigator /> : <AuthNavigator />;
 }

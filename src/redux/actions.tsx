@@ -14,6 +14,9 @@ import {
 } from './utils';
 import axiosConfig from '../utils/axiosConfig';
 import showSnackbar from '../utils/snackbar';
+import {stat} from 'react-native-fs';
+import PushNotification from 'react-native-push-notification';
+import moment from 'moment';
 
 const axios = axiosConfig();
 
@@ -137,7 +140,8 @@ export const submitCallAction = (
   callback: () => void,
 ): AppThunk => async (dispatch, getState) => {
   try {
-    const {userId, activeList: listIndex} = getState();
+    const {userId, activeList: listIndex, callData} = getState();
+    const {name} = callData[listIndex].list[contactIndex];
     if (contactIndex < 0 || listIndex < 0) {
       callback();
       return;
@@ -152,6 +156,16 @@ export const submitCallAction = (
       Status: status === 'done' ? 'Done' : 'ReScheduled',
       ReScheduledDate: reschedule ?? '',
     });
+
+    if (status === 'rescheduled') {
+      PushNotification.localNotificationSchedule({
+        date: moment(reschedule).subtract(30, 'minutes').toDate(),
+        title: 'ReScheduled Call',
+        message: `A call to ${name} is scheduled in 30 mins.`,
+        playSound: true,
+        soundName: 'default',
+      });
+    }
 
     dispatch(
       submitCall({
