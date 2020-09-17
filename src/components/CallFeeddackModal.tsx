@@ -24,11 +24,12 @@ export interface CallFeedbackModalProps {
     comment: string,
     reschedule: string,
     status: 'done' | 'rescheduled',
-    callback: (index: number) => void,
+    callback: (index?: number) => void,
   ) => void;
   callAgain: () => void;
-  startCalling: (index: number) => Promise<void>;
-  callDisabled: boolean;
+  startCalling?: (index: number) => Promise<void>;
+  callDisabled?: boolean;
+  nextDisabled?: boolean;
 }
 
 export function CallFeedbackModal({
@@ -38,6 +39,7 @@ export function CallFeedbackModal({
   callAgain,
   startCalling,
   callDisabled,
+  nextDisabled,
 }: CallFeedbackModalProps) {
   const [comment, setComment] = useState('');
   const [reschedule, setReschedule] = useState('');
@@ -116,20 +118,23 @@ export function CallFeedbackModal({
         </View> */}
 
         <View style={styles.buttonRow}>
-          <CustomButton
-            text="Next Call"
-            onPress={() => {
-              endCall(comment, reschedule, status, (index) => {
-                cleanUp();
-                startCalling(index);
-              });
-            }}
-            style={[styles.button, {marginRight: 8}]}
-            disabled={
-              (status === 'rescheduled' && reschedule === '' ? true : false) ||
-              callDisabled
-            }
-          />
+          {!nextDisabled && (
+            <CustomButton
+              text="Next Call"
+              onPress={() => {
+                endCall(comment, reschedule, status, (index) => {
+                  cleanUp();
+                  startCalling?.(index ?? -1);
+                });
+              }}
+              style={[styles.button, {marginRight: 8}]}
+              disabled={
+                (status === 'rescheduled' && reschedule === ''
+                  ? true
+                  : false) || callDisabled
+              }
+            />
+          )}
 
           <CustomButton
             text="Call Again"
