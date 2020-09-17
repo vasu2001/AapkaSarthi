@@ -16,6 +16,7 @@ const initialState: stateType = {
   callData: [],
   activeList: -1,
   gender: null,
+  freePlan: true,
 };
 
 export default (state = initialState, action: actionType): stateType => {

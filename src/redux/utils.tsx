@@ -32,6 +32,7 @@ export interface stateType {
   lastName: string | null;
   gender: 'm' | 'f' | null;
   activeList: number;
+  freePlan: boolean;
   callData: contactGroupType[];
 }
 

@@ -19,6 +19,7 @@ import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 
 const axios = axiosConfig();
+const freeLimit = 50; ///limit of contacts on free plan
 
 const login = (payload: loginActionPayload): loginActionType => {
   return {
@@ -88,11 +89,12 @@ export const newListAction = (
   failCallback: () => void,
 ): AppThunk => async (dispatch, getState) => {
   try {
-    const {userId} = getState();
+    const {userId, freePlan} = getState();
     const groupId: string = (
       await createList(name, userId ?? '')
     ).data.toString();
-    const finalList: contactType[] = [];
+
+    let finalList: contactType[] = [];
 
     console.log(groupId);
     // console.log(list);
@@ -113,6 +115,13 @@ export const newListAction = (
         reschedule: null,
         status: 'upcoming',
       });
+    }
+
+    if (freePlan && finalList.length > freeLimit) {
+      setTimeout(() => {
+        showSnackbar(`Only ${freeLimit} contacts are allowed on free plan`);
+      }, 250);
+      finalList = finalList.slice(0, freeLimit);
     }
 
     dispatch(
@@ -193,7 +202,7 @@ export const uploadFileAction = (
   callback: () => void,
 ): AppThunk => async (dispatch, getState) => {
   try {
-    const {userId} = getState();
+    const {userId, freePlan} = getState();
     const groupId = await (
       await createList(name, userId ?? '')
     ).data.toString();
@@ -218,17 +227,22 @@ export const uploadFileAction = (
       {
         params: {
           isActive: true,
-          take: 1000,
+          take: freePlan ? freeLimit : 1000,
         },
       },
     );
 
-    // console.log(uploadRes.data);
-    if (parseInt(uploadRes.data.TotalRecords) > 1000) {
+    // console.log(uploadRes.data.TotalRecords);
+    if (freePlan && parseInt(uploadRes.data.TotalRecords) > freeLimit) {
+      setTimeout(() => {
+        showSnackbar(`Only ${freeLimit} contacts are allowed on free plan`);
+      }, 250);
+    } else if (parseInt(uploadRes.data.TotalRecords) > 1000) {
       setTimeout(() => {
         showSnackbar('Only 1000 records are supported in beta version');
       }, 250);
     }
+
     dispatch(
       newList({
         name,

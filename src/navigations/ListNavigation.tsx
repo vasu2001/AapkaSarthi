@@ -1,6 +1,6 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {AddNewList} from '../screens/AddNewList';
+import {AddNewList} from '../screens/AddNewListManual';
 import {PhoneList} from '../screens/PhoneList';
 import {contactType} from '../redux/utils';
 import {AddNewListPhonebook} from '../screens/AddNewListPhonebook';

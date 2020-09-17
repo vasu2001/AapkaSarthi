@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
-import {GRAY_BACKGROUND, GRAY} from '../utils/colors';
+import {GRAY_BACKGROUND, GRAY, RED} from '../utils/colors';
 import {PhoneGroupItem} from '../components/PhoneGroupItem';
 import {CustomButton} from '../components/CustomButton';
 import {AddNewListModal} from '../components/AddNewListModal';
@@ -12,7 +12,6 @@ import {
   changeActiveListAction,
   deleteAllAction,
 } from '../redux/actions';
-import showSnackbar from '../utils/snackbar';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ConfirmationModal} from '../components/ConfirmationModal';
 import {StaticHeader} from '../components/StaticHeader';
@@ -25,12 +24,16 @@ export function PhoneList({navigation}: PhoneListProps) {
   const [addModal, setAddModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
 
-  const {callData, activeList} = useSelector((state: stateType) => state);
+  const {callData, activeList, freePlan} = useSelector(
+    (state: stateType) => state,
+  );
   const dispatch = useDispatch();
 
   const deleteList = (listIndex: number) => {
     dispatch(deleteListAction(listIndex));
   };
+
+  const newListDisabled = freePlan && callData.length > 0;
 
   return (
     <>
@@ -83,13 +86,21 @@ export function PhoneList({navigation}: PhoneListProps) {
             />
           )}
           ListFooterComponent={
-            <CustomButton
-              text="Add a new list"
-              onPress={() => {
-                setAddModal(true);
-              }}
-              style={styles.listFooter}
-            />
+            <>
+              <CustomButton
+                text="Add a new list"
+                onPress={() => {
+                  setAddModal(true);
+                }}
+                style={styles.listFooter}
+                disabled={newListDisabled}
+              />
+              {newListDisabled && (
+                <Text style={styles.freePlanText}>
+                  Only 1 list allowed in Free Plan
+                </Text>
+              )}
+            </>
           }
           ListEmptyComponent={
             <Text style={styles.emptyList}>
@@ -135,5 +146,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginHorizontal: 25,
     textAlign: 'center',
+  },
+  freePlanText: {
+    alignSelf: 'center',
+    color: RED,
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 14,
   },
 });
