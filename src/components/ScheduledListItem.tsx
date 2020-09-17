@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {GRAY, LAVENDER} from '../utils/colors';
+import {BLUE, GRAY, LAVENDER, RED} from '../utils/colors';
 import moment from 'moment';
 
 export interface PhoneGroupItemProps {
@@ -16,15 +16,23 @@ export function ScheduledListItem({
   reschedule,
   onPress,
 }: PhoneGroupItemProps) {
+  const isPending = moment(reschedule).isBefore();
+
   return (
     <TouchableOpacity
-      style={[styles.mainContainer]}
+      style={[
+        styles.mainContainer,
+        isPending && {
+          borderWidth: 2,
+        },
+      ]}
       onPress={() => {
         onPress(phNo);
       }}>
       <View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={[styles.text0]}>{name}</Text>
+          {isPending && <Text style={styles.pendingText}>Pending</Text>}
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={styles.text1}>{phNo}</Text>
@@ -32,8 +40,8 @@ export function ScheduledListItem({
       </View>
       <View>
         <Text style={styles.text3}>Scheduled for</Text>
-        <Text style={styles.text2}>
-          {moment(reschedule).format('MMM Do, hh:mm:a')}
+        <Text style={[styles.text2, isPending && {color: BLUE}]}>
+          {moment(reschedule).format('MMM Do, hh:mm a')}
         </Text>
       </View>
     </TouchableOpacity>
@@ -75,5 +83,11 @@ const styles = StyleSheet.create({
     color: GRAY,
     fontFamily: 'Montserrat-Regular',
     fontSize: 12,
+  },
+  pendingText: {
+    color: BLUE,
+    fontFamily: 'Montserrat-Regular',
+    fontSize: 10,
+    marginLeft: 10,
   },
 });
