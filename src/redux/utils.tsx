@@ -8,7 +8,11 @@ export const actionNames = {
   deleteList: 'DELETE_LIST',
   changeActiveList: 'ACTIVE_LIST',
   deleteAll: 'DELETE_ALL',
+  upgradePlan: 'UPGRADE_PLAN',
+  signout: 'SIGNOUT',
 };
+
+const aa = 'asdfbn';
 
 export interface contactType {
   name: string;
@@ -88,13 +92,19 @@ export interface deleteAllActionType {
   payload: null;
 }
 
+export type upgradePlanActionType = deleteAllActionType;
+
+export type signoutActionType = deleteAllActionType;
+
 export type actionType =
   | newListActionType
   | loginActionType
   | submitCallActionType
   | deleteListActionType
   | changeActiveListActionType
-  | deleteAllActionType;
+  | deleteAllActionType
+  | upgradePlanActionType
+  | signoutActionType;
 
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,

@@ -33,8 +33,8 @@ export function BottomNavigator() {
               case 'List':
                 iconName = 'bars';
                 break;
-              case 'About Us':
-                iconName = 'team';
+              case 'Settings':
+                iconName = 'setting';
                 break;
               case 'Contact Us':
                 iconName = 'phone';
@@ -54,7 +54,7 @@ export function BottomNavigator() {
         <Tab.Screen name="Home" component={Dashboard} />
         <Tab.Screen name="Scheduled" component={ScheduledList} />
         <Tab.Screen name="List" component={ListNavigation} />
-        <Tab.Screen name="About Us" component={AboutUsDrawer} />
+        <Tab.Screen name="Settings" component={AboutUsDrawer} />
         <Tab.Screen name="Contact Us" component={ContactUs} />
       </Tab.Navigator>
     </>

@@ -285,3 +285,17 @@ export const deleteAllAction = (): deleteAllActionType => ({
   type: actionNames.deleteAll,
   payload: null,
 });
+
+export const upgradePlanAction = (): AppThunk => (dispatch, getState) => {
+  dispatch({
+    type: actionNames.upgradePlan,
+    payload: null,
+  });
+};
+
+export const signoutAction = (): AppThunk => (dispatch, getState) => {
+  dispatch({
+    type: actionNames.signout,
+    payload: null,
+  });
+};

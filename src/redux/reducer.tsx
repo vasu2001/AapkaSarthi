@@ -72,6 +72,12 @@ export default (state = initialState, action: actionType): stateType => {
     case actionNames.deleteAll:
       return {...state, activeList: -1, callData: []};
 
+    case actionNames.upgradePlan:
+      return {...state, freePlan: false};
+
+    case actionNames.signout:
+      return {...initialState, callData: state.callData};
+
     default:
       return state;
   }
