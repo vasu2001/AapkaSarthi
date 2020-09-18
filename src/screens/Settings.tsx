@@ -1,5 +1,12 @@
 import React from 'react';
-import {Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Share,
+  Linking,
+} from 'react-native';
 import {BLUE, GRAY_BACKGROUND, GRAY_DARK} from '../utils/colors';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -7,9 +14,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import {stateType} from '../redux/utils';
 import {signoutAction, upgradePlanAction} from '../redux/actions';
 
-export interface InformationScreenProps {
+interface InformationScreenProps {
   navigation: DrawerNavigationProp<any>;
 }
+
+const PLAYSTORE_LINK =
+  'https://play.google.com/store/apps/details?id=com.aapkasarthi&hl=en_IN';
 
 export function Settings({navigation}: InformationScreenProps) {
   const {email, freePlan} = useSelector((state: stateType) => state);
@@ -41,6 +51,7 @@ export function Settings({navigation}: InformationScreenProps) {
             </Text>
           </TouchableOpacity>
         )}
+
         <TouchableOpacity
           onPress={() => {
             dispatch(signoutAction());
@@ -51,6 +62,39 @@ export function Settings({navigation}: InformationScreenProps) {
               {color: BLUE, textDecorationLine: 'underline'},
             ]}>
             Signout
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            Share.share(
+              {
+                message: PLAYSTORE_LINK,
+              },
+              {
+                dialogTitle: 'Share CallSpace',
+              },
+            );
+          }}>
+          <Text
+            style={[
+              styles.aboutText,
+              {color: BLUE, textDecorationLine: 'underline'},
+            ]}>
+            Share CallSpace
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            Linking.openURL(PLAYSTORE_LINK);
+          }}>
+          <Text
+            style={[
+              styles.aboutText,
+              {color: BLUE, textDecorationLine: 'underline'},
+            ]}>
+            Like CallSpace? Rate us on PlayStore
           </Text>
         </TouchableOpacity>
       </ScrollView>
