@@ -9,12 +9,11 @@ import {
   submitCallActionType,
   submitCallPayload,
   deleteListActionType,
-  changeActiveListActionType,
   deleteAllActionType,
+  addDataToListActionType,
 } from './utils';
 import axiosConfig from '../utils/axiosConfig';
 import showSnackbar from '../utils/snackbar';
-import {stat} from 'react-native-fs';
 import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 
@@ -38,6 +37,17 @@ const newList = (payload: contactGroupType): newListActionType => {
 const submitCall = (payload: submitCallPayload): submitCallActionType => ({
   type: actionNames.submitCall,
   payload,
+});
+
+const addDataToList = (
+  index: number,
+  list: contactType[],
+): addDataToListActionType => ({
+  type: actionNames.addToList,
+  payload: {
+    index,
+    list,
+  },
 });
 
 const createList = async (GroupName: string, userId: string) =>
@@ -275,27 +285,95 @@ export const deleteListAction = (listIndex: number): deleteListActionType => ({
 });
 
 export const changeActiveListAction = (
-  payload: number,
-): changeActiveListActionType => ({
-  type: actionNames.changeActiveList,
-  payload,
-});
+  newIndex: number,
+  callback: () => void,
+): AppThunk => async (dispatch, getState) => {
+  try {
+    const {userId, callData, freePlan} = getState();
+    const {id, list} = callData[newIndex];
+
+    if (list.length == 0) {
+      //get list and save it
+
+      const getList = await axios.get(`/users/${userId}/groups/${id}/callees`, {
+        params: {
+          isActive: true,
+          take: freePlan ? freeLimit : 1000,
+        },
+      });
+
+      dispatch(
+        addDataToList(
+          newIndex,
+          getList.data.Data.map(
+            (ele: any): contactType => ({
+              id: ele.CalleeId,
+              name: ele.Name,
+              phNo: ele.Contact,
+              status: 'upcoming',
+              reschedule: null,
+            }),
+          ),
+        ),
+      );
+    }
+
+    dispatch({
+      type: actionNames.changeActiveList,
+      payload: newIndex,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+
+  callback();
+};
 
 export const deleteAllAction = (): deleteAllActionType => ({
   type: actionNames.deleteAll,
   payload: null,
 });
 
-export const upgradePlanAction = (): AppThunk => (dispatch, getState) => {
+export const upgradePlanAction = (): AppThunk => (dispatch) => {
   dispatch({
     type: actionNames.upgradePlan,
     payload: null,
   });
 };
 
-export const signoutAction = (): AppThunk => (dispatch, getState) => {
+export const signoutAction = (): AppThunk => (dispatch) => {
   dispatch({
     type: actionNames.signout,
     payload: null,
   });
+};
+
+export const updateLists = (): AppThunk => async (dispatch, getState) => {
+  try {
+    const {userId, callData} = getState();
+
+    const res = await axios.get(`/users/${userId?.toString()}/associates`);
+    let listRes: {GroupId: string; GroupName: string}[] =
+      res.data?.Data?.[0]?.CalleeGroups ?? [];
+
+    listRes = listRes.filter(
+      (rec) => callData.find((e) => e.id == rec.GroupId) === undefined,
+    );
+
+    console.log(userId);
+    console.log(listRes);
+
+    dispatch({
+      type: actionNames.updateMultiple,
+      payload: listRes.map(
+        (e): contactGroupType => ({
+          name: e.GroupName,
+          id: e.GroupId,
+          list: [],
+        }),
+      ),
+    });
+  } catch (err) {
+    console.log(err);
+  }
 };

@@ -15,6 +15,7 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ConfirmationModal} from '../components/ConfirmationModal';
 import {StaticHeader} from '../components/StaticHeader';
+import {LoadingModal} from '../components/LoadingModal';
 
 export interface PhoneListProps {
   navigation: StackNavigationProp<any>;
@@ -23,6 +24,7 @@ export interface PhoneListProps {
 export function PhoneList({navigation}: PhoneListProps) {
   const [addModal, setAddModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const {callData, activeList, freePlan} = useSelector(
     (state: stateType) => state,
@@ -57,6 +59,8 @@ export function PhoneList({navigation}: PhoneListProps) {
         }}
       />
 
+      <LoadingModal visible={loading} />
+
       <View style={styles.mainContainer}>
         {/* <Text style={styles.heading}>Phone List</Text> */}
         <StaticHeader />
@@ -81,7 +85,12 @@ export function PhoneList({navigation}: PhoneListProps) {
               }}
               active={activeList === index}
               onPress={() => {
-                dispatch(changeActiveListAction(index));
+                setLoading(true);
+                dispatch(
+                  changeActiveListAction(index, () => {
+                    setLoading(false);
+                  }),
+                );
               }}
             />
           )}

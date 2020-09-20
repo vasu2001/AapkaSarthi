@@ -10,6 +10,8 @@ export const actionNames = {
   deleteAll: 'DELETE_ALL',
   upgradePlan: 'UPGRADE_PLAN',
   signout: 'SIGNOUT',
+  addToList: 'ADD_DATA_TO_LIST',
+  updateMultiple: 'UPDATE_MULTIPLE_LIST',
 };
 
 const aa = 'asdfbn';
@@ -96,6 +98,21 @@ export type upgradePlanActionType = deleteAllActionType;
 
 export type signoutActionType = deleteAllActionType;
 
+export interface addDataToListPayload {
+  index: number;
+  list: contactType[];
+}
+
+export interface addDataToListActionType {
+  type: string;
+  payload: addDataToListPayload;
+}
+
+export interface updateMultipleListsActionType {
+  type: string;
+  payload: contactGroupType[];
+}
+
 export type actionType =
   | newListActionType
   | loginActionType
@@ -104,7 +121,9 @@ export type actionType =
   | changeActiveListActionType
   | deleteAllActionType
   | upgradePlanActionType
-  | signoutActionType;
+  | signoutActionType
+  | addDataToListActionType
+  | updateMultipleListsActionType;
 
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,

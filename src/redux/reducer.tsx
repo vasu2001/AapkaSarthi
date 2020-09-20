@@ -6,6 +6,8 @@ import {
   submitCallPayload,
   deleteListPayload,
   loginActionPayload,
+  addDataToListActionType,
+  addDataToListPayload,
 } from './utils';
 
 const initialState: stateType = {
@@ -77,6 +79,20 @@ export default (state = initialState, action: actionType): stateType => {
 
     case actionNames.signout:
       return {...initialState, callData: state.callData};
+
+    case actionNames.addToList:
+      newState = {...state};
+      const {index, list} = action.payload as addDataToListPayload;
+      newState.callData[index].list = list;
+      return newState;
+
+    case actionNames.updateMultiple:
+      newState = {...state};
+      newState.callData = [
+        ...newState.callData,
+        ...(action.payload as contactGroupType[]),
+      ];
+      return newState;
 
     default:
       return state;

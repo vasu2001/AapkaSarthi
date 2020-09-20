@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Text, StyleSheet, StatusBar} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -8,11 +8,18 @@ import {ListNavigation} from './ListNavigation';
 import {ContactUs} from '../screens/ContactUs';
 import {ScheduledList} from '../screens/ScheduledList';
 import {AboutUsDrawer} from './AboutUsDrawer';
+import {useDispatch} from 'react-redux';
+import {updateLists} from '../redux/actions';
 
 export interface BottomNavigatorProps {}
 const Tab = createBottomTabNavigator();
 
 export function BottomNavigator() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(updateLists());
+  }, []);
+
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="white" />

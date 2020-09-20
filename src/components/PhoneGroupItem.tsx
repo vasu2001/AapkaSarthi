@@ -29,7 +29,9 @@ export function PhoneGroupItem({
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={styles.text1}>No of Contacts</Text>
-          <Text style={styles.text2}>{noOfContacts}</Text>
+          <Text style={styles.text2}>
+            {noOfContacts > 0 ? noOfContacts : '??'}
+          </Text>
         </View>
       </View>
       <TouchableOpacity onPress={deleteContact}>
