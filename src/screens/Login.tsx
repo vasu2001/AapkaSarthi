@@ -1,18 +1,35 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, ImageBackground, Image} from 'react-native';
-import {ORANGE, GRAY_BACKGROUND, GRAY, RED} from '../utils/colors';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
+import {
+  BLUE,
+  GRAY_BACKGROUND,
+  GRAY,
+  RED,
+  GRAY_DARK,
+  GRAY_LIGHT,
+} from '../utils/colors';
 import CustomInput from '../components/CustomInput';
 import {CustomButton} from '../components/CustomButton';
 import showSnackbar from '../utils/snackbar';
 import {useDispatch} from 'react-redux';
 import {loginAction} from '../redux/actions';
 import {LoadingModal} from '../components/LoadingModal';
+import {StackNavigationProp} from '@react-navigation/stack';
 
-export interface LoginScreenProps {}
+export interface LoginScreenProps {
+  navigation: StackNavigationProp<any>;
+}
 
-export const LoginScreen: React.SFC<LoginScreenProps> = () => {
+export const LoginScreen: React.SFC<LoginScreenProps> = ({navigation}) => {
   const [email, setEmail] = useState('');
-  const [] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const mailFormat: RegExp = /^[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,4}$/;
   const dispatch = useDispatch();
@@ -23,7 +40,6 @@ export const LoginScreen: React.SFC<LoginScreenProps> = () => {
       // } else if (password.length < 4) {
       //   showSnackbar('Enter a valid password');
     } else {
-      // call login API
       setLoading(true);
       dispatch(
         loginAction(email.trim(), () => {
@@ -54,15 +70,15 @@ export const LoginScreen: React.SFC<LoginScreenProps> = () => {
             style={styles.input}
           />
 
-          {/* <CustomInput
-          value={password}
-          onChangeText={setPassword}
-          validation={(text: string): boolean => text.length >= 4}
-          placeholder="Password"
-          placeholderTextColor="grey"
-          style={styles.input}
-          secureTextEntry
-        /> */}
+          <CustomInput
+            value={password}
+            onChangeText={setPassword}
+            validation={(text: string): boolean => text.length >= 4}
+            placeholder="Password"
+            placeholderTextColor="grey"
+            style={styles.input}
+            secureTextEntry
+          />
 
           <CustomButton
             text="Next"
@@ -71,12 +87,25 @@ export const LoginScreen: React.SFC<LoginScreenProps> = () => {
             disabled={loading}
           />
 
-          {/* <View style={styles.row}>
-          <Text style={styles.text0}>Don't have an account? </Text>
-          <TouchableOpacity>
-            <Text style={styles.text1}>SignUp</Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('ForgotPass');
+            }}>
+            <Text style={[styles.text0, {color: GRAY, marginBottom: 8}]}>
+              Forgot Password?
+            </Text>
           </TouchableOpacity>
-        </View> */}
+
+          <View style={styles.row}>
+            <Text style={styles.text0}>Don't have an account? </Text>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('SignUp');
+              }}>
+              <Text style={styles.text1}>SignUp</Text>
+            </TouchableOpacity>
+          </View>
+
           <View style={{flexDirection: 'row', width: 220, marginTop: 10}}>
             <Text style={{color: RED}}>* </Text>
             <Text style={styles.tncText}>
@@ -133,7 +162,7 @@ const styles = StyleSheet.create({
   text1: {
     fontFamily: 'Montserrat-SemiBold',
     fontSize: 15,
-    color: ORANGE,
+    color: BLUE,
   },
   tncText: {
     color: GRAY,
