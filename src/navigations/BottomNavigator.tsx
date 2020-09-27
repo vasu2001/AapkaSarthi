@@ -9,7 +9,7 @@ import {ContactUs} from '../screens/ContactUs';
 import {ScheduledList} from '../screens/ScheduledList';
 import {AboutUsDrawer} from './AboutUsDrawer';
 import {useDispatch} from 'react-redux';
-import {updateLists} from '../redux/actions';
+import {updateLists} from '../redux/actions/core';
 
 export interface BottomNavigatorProps {}
 const Tab = createBottomTabNavigator();

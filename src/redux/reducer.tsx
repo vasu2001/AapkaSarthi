@@ -8,6 +8,7 @@ import {
   loginActionPayload,
   addDataToListActionType,
   addDataToListPayload,
+  signUpActionType,
 } from './utils';
 
 const initialState: stateType = {
@@ -93,6 +94,10 @@ export default (state = initialState, action: actionType): stateType => {
         ...(action.payload as contactGroupType[]),
       ];
       return newState;
+
+    case actionNames.signup:
+      const {payload} = action as signUpActionType;
+      return {...state, ...payload};
 
     default:
       return state;

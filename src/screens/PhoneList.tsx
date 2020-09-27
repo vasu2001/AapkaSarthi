@@ -7,15 +7,15 @@ import {AddNewListModal} from '../components/AddNewListModal';
 import {useSelector, useDispatch} from 'react-redux';
 import {stateType} from '../redux/utils';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {
-  deleteListAction,
-  changeActiveListAction,
-  deleteAllAction,
-} from '../redux/actions';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ConfirmationModal} from '../components/ConfirmationModal';
 import {StaticHeader} from '../components/StaticHeader';
 import {LoadingModal} from '../components/LoadingModal';
+import {
+  deleteListAction,
+  deleteAllAction,
+  changeActiveListAction,
+} from '../redux/actions/core';
 
 export interface PhoneListProps {
   navigation: StackNavigationProp<any>;

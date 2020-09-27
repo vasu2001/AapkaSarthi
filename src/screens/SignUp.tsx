@@ -7,6 +7,7 @@ import showSnackbar from '../utils/snackbar';
 import {useDispatch} from 'react-redux';
 import {LoadingModal} from '../components/LoadingModal';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {signUpAction} from '../redux/actions/auth';
 
 export interface SignUpScreenProps {
   navigation: StackNavigationProp<any>;
@@ -23,21 +24,30 @@ export const SignUpScreen: React.SFC<SignUpScreenProps> = ({navigation}) => {
   const dispatch = useDispatch();
 
   const signup = (): void => {
-    // if (firstName == '' || lastName == '') {
-    //   showSnackbar('Enter your name');
-    // } else if (!mailFormat.test(email.trim())) {
-    //   showSnackbar('Enter a valid email');
-    // } else if (phNo.trim().length !== 10) {
-    //   showSnackbar('Enter a valid phone number');
-    // } else {
-    //   //   setLoading(true);
-    //   //   dispatch(
-    //   //     loginAction(email.trim(), () => {
-    //   //       setLoading(false);
-    //   //     }),
-    //   //   );
-    // }
-    navigation.navigate('VerifyOtp');
+    if (firstName == '' || lastName == '') {
+      showSnackbar('Enter your name');
+    } else if (!mailFormat.test(email.trim())) {
+      showSnackbar('Enter a valid email');
+    } else if (phNo.trim().length !== 10) {
+      showSnackbar('Enter a valid phone number');
+    } else {
+      setLoading(true);
+      dispatch(
+        signUpAction(
+          firstName,
+          lastName,
+          email,
+          phNo,
+          () => {
+            setLoading(false);
+            navigation.navigate('VerifyOtp');
+          },
+          () => {
+            setLoading(false);
+          },
+        ),
+      );
+    }
   };
 
   return (
@@ -87,6 +97,7 @@ export const SignUpScreen: React.SFC<SignUpScreenProps> = ({navigation}) => {
             placeholderTextColor="grey"
             style={styles.input}
             keyboardType="phone-pad"
+            maxLength={10}
           />
 
           <CustomButton

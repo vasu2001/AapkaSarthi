@@ -19,9 +19,9 @@ import CustomInput from '../components/CustomInput';
 import {CustomButton} from '../components/CustomButton';
 import showSnackbar from '../utils/snackbar';
 import {useDispatch} from 'react-redux';
-import {loginAction} from '../redux/actions';
 import {LoadingModal} from '../components/LoadingModal';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {loginAction} from '../redux/actions/auth';
 
 export interface LoginScreenProps {
   navigation: StackNavigationProp<any>;
@@ -42,7 +42,7 @@ export const LoginScreen: React.SFC<LoginScreenProps> = ({navigation}) => {
     } else {
       setLoading(true);
       dispatch(
-        loginAction(email.trim(), () => {
+        loginAction(email.trim(), password, () => {
           setLoading(false);
         }),
       );

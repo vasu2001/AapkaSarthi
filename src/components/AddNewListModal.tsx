@@ -3,9 +3,9 @@ import BottomModal from './BottomModal';
 import CustomInput from './CustomInput';
 import {ImportComponent} from './ImportComponent';
 import {useDispatch} from 'react-redux';
-import {newListAction, uploadFileAction} from '../redux/actions';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {TextInput} from 'react-native';
+import {newListAction, uploadFileAction} from '../redux/actions/core';
 
 export interface AddNewListModalProps {
   visible: boolean;

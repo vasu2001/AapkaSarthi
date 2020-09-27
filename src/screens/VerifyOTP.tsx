@@ -6,6 +6,7 @@ import {CustomButton} from '../components/CustomButton';
 import showSnackbar from '../utils/snackbar';
 import {useDispatch} from 'react-redux';
 import {LoadingModal} from '../components/LoadingModal';
+import {resetPassAction} from '../redux/actions/auth';
 
 export interface VerifyOtpScreenProps {}
 
@@ -19,16 +20,18 @@ export const VerifyOtpScreen: React.SFC<VerifyOtpScreenProps> = () => {
   const dispatch = useDispatch();
 
   const setPass = (): void => {
-    // if (!mailFormat.test(email.trim())) {
-    //   showSnackbar('Enter a valid email');
-    // } else {
-    //   //   setLoading(true);
-    //   //   dispatch(
-    //   //     loginAction(email.trim(), () => {
-    //   //       setLoading(false);
-    //   //     }),
-    //   //   );
-    // }
+    if (!otp) {
+      showSnackbar('Enter OTP');
+    } else if (password1.length < 4 || password1 !== password2) {
+      showSnackbar('Enter valid password');
+    } else {
+      setLoading(true);
+      dispatch(
+        resetPassAction(otp, password1, () => {
+          setLoading(false);
+        }),
+      );
+    }
   };
 
   return (

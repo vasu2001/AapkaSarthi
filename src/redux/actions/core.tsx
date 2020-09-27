@@ -1,31 +1,24 @@
 import {
-  AppThunk,
+  loginActionPayload,
   loginActionType,
   actionNames,
-  loginActionPayload,
   contactGroupType,
   newListActionType,
-  contactType,
-  submitCallActionType,
   submitCallPayload,
+  submitCallActionType,
+  contactType,
+  addDataToListActionType,
+  AppThunk,
   deleteListActionType,
   deleteAllActionType,
-  addDataToListActionType,
-} from './utils';
-import axiosConfig from '../utils/axiosConfig';
-import showSnackbar from '../utils/snackbar';
+} from '../utils';
 import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
+import axiosConfig from '../../utils/axiosConfig';
+import showSnackbar from '../../utils/snackbar';
 
 const axios = axiosConfig();
 const freeLimit = 50; ///limit of contacts on free plan
-
-const login = (payload: loginActionPayload): loginActionType => {
-  return {
-    type: actionNames.login,
-    payload,
-  };
-};
 
 const newList = (payload: contactGroupType): newListActionType => {
   return {
@@ -52,45 +45,6 @@ const addDataToList = (
 
 const createList = async (GroupName: string, userId: string) =>
   axios.post(`/users/${userId}/calleesgroup`, {GroupName});
-
-export const loginAction = (
-  email: string,
-  callback: () => void,
-): AppThunk => async (dispatch) => {
-  // api call
-  try {
-    const res = await axios.post(
-      '/accounts/registeremail',
-      {},
-      {
-        params: {
-          email,
-        },
-      },
-    );
-    // console.log(res.data);
-    dispatch(
-      login({
-        userId: res.data.UserId,
-        firstName: res.data.FirstName,
-        lastName: res.data.LastName,
-        email,
-        gender: res.data.Gender,
-      }),
-    );
-  } catch (err) {
-    console.log(JSON.stringify(err));
-    // console.log('showing login failed snackbar');
-    setTimeout(() => {
-      showSnackbar(
-        err.message == 'Network Error'
-          ? 'Network Error'
-          : 'User already registered',
-      );
-    }, 250);
-  }
-  callback();
-};
 
 export const newListAction = (
   list: {[x: string]: string},
@@ -333,20 +287,6 @@ export const deleteAllAction = (): deleteAllActionType => ({
   type: actionNames.deleteAll,
   payload: null,
 });
-
-export const upgradePlanAction = (): AppThunk => (dispatch) => {
-  dispatch({
-    type: actionNames.upgradePlan,
-    payload: null,
-  });
-};
-
-export const signoutAction = (): AppThunk => (dispatch) => {
-  dispatch({
-    type: actionNames.signout,
-    payload: null,
-  });
-};
 
 export const updateLists = (): AppThunk => async (dispatch, getState) => {
   try {

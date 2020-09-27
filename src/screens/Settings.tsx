@@ -12,7 +12,7 @@ import {DrawerNavigationProp} from '@react-navigation/drawer';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useDispatch, useSelector} from 'react-redux';
 import {stateType} from '../redux/utils';
-import {signoutAction, upgradePlanAction} from '../redux/actions';
+import {signout, upgradePlan} from '../redux/actions/auth';
 
 interface InformationScreenProps {
   navigation: DrawerNavigationProp<any>;
@@ -40,7 +40,7 @@ export function Settings({navigation}: InformationScreenProps) {
         {freePlan && (
           <TouchableOpacity
             onPress={() => {
-              dispatch(upgradePlanAction());
+              dispatch(upgradePlan());
             }}>
             <Text
               style={[
@@ -54,7 +54,7 @@ export function Settings({navigation}: InformationScreenProps) {
 
         <TouchableOpacity
           onPress={() => {
-            dispatch(signoutAction());
+            dispatch(signout());
           }}>
           <Text
             style={[

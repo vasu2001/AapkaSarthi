@@ -15,12 +15,12 @@ import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import {CallFeedbackModal} from '../components/CallFeeddackModal';
 import {useSelector, useDispatch} from 'react-redux';
 import {stateType} from '../redux/utils';
-import {submitCallAction} from '../redux/actions';
 import showSnackbar from '../utils/snackbar';
 import {TimerModal} from '../components/TimerModal';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {LoadingModal} from '../components/LoadingModal';
 import {StaticHeader} from '../components/StaticHeader';
+import {submitCallAction} from '../redux/actions/core';
 
 export interface DashboardProps {
   navigation: BottomTabNavigationProp<any>;

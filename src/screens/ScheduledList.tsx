@@ -15,8 +15,8 @@ import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import {TimerModal} from '../components/TimerModal';
 import {StaticHeader} from '../components/StaticHeader';
 import {CallFeedbackModal} from '../components/CallFeeddackModal';
-import {submitCallAction} from '../redux/actions';
 import {LoadingModal} from '../components/LoadingModal';
+import {submitCallAction} from '../redux/actions/core';
 
 export interface AboutUsProps {}
 

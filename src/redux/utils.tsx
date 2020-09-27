@@ -12,6 +12,7 @@ export const actionNames = {
   signout: 'SIGNOUT',
   addToList: 'ADD_DATA_TO_LIST',
   updateMultiple: 'UPDATE_MULTIPLE_LIST',
+  signup: 'SIGNUP',
 };
 
 const aa = 'asdfbn';
@@ -113,6 +114,18 @@ export interface updateMultipleListsActionType {
   payload: contactGroupType[];
 }
 
+export interface signUpPayload {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phNo: string;
+}
+
+export interface signUpActionType {
+  type: string;
+  payload: signUpPayload;
+}
+
 export type actionType =
   | newListActionType
   | loginActionType
@@ -123,7 +136,8 @@ export type actionType =
   | upgradePlanActionType
   | signoutActionType
   | addDataToListActionType
-  | updateMultipleListsActionType;
+  | updateMultipleListsActionType
+  | signUpActionType;
 
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
