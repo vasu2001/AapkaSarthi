@@ -39,23 +39,21 @@ export const loginAction = (
 ): AppThunk => async (dispatch) => {
   // api call
   try {
-    const res = await axios.post(
-      '/accounts/registeremail',
-      {},
-      {
-        params: {
-          email,
-        },
-      },
-    );
-    // console.log(res.data);
+    const {
+      data: {Claims},
+    } = await axios.post('/accounts/login', {
+      UserName: email,
+      Password: password,
+      Source: 'MobileApp',
+    });
+    // console.log(Claims);
+
     dispatch(
       login({
-        userId: res.data.UserId,
-        firstName: res.data.FirstName,
-        lastName: res.data.LastName,
+        userId: Claims.UserId,
+        firstName: Claims.FirstName,
+        lastName: Claims.LastName,
         email,
-        gender: res.data.Gender,
       }),
     );
   } catch (err) {
@@ -65,7 +63,7 @@ export const loginAction = (
       showSnackbar(
         err.message == 'Network Error'
           ? 'Network Error'
-          : 'User already registered',
+          : 'Wrong email/password',
       );
     }, 250);
   }
@@ -122,6 +120,7 @@ export const resetPassAction = (
     dispatch(loginAction(email ?? '', password, callback));
   } catch (err) {
     console.log(err);
+
     setTimeout(() => {
       showSnackbar('Some error occured');
     }, 250);
@@ -130,7 +129,31 @@ export const resetPassAction = (
   }
 };
 
-export const forgotPassAction = (): AppThunk => () => {};
+export const forgotPassAction = (
+  email: string,
+  successCallback: () => void,
+  failCallback: () => void,
+): AppThunk => async () => {
+  try {
+    const res = await axios.post('/accounts/forgotpassword', {
+      Email: email,
+      EmailRedirectUrl: 'null',
+    });
+
+    setTimeout(() => {
+      showSnackbar('OTP has been sent to your email');
+    }, 250);
+
+    successCallback();
+  } catch (err) {
+    console.log(err);
+
+    setTimeout(() => {
+      showSnackbar('Some error occured');
+    }, 250);
+    failCallback();
+  }
+};
 
 export const signout = (): AppThunk => (dispatch) => {
   dispatch({

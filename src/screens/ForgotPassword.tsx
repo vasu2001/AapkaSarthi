@@ -7,6 +7,7 @@ import showSnackbar from '../utils/snackbar';
 import {useDispatch} from 'react-redux';
 import {LoadingModal} from '../components/LoadingModal';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {forgotPassAction} from '../redux/actions/auth';
 
 export interface ForgotPasswordScreenProps {
   navigation: StackNavigationProp<any>;
@@ -22,16 +23,23 @@ export const ForgotPasswordScreen: React.SFC<ForgotPasswordScreenProps> = ({
   const dispatch = useDispatch();
 
   const signup = (): void => {
-    // if (!mailFormat.test(email.trim())) {
-    //   showSnackbar('Enter a valid email');
-    // } else {
-    //   //   setLoading(true);
-    //   //   dispatch(
-    //   //     loginAction(email.trim(), () => {
-    //   //       setLoading(false);
-    //   //     }),
-    //   //   );
-    // }
+    if (!mailFormat.test(email.trim())) {
+      showSnackbar('Enter a valid email');
+    } else {
+      setLoading(true);
+      dispatch(
+        forgotPassAction(
+          email.trim(),
+          () => {
+            setLoading(false);
+            navigation.navigate('VerifyOtp');
+          },
+          () => {
+            setLoading(false);
+          },
+        ),
+      );
+    }
     navigation.navigate('VerifyOtp');
   };
 

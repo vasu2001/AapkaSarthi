@@ -6,7 +6,6 @@ import {
   submitCallPayload,
   deleteListPayload,
   loginActionPayload,
-  addDataToListActionType,
   addDataToListPayload,
   signUpActionType,
 } from './utils';
@@ -18,7 +17,6 @@ const initialState: stateType = {
   lastName: null,
   callData: [],
   activeList: -1,
-  gender: null,
   freePlan: true,
 };
 
@@ -79,7 +77,7 @@ export default (state = initialState, action: actionType): stateType => {
       return {...state, freePlan: false};
 
     case actionNames.signout:
-      return {...initialState, callData: state.callData};
+      return initialState;
 
     case actionNames.addToList:
       newState = {...state};

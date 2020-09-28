@@ -81,7 +81,7 @@ export const LoginScreen: React.SFC<LoginScreenProps> = ({navigation}) => {
           />
 
           <CustomButton
-            text="Next"
+            text="Login"
             onPress={login}
             style={styles.button}
             disabled={loading}

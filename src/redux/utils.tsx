@@ -37,7 +37,6 @@ export interface stateType {
   email: string | null;
   firstName: string | null;
   lastName: string | null;
-  gender: 'm' | 'f' | null;
   activeList: number;
   freePlan: boolean;
   callData: contactGroupType[];
@@ -48,7 +47,6 @@ export interface loginActionPayload {
   firstName: string | null;
   lastName: string | null;
   email: string;
-  gender: 'm' | 'f' | null;
 }
 
 export interface loginActionType {
