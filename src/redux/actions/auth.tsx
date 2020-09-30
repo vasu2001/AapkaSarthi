@@ -7,8 +7,10 @@ import {
 } from '../utils';
 import axiosConfig from '../../utils/axiosConfig';
 import showSnackbar from '../../utils/snackbar';
+import {NativeModules} from 'react-native';
 
 const axios = axiosConfig();
+const AllInOneSDKManager = NativeModules.AllInOneSDKManager;
 
 const login = (payload: loginActionPayload): loginActionType => {
   return {
