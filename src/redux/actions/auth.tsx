@@ -7,9 +7,11 @@ import {
 } from '../utils';
 import axiosConfig from '../../utils/axiosConfig';
 import showSnackbar from '../../utils/snackbar';
-import {NativeModules} from 'react-native';
+import {NativeModules, ToastAndroid} from 'react-native';
+import {mid, isStaging} from '../../utils/paytm';
 
 const axios = axiosConfig();
+
 const AllInOneSDKManager = NativeModules.AllInOneSDKManager;
 
 const login = (payload: loginActionPayload): loginActionType => {
@@ -164,9 +166,64 @@ export const signout = (): AppThunk => (dispatch) => {
   });
 };
 
-export const upgradePlan = (): AppThunk => (dispatch) => {
-  dispatch({
-    type: actionNames.upgradePlan,
-    payload: null,
-  });
+export const upgradePlan = (callback: () => void): AppThunk => async (
+  dispatch,
+  getState,
+) => {
+  try {
+    const {userId} = getState();
+
+    const displayResult = (result: string): void => {
+      console.log(result);
+      const res: {[x: string]: string} = {};
+
+      // populatng res with data using string manipulation
+      result
+        .slice(37, -2)
+        .split(', ')
+        .forEach((ele) => {
+          const [x, y] = ele.split('=');
+          res[x] = y;
+        });
+
+      console.log(res);
+
+      ToastAndroid.show(res.RESPMSG, ToastAndroid.LONG);
+
+      dispatch({
+        type: actionNames.upgradePlan,
+        payload: null,
+      });
+      callback();
+    };
+
+    const {
+      data: {TransactionToken, OrderGuid},
+      data,
+    } = await axios.post(`/users/${userId}/orders`, {
+      PlanId: 1,
+      Amount: 100,
+      CallBackUrlForGateway: 'null',
+    });
+
+    // console.log(data);
+
+    AllInOneSDKManager.startTransaction(
+      OrderGuid.toString(),
+      mid,
+      TransactionToken.toString(),
+      '100.00',
+      `https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=${OrderGuid.toString()}`,
+      isStaging,
+      displayResult,
+    );
+  } catch (err) {
+    console.log(err);
+
+    setTimeout(() => {
+      showSnackbar('Something went wrong');
+    }, 250);
+
+    callback();
+  }
 };

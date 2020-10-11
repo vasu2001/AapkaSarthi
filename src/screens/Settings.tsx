@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   StyleSheet,
@@ -13,6 +13,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useDispatch, useSelector} from 'react-redux';
 import {stateType} from '../redux/utils';
 import {signout, upgradePlan} from '../redux/actions/auth';
+import {LoadingModal} from '../components/LoadingModal';
 
 interface InformationScreenProps {
   navigation: DrawerNavigationProp<any>;
@@ -22,6 +23,8 @@ const PLAYSTORE_LINK =
   'https://play.google.com/store/apps/details?id=com.aapkasarthi&hl=en_IN';
 
 export function Settings({navigation}: InformationScreenProps) {
+  const [loading, setLoading] = useState(false);
+
   const {email, freePlan} = useSelector((state: stateType) => state);
   const dispatch = useDispatch();
 
@@ -40,7 +43,12 @@ export function Settings({navigation}: InformationScreenProps) {
         {freePlan && (
           <TouchableOpacity
             onPress={() => {
-              dispatch(upgradePlan());
+              setLoading(true);
+              dispatch(
+                upgradePlan(() => {
+                  setLoading(false);
+                }),
+              );
             }}>
             <Text
               style={[
@@ -98,6 +106,7 @@ export function Settings({navigation}: InformationScreenProps) {
           </Text>
         </TouchableOpacity>
       </ScrollView>
+      <LoadingModal visible={loading} />
     </>
   );
 }
