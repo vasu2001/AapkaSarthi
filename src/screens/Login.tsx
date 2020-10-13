@@ -28,8 +28,8 @@ export interface LoginScreenProps {
 }
 
 export const LoginScreen: React.SFC<LoginScreenProps> = ({navigation}) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('vasualternate+1@gmail.com');
+  const [password, setPassword] = useState('12345678');
   const [loading, setLoading] = useState(false);
   const mailFormat: RegExp = /^[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,4}$/;
   const dispatch = useDispatch();

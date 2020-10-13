@@ -7,7 +7,7 @@ import {
 } from '../utils';
 import axiosConfig from '../../utils/axiosConfig';
 import showSnackbar from '../../utils/snackbar';
-import {NativeModules, ToastAndroid} from 'react-native';
+import {NativeModules} from 'react-native';
 import {mid, isStaging} from '../../utils/paytm';
 
 const axios = axiosConfig();
@@ -58,6 +58,7 @@ export const loginAction = (
         firstName: Claims.FirstName,
         lastName: Claims.LastName,
         email,
+        // phNo: Claims.MobileNumber,
       }),
     );
   } catch (err) {
@@ -139,11 +140,6 @@ export const forgotPassAction = (
   failCallback: () => void,
 ): AppThunk => async () => {
   try {
-    const res = await axios.post('/accounts/forgotpassword', {
-      Email: email,
-      EmailRedirectUrl: 'null',
-    });
-
     setTimeout(() => {
       showSnackbar('OTP has been sent to your email');
     }, 250);
@@ -173,40 +169,64 @@ export const upgradePlan = (callback: () => void): AppThunk => async (
   try {
     const {userId} = getState();
 
-    const displayResult = (result: string): void => {
-      console.log(result);
-      const res: {[x: string]: string} = {};
+    const displayResult = async (result: string): Promise<void> => {
+      // console.log(result);
 
-      // populatng res with data using string manipulation
-      result
-        .slice(37, -2)
-        .split(', ')
-        .forEach((ele) => {
-          const [x, y] = ele.split('=');
-          res[x] = y;
-        });
+      if (result.slice(0, 28) === 'Payment Transaction response') {
+        const res: {[x: string]: string} = {};
 
-      console.log(res);
+        // populatng res with data using string manipulation
+        result
+          .slice(37, -2)
+          .split(', ')
+          .forEach((ele) => {
+            const [x, y] = ele.split('=');
+            res[x] = y;
+          });
+        console.log(res, OrderId, userId);
 
-      ToastAndroid.show(res.RESPMSG, ToastAndroid.LONG);
+        if (res.STATUS === 'TXN_SUCCESS') {
+          try {
+            const verifyRes = await axios.post(
+              `/users/${userId}/orders/${OrderId}/verify`,
+              {
+                CheckSumHash: res.CHECKSUMHASH,
+                FormKeyValue: res,
+              },
+            );
 
-      dispatch({
-        type: actionNames.upgradePlan,
-        payload: null,
-      });
+            console.log(verifyRes);
+
+            // dispatch({
+            //   type: actionNames.upgradePlan,
+            //   payload: null,
+            // });
+          } catch (err) {
+            console.log(err);
+            setTimeout(() => {
+              showSnackbar('Some error occurred');
+            }, 250);
+          }
+        } else {
+          setTimeout(() => {
+            showSnackbar(res.RESPMSG);
+          }, 250);
+        }
+      } else {
+        setTimeout(() => {
+          showSnackbar(result);
+        }, 250);
+      }
       callback();
     };
 
     const {
-      data: {TransactionToken, OrderGuid},
-      data,
+      data: {TransactionToken, OrderGuid, OrderId},
     } = await axios.post(`/users/${userId}/orders`, {
       PlanId: 1,
       Amount: 100,
       CallBackUrlForGateway: 'null',
     });
-
-    // console.log(data);
 
     AllInOneSDKManager.startTransaction(
       OrderGuid.toString(),

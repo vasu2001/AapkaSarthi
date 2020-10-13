@@ -1,30 +1,18 @@
-import React, {useState} from 'react';
-import {
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Share,
-  Linking,
-} from 'react-native';
-import {BLUE, GRAY_BACKGROUND, GRAY_DARK} from '../utils/colors';
+import React from 'react';
+import {Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useDispatch, useSelector} from 'react-redux';
-import {stateType} from '../redux/utils';
-import {signout, upgradePlan} from '../redux/actions/auth';
-import {LoadingModal} from '../components/LoadingModal';
 
-interface InformationScreenProps {
+import {BLUE, GRAY_BACKGROUND, GRAY_DARK} from '../utils/colors';
+import {stateType} from '../redux/utils';
+import {signout} from '../redux/actions/auth';
+
+interface SettingsScreenProps {
   navigation: DrawerNavigationProp<any>;
 }
 
-const PLAYSTORE_LINK =
-  'https://play.google.com/store/apps/details?id=com.aapkasarthi&hl=en_IN';
-
-export function Settings({navigation}: InformationScreenProps) {
-  const [loading, setLoading] = useState(false);
-
+export function Settings({navigation}: SettingsScreenProps) {
   const {email, freePlan} = useSelector((state: stateType) => state);
   const dispatch = useDispatch();
 
@@ -40,15 +28,14 @@ export function Settings({navigation}: InformationScreenProps) {
 
       <ScrollView style={styles.mainContainer}>
         <Text style={styles.aboutText}>{email}</Text>
+        {/* <Text style={styles.aboutText}>{phNo}</Text> */}
+        <Text style={styles.aboutText}>
+          {freePlan ? 'Free Plan' : 'Premium plan'}
+        </Text>
         {freePlan && (
           <TouchableOpacity
             onPress={() => {
-              setLoading(true);
-              dispatch(
-                upgradePlan(() => {
-                  setLoading(false);
-                }),
-              );
+              navigation.navigate('Upgrade Plan');
             }}>
             <Text
               style={[
@@ -72,41 +59,7 @@ export function Settings({navigation}: InformationScreenProps) {
             Signout
           </Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => {
-            Share.share(
-              {
-                message: PLAYSTORE_LINK,
-              },
-              {
-                dialogTitle: 'Share CallSpace',
-              },
-            );
-          }}>
-          <Text
-            style={[
-              styles.aboutText,
-              {color: BLUE, textDecorationLine: 'underline'},
-            ]}>
-            Share CallSpace
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => {
-            Linking.openURL(PLAYSTORE_LINK);
-          }}>
-          <Text
-            style={[
-              styles.aboutText,
-              {color: BLUE, textDecorationLine: 'underline'},
-            ]}>
-            Like CallSpace? Rate us on PlayStore
-          </Text>
-        </TouchableOpacity>
       </ScrollView>
-      <LoadingModal visible={loading} />
     </>
   );
 }

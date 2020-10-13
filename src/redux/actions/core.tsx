@@ -300,8 +300,8 @@ export const updateLists = (): AppThunk => async (dispatch, getState) => {
       (rec) => callData.find((e) => e.id == rec.GroupId) === undefined,
     );
 
-    console.log(userId);
-    console.log(listRes);
+    // console.log(userId);
+    // console.log(listRes);
 
     dispatch({
       type: actionNames.updateMultiple,
