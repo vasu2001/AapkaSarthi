@@ -170,7 +170,7 @@ export const upgradePlan = (callback: () => void): AppThunk => async (
     const {userId} = getState();
 
     const displayResult = async (result: string): Promise<void> => {
-      // console.log(result);
+      console.log(result);
 
       if (result.slice(0, 28) === 'Payment Transaction response') {
         const res: {[x: string]: string} = {};
@@ -194,13 +194,16 @@ export const upgradePlan = (callback: () => void): AppThunk => async (
                 FormKeyValue: res,
               },
             );
+            // console.log(verifyRes.data);
 
-            console.log(verifyRes);
-
-            // dispatch({
-            //   type: actionNames.upgradePlan,
-            //   payload: null,
-            // });
+            if (verifyRes.data?.Status === 'Success') {
+              dispatch({
+                type: actionNames.upgradePlan,
+                payload: null,
+              });
+            } else {
+              throw 'Verification failed';
+            }
           } catch (err) {
             console.log(err);
             setTimeout(() => {
@@ -225,7 +228,7 @@ export const upgradePlan = (callback: () => void): AppThunk => async (
     } = await axios.post(`/users/${userId}/orders`, {
       PlanId: 1,
       Amount: 100,
-      CallBackUrlForGateway: 'null',
+      // CallBackUrlForGateway: '',
     });
 
     AllInOneSDKManager.startTransaction(

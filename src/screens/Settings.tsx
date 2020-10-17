@@ -1,5 +1,11 @@
 import React from 'react';
-import {Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useDispatch, useSelector} from 'react-redux';
@@ -7,6 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {BLUE, GRAY_BACKGROUND, GRAY_DARK} from '../utils/colors';
 import {stateType} from '../redux/utils';
 import {signout} from '../redux/actions/auth';
+import {CustomButton} from '../components/CustomButton';
 
 interface SettingsScreenProps {
   navigation: DrawerNavigationProp<any>;
@@ -26,7 +33,7 @@ export function Settings({navigation}: SettingsScreenProps) {
         <AntDesign name="menu-unfold" size={25} color={GRAY_DARK} />
       </TouchableOpacity>
 
-      <ScrollView style={styles.mainContainer}>
+      <View style={styles.mainContainer}>
         <Text style={styles.aboutText}>{email}</Text>
         {/* <Text style={styles.aboutText}>{phNo}</Text> */}
         <Text style={styles.aboutText}>
@@ -47,19 +54,16 @@ export function Settings({navigation}: SettingsScreenProps) {
           </TouchableOpacity>
         )}
 
-        <TouchableOpacity
+        <View style={{flex: 1}} />
+
+        <CustomButton
+          text="Signout"
           onPress={() => {
             dispatch(signout());
-          }}>
-          <Text
-            style={[
-              styles.aboutText,
-              {color: BLUE, textDecorationLine: 'underline'},
-            ]}>
-            Signout
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
+          }}
+          style={styles.signout}
+        />
+      </View>
     </>
   );
 }
@@ -92,5 +96,8 @@ const styles = StyleSheet.create({
     top: 18,
     right: 20,
     elevation: 3,
+  },
+  signout: {
+    marginBottom: 20,
   },
 });

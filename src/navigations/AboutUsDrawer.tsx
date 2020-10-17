@@ -28,22 +28,30 @@ export function AboutUsDrawer() {
       drawerContent={(props) => {
         // console.log(props.state.index);
         const items = [
-          {label: 'Settings', icon: 'setting'},
-          {label: 'About Us', icon: 'info'},
-          {label: 'Terms and Conditions', icon: 'copy1'},
-          {label: 'Privacy Policy', icon: 'lock1'},
-          {label: 'Upgrade Plan', icon: 'totop'},
+          {label: 'Settings', icon: 'setting', name: 'Settings'},
+          {label: 'About Us', icon: 'info', name: 'About Us'},
+          {
+            label: 'Terms and Conditions',
+            icon: 'copy1',
+            name: 'Terms and Conditions',
+          },
+          {label: 'Privacy Policy', icon: 'lock1', name: 'Privacy Policy'},
+          {
+            label: freePlan ? 'Upgrade Plan' : 'Renew Plan',
+            icon: 'totop',
+            name: 'Upgrade Plan',
+          },
         ];
         return (
           <ScrollView>
-            {items.map(({label, icon}, i) => (
+            {items.map(({label, icon, name}, i) => (
               <DrawerItem
                 label={label}
                 icon={({size, color}) => (
                   <AntDesign name={icon} size={size} color={color} />
                 )}
                 onPress={() => {
-                  props.navigation.navigate(label);
+                  props.navigation.navigate(name);
                 }}
                 labelStyle={{fontFamily: 'Montserrat-Medium', marginLeft: -10}}
                 inactiveTintColor={i == props.state.index ? WHITE : GRAY_DARK}
@@ -90,9 +98,7 @@ export function AboutUsDrawer() {
       <Drawer.Screen component={AboutUs} name="About Us" />
       <Drawer.Screen component={Tnc} name="Terms and Conditions" />
       <Drawer.Screen component={PrivacyPolicy} name="Privacy Policy" />
-      {freePlan && (
-        <Drawer.Screen component={UpgradePlan} name="Upgrade Plan" />
-      )}
+      <Drawer.Screen component={UpgradePlan} name="Upgrade Plan" />
     </Drawer.Navigator>
   );
 }

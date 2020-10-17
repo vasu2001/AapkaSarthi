@@ -28,7 +28,9 @@ export function UpgradePlan({navigation}: UpgradePlanProps) {
 
   return (
     <>
-      <Text style={styles.heading}>Upgrade Plan</Text>
+      <Text style={styles.heading}>
+        {freePlan ? 'Upgrade Plan' : 'Renew Plan'}
+      </Text>
 
       <TouchableOpacity
         style={styles.hamburger}
@@ -39,12 +41,13 @@ export function UpgradePlan({navigation}: UpgradePlanProps) {
       <LoadingModal visible={loading} />
 
       <View style={styles.body}>
-        <View style={[styles.planBox, freePlan ? styles.activePlanBox : null]}>
-          <Text style={styles.activeLabel}>Active</Text>
+        <View style={[styles.planBox, freePlan && styles.activePlanBox]}>
+          {freePlan && <Text style={styles.activeLabel}>Active</Text>}
           <Text>Free Plan</Text>
         </View>
 
-        <View style={[styles.planBox, !freePlan ? styles.activePlanBox : null]}>
+        <View style={[styles.planBox, !freePlan && styles.activePlanBox]}>
+          {!freePlan && <Text style={styles.activeLabel}>Active</Text>}
           <Text>Premium Plan</Text>
         </View>
       </View>

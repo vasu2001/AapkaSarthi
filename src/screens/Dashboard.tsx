@@ -8,16 +8,17 @@ import {
   AppStateStatus,
   TouchableOpacity,
 } from 'react-native';
-import {GRAY_BACKGROUND, GRAY, PINK, PURPLE, BLUE, RED} from '../utils/colors';
 import {CustomButton} from '../components/CustomButton';
+import {useSelector, useDispatch} from 'react-redux';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import Pie from 'react-native-pie';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
+
+import {GRAY_BACKGROUND, GRAY, PINK, PURPLE, BLUE, RED} from '../utils/colors';
 import {CallFeedbackModal} from '../components/CallFeeddackModal';
-import {useSelector, useDispatch} from 'react-redux';
 import {stateType} from '../redux/utils';
 import showSnackbar from '../utils/snackbar';
 import {TimerModal} from '../components/TimerModal';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {LoadingModal} from '../components/LoadingModal';
 import {StaticHeader} from '../components/StaticHeader';
 import {submitCallAction} from '../redux/actions/core';
@@ -92,18 +93,6 @@ export function Dashboard({navigation}: DashboardProps) {
     });
 
     setFrequency(newFrequency);
-
-    // if (phoneList.length === 0) setActiveIndex(-1);
-
-    // if (activeIndex == -1) {
-    //   for (let i = 0; i < phoneList.length; i++) {
-    //     if (phoneList[i].status !== 'done') {
-    //       console.log('activeIndex after adding ' + i);
-    //       setActiveIndex(i);
-    //       break;
-    //     }
-    //   }
-    // }
   }, [state]);
 
   //timeout handler for making calls
