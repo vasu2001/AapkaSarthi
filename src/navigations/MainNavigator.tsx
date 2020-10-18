@@ -21,7 +21,7 @@ export function MainNavigator() {
     }
   }, [userId]);
 
-  console.log('render', route);
+  // console.log('render', route);
 
   return userId ? <BottomNavigator /> : <AuthNavigator initialRoute={route} />;
 }

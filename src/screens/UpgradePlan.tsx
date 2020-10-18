@@ -57,11 +57,7 @@ export function UpgradePlan({navigation}: UpgradePlanProps) {
         text={freePlan ? 'Upgrade Plan' : 'Renew Plan'}
         onPress={() => {
           setLoading(true);
-          dispatch(
-            upgradePlan(() => {
-              setLoading(false);
-            }),
-          );
+          dispatch(upgradePlan(setLoading));
         }}
       />
     </>

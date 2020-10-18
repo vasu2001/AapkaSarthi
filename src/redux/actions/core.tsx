@@ -1,6 +1,4 @@
 import {
-  loginActionPayload,
-  loginActionType,
   actionNames,
   contactGroupType,
   newListActionType,
@@ -18,7 +16,7 @@ import axiosConfig from '../../utils/axiosConfig';
 import showSnackbar from '../../utils/snackbar';
 
 const axios = axiosConfig();
-const freeLimit = 50; ///limit of contacts on free plan
+const freeLimit = 25; ///limit of contacts on free plan
 
 const newList = (payload: contactGroupType): newListActionType => {
   return {
@@ -93,6 +91,7 @@ export const newListAction = (
         name,
         list: finalList,
         id: groupId,
+        loaded: true,
       }),
     );
 
@@ -211,6 +210,7 @@ export const uploadFileAction = (
       newList({
         name,
         id: groupId,
+        loaded: true,
         list: getList.data.Data.map(
           (ele: any): contactType => ({
             id: ele.CalleeId,
@@ -244,9 +244,9 @@ export const changeActiveListAction = (
 ): AppThunk => async (dispatch, getState) => {
   try {
     const {userId, callData, freePlan} = getState();
-    const {id, list} = callData[newIndex];
+    const {id, loaded} = callData[newIndex];
 
-    if (list.length == 0) {
+    if (!loaded) {
       //get list and save it
 
       const getList = await axios.get(`/users/${userId}/groups/${id}/callees`, {
@@ -255,6 +255,7 @@ export const changeActiveListAction = (
           take: freePlan ? freeLimit : 1000,
         },
       });
+      // console.log(getList.data);
 
       dispatch(
         addDataToList(
@@ -310,6 +311,7 @@ export const updateLists = (): AppThunk => async (dispatch, getState) => {
           name: e.GroupName,
           id: e.GroupId,
           list: [],
+          loaded: false,
         }),
       ),
     });

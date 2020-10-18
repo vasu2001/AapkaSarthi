@@ -84,6 +84,7 @@ export default (state = initialState, action: actionType): stateType => {
       newState = {...state};
       const {index, list} = action.payload as addDataToListPayload;
       newState.callData[index].list = list;
+      newState.callData[index].loaded = true;
       return newState;
 
     case actionNames.updateMultiple:

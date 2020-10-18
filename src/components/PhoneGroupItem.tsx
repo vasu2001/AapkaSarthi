@@ -30,7 +30,7 @@ export function PhoneGroupItem({
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={styles.text1}>No of Contacts</Text>
           <Text style={styles.text2}>
-            {noOfContacts > 0 ? noOfContacts : '??'}
+            {noOfContacts >= 0 ? noOfContacts : '??'}
           </Text>
         </View>
       </View>

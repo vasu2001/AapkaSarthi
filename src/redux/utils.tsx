@@ -30,6 +30,7 @@ export interface contactGroupType {
   name: string | null;
   id: string;
   list: contactType[];
+  loaded: boolean;
 }
 
 export interface stateType {

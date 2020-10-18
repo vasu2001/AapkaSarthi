@@ -9,6 +9,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import Autocomplete from 'react-native-autocomplete-input';
+import showSnackbar from '../utils/snackbar';
 
 const suggestionData = [
   'Call not Picked',
@@ -208,7 +209,11 @@ export function CallFeedbackModal({
         mode="datetime"
         minimumDate={moment().toDate()}
         onConfirm={(date) => {
-          setReschedule(date.toISOString());
+          if (date <= new Date()) {
+            showSnackbar('Cannot reschedule to past');
+          } else {
+            setReschedule(date.toISOString());
+          }
           setDateTimeModal(false);
         }}
         onCancel={() => {

@@ -22,8 +22,10 @@ export const VerifyOtpScreen: React.SFC<VerifyOtpScreenProps> = () => {
   const setPass = (): void => {
     if (!otp) {
       showSnackbar('Enter OTP');
-    } else if (password1.length < 4 || password1 !== password2) {
-      showSnackbar('Enter valid password');
+    } else if (password1.length < 4) {
+      showSnackbar('Password must have minimum 4 characters');
+    } else if (password1 !== password2) {
+      showSnackbar('Passwords donot match');
     } else {
       setLoading(true);
       dispatch(

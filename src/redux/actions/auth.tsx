@@ -102,7 +102,7 @@ export const signUpAction = (
     console.log(err);
 
     setTimeout(() => {
-      showSnackbar('Some error occured');
+      showSnackbar('Already Registered');
     }, 250);
     failCallback();
   }
@@ -162,7 +162,7 @@ export const signout = (): AppThunk => (dispatch) => {
   });
 };
 
-export const upgradePlan = (callback: () => void): AppThunk => async (
+export const upgradePlan = (loading: (x: boolean) => void): AppThunk => async (
   dispatch,
   getState,
 ) => {
@@ -170,7 +170,8 @@ export const upgradePlan = (callback: () => void): AppThunk => async (
     const {userId} = getState();
 
     const displayResult = async (result: string): Promise<void> => {
-      console.log(result);
+      // console.log(result);
+      loading(true);
 
       if (result.slice(0, 28) === 'Payment Transaction response') {
         const res: {[x: string]: string} = {};
@@ -183,7 +184,7 @@ export const upgradePlan = (callback: () => void): AppThunk => async (
             const [x, y] = ele.split('=');
             res[x] = y;
           });
-        console.log(res, OrderId, userId);
+        // console.log(res, OrderId, userId);
 
         if (res.STATUS === 'TXN_SUCCESS') {
           try {
@@ -220,7 +221,7 @@ export const upgradePlan = (callback: () => void): AppThunk => async (
           showSnackbar(result);
         }, 250);
       }
-      callback();
+      loading(false);
     };
 
     const {
@@ -246,7 +247,6 @@ export const upgradePlan = (callback: () => void): AppThunk => async (
     setTimeout(() => {
       showSnackbar('Something went wrong');
     }, 250);
-
-    callback();
   }
+  loading(false);
 };

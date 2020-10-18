@@ -79,7 +79,7 @@ export function PhoneList({navigation}: PhoneListProps) {
           renderItem={({item, index}) => (
             <PhoneGroupItem
               name={item.name ?? ''}
-              noOfContacts={item.list.length}
+              noOfContacts={item.loaded ? item.list.length : -1}
               deleteContact={() => {
                 deleteList(index);
               }}
