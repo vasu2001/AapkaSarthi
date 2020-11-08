@@ -8,17 +8,21 @@ import {useDispatch} from 'react-redux';
 import {LoadingModal} from '../components/LoadingModal';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {signUpAction} from '../redux/actions/auth';
+import SelectPlan from '../components/SelectPlan';
 
 export interface SignUpScreenProps {
   navigation: StackNavigationProp<any>;
 }
 
-export const SignUpScreen: React.SFC<SignUpScreenProps> = ({navigation}) => {
+export const SignUpScreen: React.FunctionComponent<SignUpScreenProps> = ({
+  navigation,
+}) => {
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phNo, setPhNo] = useState('');
   const [loading, setLoading] = useState(false);
+  const [plan, setPlan] = useState(0);
 
   const mailFormat: RegExp = /^[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,4}$/;
   const dispatch = useDispatch();
@@ -40,7 +44,7 @@ export const SignUpScreen: React.SFC<SignUpScreenProps> = ({navigation}) => {
           phNo,
           () => {
             setLoading(false);
-            navigation.navigate('VerifyOtp');
+            navigation.navigate('VerifyOtp', {plan});
           },
           () => {
             setLoading(false);
@@ -100,6 +104,12 @@ export const SignUpScreen: React.SFC<SignUpScreenProps> = ({navigation}) => {
             maxLength={10}
           />
 
+          <SelectPlan
+            style={styles.selectPlan}
+            value={plan}
+            setValue={setPlan}
+          />
+
           <CustomButton
             text="Sign Up"
             onPress={signup}
@@ -139,5 +149,8 @@ const styles = StyleSheet.create({
   },
   button: {
     marginVertical: 10,
+  },
+  selectPlan: {
+    marginTop: -10,
   },
 });

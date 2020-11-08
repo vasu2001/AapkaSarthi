@@ -39,7 +39,8 @@ const signUp = (
 export const loginAction = (
   email: string,
   password: string,
-  callback: () => void,
+  successCallback: () => void,
+  failCallback: () => void,
 ): AppThunk => async (dispatch) => {
   // api call
   try {
@@ -61,8 +62,10 @@ export const loginAction = (
         // phNo: Claims.MobileNumber,
       }),
     );
+    successCallback();
   } catch (err) {
     console.log(JSON.stringify(err));
+    failCallback();
     // console.log('showing login failed snackbar');
     setTimeout(() => {
       showSnackbar(
@@ -72,7 +75,6 @@ export const loginAction = (
       );
     }, 250);
   }
-  callback();
 };
 
 export const signUpAction = (
@@ -111,7 +113,8 @@ export const signUpAction = (
 export const resetPassAction = (
   otp: string,
   password: string,
-  callback: () => void,
+  successCallback: () => void,
+  failCallback: () => void,
 ): AppThunk => async (dispatch, getState) => {
   try {
     const {email} = getState();
@@ -122,15 +125,14 @@ export const resetPassAction = (
       ResetToken: otp,
     });
 
-    dispatch(loginAction(email ?? '', password, callback));
+    dispatch(loginAction(email ?? '', password, successCallback, failCallback));
   } catch (err) {
     console.log(err);
+    failCallback();
 
     setTimeout(() => {
       showSnackbar('Some error occured');
     }, 250);
-
-    callback();
   }
 };
 

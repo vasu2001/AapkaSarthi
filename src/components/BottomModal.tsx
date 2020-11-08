@@ -7,8 +7,10 @@ import {
   StatusBar,
 } from 'react-native';
 import {LAVENDER, MODAL_BACKDROP} from '../utils/colors';
-import {BannerAd, TestIds, BannerAdSize} from '@react-native-firebase/admob';
+import {BannerAd, BannerAdSize, TestIds} from '@react-native-firebase/admob';
 import {bannerUnitId2} from '../utils/admob';
+import {useSelector} from 'react-redux';
+import {stateType} from '../redux/utils';
 
 interface BottomModalProps {
   visible: boolean;
@@ -27,6 +29,7 @@ const BottomModal = ({
   children,
   validation = () => true,
 }: BottomModalProps) => {
+  const {freePlan} = useSelector((store: stateType) => store);
   const animate = useRef(new Animated.Value(-contentHeight)).current;
 
   useEffect(() => {
@@ -57,15 +60,17 @@ const BottomModal = ({
             flex: 1,
             backgroundColor: MODAL_BACKDROP,
           }}>
-          <View style={{position: 'absolute', top: 0}}>
-            <BannerAd
-              unitId={bannerUnitId2}
-              size={BannerAdSize.FULL_BANNER}
-              requestOptions={{
-                requestNonPersonalizedAdsOnly: true,
-              }}
-            />
-          </View>
+          {freePlan && (
+            <View style={{position: 'absolute', top: 0}}>
+              <BannerAd
+                unitId={bannerUnitId2}
+                size={BannerAdSize.FULL_BANNER}
+                requestOptions={{
+                  requestNonPersonalizedAdsOnly: true,
+                }}
+              />
+            </View>
+          )}
           <Animated.View
             style={{
               position: 'absolute',

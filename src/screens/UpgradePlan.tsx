@@ -26,6 +26,11 @@ export function UpgradePlan({navigation}: UpgradePlanProps) {
 
   const [loading, setLoading] = useState(false);
 
+  const onUpgrade = () => {
+    setLoading(true);
+    dispatch(upgradePlan(setLoading));
+  };
+
   return (
     <>
       <Text style={styles.heading}>
@@ -46,19 +51,19 @@ export function UpgradePlan({navigation}: UpgradePlanProps) {
           <Text>Free Plan</Text>
         </View>
 
-        <View style={[styles.planBox, !freePlan && styles.activePlanBox]}>
+        <TouchableOpacity
+          disabled={!freePlan}
+          onPress={onUpgrade}
+          style={[styles.planBox, !freePlan && styles.activePlanBox]}>
           {!freePlan && <Text style={styles.activeLabel}>Active</Text>}
           <Text>Premium Plan</Text>
-        </View>
+        </TouchableOpacity>
       </View>
 
       <CustomButton
         style={styles.upgradeButton}
         text={freePlan ? 'Upgrade Plan' : 'Renew Plan'}
-        onPress={() => {
-          setLoading(true);
-          dispatch(upgradePlan(setLoading));
-        }}
+        onPress={onUpgrade}
       />
     </>
   );

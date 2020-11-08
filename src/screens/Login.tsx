@@ -27,7 +27,9 @@ export interface LoginScreenProps {
   navigation: StackNavigationProp<any>;
 }
 
-export const LoginScreen: React.SFC<LoginScreenProps> = ({navigation}) => {
+export const LoginScreen: React.FunctionComponent<LoginScreenProps> = ({
+  navigation,
+}) => {
   const [email, setEmail] = useState('vasualternate+1@gmail.com');
   const [password, setPassword] = useState('12345678');
   const [loading, setLoading] = useState(false);
@@ -42,9 +44,16 @@ export const LoginScreen: React.SFC<LoginScreenProps> = ({navigation}) => {
     } else {
       setLoading(true);
       dispatch(
-        loginAction(email.trim(), password, () => {
-          setLoading(false);
-        }),
+        loginAction(
+          email.trim(),
+          password,
+          () => {
+            setLoading(false);
+          },
+          () => {
+            setLoading(false);
+          },
+        ),
       );
     }
   };

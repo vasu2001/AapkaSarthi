@@ -8,7 +8,7 @@ interface WelcomeScreenProps {
   width: number;
 }
 
-const WelcomeScreen: React.SFC<WelcomeScreenProps> = ({
+const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = ({
   width,
 }: WelcomeScreenProps) => {
   return (

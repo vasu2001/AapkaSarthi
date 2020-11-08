@@ -1,22 +1,25 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, ImageBackground, Image} from 'react-native';
-import {BLUE, GRAY_BACKGROUND, GRAY} from '../utils/colors';
+import {GRAY_BACKGROUND} from '../utils/colors';
 import CustomInput from '../components/CustomInput';
 import {CustomButton} from '../components/CustomButton';
 import showSnackbar from '../utils/snackbar';
 import {useDispatch} from 'react-redux';
 import {LoadingModal} from '../components/LoadingModal';
-import {resetPassAction} from '../redux/actions/auth';
+import {resetPassAction, upgradePlan} from '../redux/actions/auth';
 
-export interface VerifyOtpScreenProps {}
+export interface VerifyOtpScreenProps {
+  route: {params: {plan: number}};
+}
 
-export const VerifyOtpScreen: React.SFC<VerifyOtpScreenProps> = () => {
+export const VerifyOtpScreen: React.FunctionComponent<VerifyOtpScreenProps> = ({
+  route,
+}) => {
   const [otp, setOtp] = useState('');
   const [password1, setPassword1] = useState('');
   const [password2, setPassword2] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const mailFormat: RegExp = /^[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,4}$/;
   const dispatch = useDispatch();
 
   const setPass = (): void => {
@@ -29,9 +32,18 @@ export const VerifyOtpScreen: React.SFC<VerifyOtpScreenProps> = () => {
     } else {
       setLoading(true);
       dispatch(
-        resetPassAction(otp, password1, () => {
-          setLoading(false);
-        }),
+        resetPassAction(
+          otp,
+          password1,
+          () => {
+            if (route.params.plan === 1) {
+              dispatch(upgradePlan(setLoading));
+            }
+          },
+          () => {
+            setLoading(false);
+          },
+        ),
       );
     }
   };
@@ -51,7 +63,7 @@ export const VerifyOtpScreen: React.SFC<VerifyOtpScreenProps> = () => {
           <CustomInput
             value={otp}
             onChangeText={setOtp}
-            validation={(text: string): boolean => otp.trim().length === 4}
+            validation={(): boolean => otp.trim().length === 4}
             placeholder="OTP"
             placeholderTextColor="grey"
             style={styles.input}

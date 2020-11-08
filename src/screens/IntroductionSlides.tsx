@@ -21,7 +21,9 @@ export interface IntroductionSlidesProps {
 const N = 10;
 const {width} = Dimensions.get('screen');
 
-export function IntroductionSlides({navigation}: IntroductionSlidesProps) {
+export const IntroductionSlides: React.FunctionComponent<IntroductionSlidesProps> = ({
+  navigation,
+}: IntroductionSlidesProps) => {
   const scrollViewRef = useRef<ScrollView | null>();
   const [scrollPos, setScrollPos] = useState(0);
 
@@ -106,7 +108,7 @@ export function IntroductionSlides({navigation}: IntroductionSlidesProps) {
       )}
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   lastButton: {

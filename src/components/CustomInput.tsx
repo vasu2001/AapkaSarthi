@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {TextInput, TextStyle, StyleSheet, StyleProp} from 'react-native';
 import {PRIMARY_BLUE, RED, GRAY} from '../utils/colors';
 
@@ -31,11 +31,11 @@ interface CustomInputProps {
   onSubmitEditing?: () => void;
 }
 
-const CustomInput: React.SFC<CustomInputProps> = ({
+const CustomInput: React.FunctionComponent<CustomInputProps> = ({
   value,
   onChangeText,
   style,
-  validation = (text) => true,
+  validation = () => true,
   placeholder = '',
   placeholderTextColor = GRAY,
   secureTextEntry = false,
@@ -46,20 +46,21 @@ const CustomInput: React.SFC<CustomInputProps> = ({
   onSubmitEditing,
 }: CustomInputProps) => {
   const [validated, setValidated] = useState(true);
-  let timeout: NodeJS.Timeout | null = null;
+  // let timeoutRef.current: NodeJS.Timeout | null = null;
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     if (value.length > 0) {
-      timeout && clearTimeout(timeout);
-      timeout = setTimeout(() => {
+      timeoutRef.current && clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => {
         setValidated(validation(value));
       }, 500);
     }
 
     return () => {
-      timeout && clearTimeout(timeout);
+      timeoutRef.current && clearTimeout(timeoutRef.current);
     };
-  }, [value]);
+  }, [value, validation]);
 
   return (
     <TextInput

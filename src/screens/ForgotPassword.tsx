@@ -13,7 +13,7 @@ export interface ForgotPasswordScreenProps {
   navigation: StackNavigationProp<any>;
 }
 
-export const ForgotPasswordScreen: React.SFC<ForgotPasswordScreenProps> = ({
+export const ForgotPasswordScreen: React.FunctionComponent<ForgotPasswordScreenProps> = ({
   navigation,
 }) => {
   const [email, setEmail] = useState('');
