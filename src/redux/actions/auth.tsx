@@ -175,19 +175,8 @@ export const upgradePlan = (loading: (x: boolean) => void): AppThunk => async (
       // console.log(result);
       loading(true);
 
-      if (result.slice(0, 28) === 'Payment Transaction response') {
-        const res: {[x: string]: string} = {};
-
-        // populatng res with data using string manipulation
-        result
-          .slice(37, -2)
-          .split(', ')
-          .forEach((ele) => {
-            const [x, y] = ele.split('=');
-            res[x] = y;
-          });
-        // console.log(res, OrderId, userId);
-
+      const res = parsePaytmResponse(result);
+      if (res) {
         if (res.STATUS === 'TXN_SUCCESS') {
           try {
             const verifyRes = await axios.post(
@@ -214,11 +203,13 @@ export const upgradePlan = (loading: (x: boolean) => void): AppThunk => async (
             }, 250);
           }
         } else {
+          console.log(res);
           setTimeout(() => {
             showSnackbar(res.RESPMSG);
           }, 250);
         }
       } else {
+        console.log(result);
         setTimeout(() => {
           showSnackbar(result);
         }, 250);
@@ -251,4 +242,29 @@ export const upgradePlan = (loading: (x: boolean) => void): AppThunk => async (
     }, 250);
   }
   loading(false);
+};
+
+const parsePaytmResponse = (result: string) => {
+  let res: {[x: string]: string} | null;
+
+  if (result.slice(0, 28) === 'Payment Transaction response') {
+    // populatng res with data using string manipulation
+    res = {};
+    result
+      .slice(37, -2)
+      .split(', ')
+      .forEach((ele) => {
+        const [x, y] = ele.split('=');
+        res![x] = y;
+      });
+  } else {
+    try {
+      res = JSON.parse(result.trim());
+    } catch (err) {
+      res = null;
+    }
+  }
+  // console.log('parsed', res);
+
+  return res;
 };
