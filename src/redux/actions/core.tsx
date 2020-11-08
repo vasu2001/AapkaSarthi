@@ -14,6 +14,7 @@ import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 import axiosConfig from '../../utils/axiosConfig';
 import showSnackbar from '../../utils/snackbar';
+import {call} from 'react-native-reanimated';
 
 const axios = axiosConfig();
 const freeLimit = 25; ///limit of contacts on free plan
@@ -231,12 +232,32 @@ export const uploadFileAction = (
   callback();
 };
 
-export const deleteListAction = (listIndex: number): deleteListActionType => ({
-  type: actionNames.deleteList,
-  payload: {
-    listIndex,
-  },
-});
+export const deleteListAction = (
+  listIndex: number,
+  callback: () => void,
+): AppThunk => async (dispatch, getState) => {
+  try {
+    const {userId, callData} = getState();
+    const groupId = callData[listIndex].id;
+
+    await axios.delete(`/users/${userId}/calleesgroup/${groupId}`);
+
+    dispatch({
+      type: actionNames.deleteList,
+      payload: {
+        listIndex,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+
+    setTimeout(() => {
+      showSnackbar('Something went wrong');
+    }, 250);
+  }
+
+  callback();
+};
 
 export const changeActiveListAction = (
   newIndex: number,
@@ -284,10 +305,31 @@ export const changeActiveListAction = (
   callback();
 };
 
-export const deleteAllAction = (): deleteAllActionType => ({
-  type: actionNames.deleteAll,
-  payload: null,
-});
+export const deleteAllAction = (callback: () => void): AppThunk => async (
+  dispatch,
+  getState,
+) => {
+  try {
+    const {userId, callData} = getState();
+
+    for (const {id} of callData) {
+      await axios.delete(`/users/${userId}/calleesgroup/${id}`);
+    }
+
+    dispatch({
+      type: actionNames.deleteAll,
+      payload: null,
+    });
+  } catch (err) {
+    console.log(err);
+
+    setTimeout(() => {
+      showSnackbar('Something went wrong');
+    }, 250);
+  }
+
+  callback();
+};
 
 export const updateLists = (): AppThunk => async (dispatch, getState) => {
   try {

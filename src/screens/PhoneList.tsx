@@ -32,7 +32,12 @@ export function PhoneList({navigation}: PhoneListProps) {
   const dispatch = useDispatch();
 
   const deleteList = (listIndex: number) => {
-    dispatch(deleteListAction(listIndex));
+    setLoading(true);
+    dispatch(
+      deleteListAction(listIndex, () => {
+        setLoading(false);
+      }),
+    );
   };
 
   const newListDisabled = freePlan && callData.length > 0;
@@ -54,7 +59,12 @@ export function PhoneList({navigation}: PhoneListProps) {
           setDeleteModal(false);
         }}
         onYes={() => {
-          dispatch(deleteAllAction());
+          setLoading(true);
+          dispatch(
+            deleteAllAction(() => {
+              setLoading(false);
+            }),
+          );
           setDeleteModal(false);
         }}
       />
