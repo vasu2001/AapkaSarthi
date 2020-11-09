@@ -6,7 +6,8 @@ import {CustomButton} from '../components/CustomButton';
 import showSnackbar from '../utils/snackbar';
 import {useDispatch} from 'react-redux';
 import {LoadingModal} from '../components/LoadingModal';
-import {resetPassAction, upgradePlan} from '../redux/actions/auth';
+import {resetPassAction} from '../redux/actions/auth';
+import {upgradePlan} from '../redux/actions/payment';
 
 export interface VerifyOtpScreenProps {
   route: {params: {plan: number}};

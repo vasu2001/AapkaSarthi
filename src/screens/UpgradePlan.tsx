@@ -14,7 +14,7 @@ import {
 import {stateType} from '../redux/utils';
 import {CustomButton} from '../components/CustomButton';
 import {LoadingModal} from '../components/LoadingModal';
-import {upgradePlan} from '../redux/actions/auth';
+import {upgradePlan} from '../redux/actions/payment';
 
 export interface UpgradePlanProps {
   navigation: DrawerNavigationProp<any>;
