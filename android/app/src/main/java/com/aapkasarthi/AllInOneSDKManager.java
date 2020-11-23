@@ -67,7 +67,7 @@ public class AllInOneSDKManager extends ReactContextBaseJavaModule implements Ac
 
             @Override
             public void networkNotAvailable() {
-                setResult("networkNotAvailable", call);
+                setResult("Check your internet connection", call);
             }
 
             @Override
@@ -92,7 +92,7 @@ public class AllInOneSDKManager extends ReactContextBaseJavaModule implements Ac
 
             @Override
             public void onBackPressedCancelTransaction() {
-                setResult("onBackPressedCancelTransaction", call);
+                setResult("Transcation Cancelled", call);
             }
 
             @Override

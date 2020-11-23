@@ -109,10 +109,14 @@ export function PhoneList({navigation}: PhoneListProps) {
               <CustomButton
                 text="Add a new list"
                 onPress={() => {
-                  setAddModal(true);
+                  if (newListDisabled) {
+                    navigation.navigate('Settings', {
+                      screen: 'Upgrade Plan',
+                    });
+                  } else setAddModal(true);
                 }}
                 style={styles.listFooter}
-                disabled={newListDisabled}
+                // disabled={newListDisabled}
               />
               {newListDisabled && (
                 <Text style={styles.freePlanText}>

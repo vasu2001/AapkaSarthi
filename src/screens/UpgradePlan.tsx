@@ -15,6 +15,7 @@ import {stateType} from '../redux/utils';
 import {CustomButton} from '../components/CustomButton';
 import {LoadingModal} from '../components/LoadingModal';
 import {upgradePlan} from '../redux/actions/payment';
+import showSnackbar from '../utils/snackbar';
 
 export interface UpgradePlanProps {
   navigation: DrawerNavigationProp<any>;
@@ -27,8 +28,12 @@ export function UpgradePlan({navigation}: UpgradePlanProps) {
   const [loading, setLoading] = useState(false);
 
   const onUpgrade = () => {
-    setLoading(true);
-    dispatch(upgradePlan(setLoading));
+    if (freePlan) {
+      setLoading(true);
+      dispatch(upgradePlan(setLoading));
+    } else {
+      showSnackbar('Current plan not expired');
+    }
   };
 
   return (
@@ -92,7 +97,7 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
-    flexDirection: 'row',
+    // flexDirection: 'row',
   },
   planBox: {
     flex: 1,

@@ -18,7 +18,11 @@ export function LoadingModal({visible}: LoadingModalProps) {
           alignItems: 'center',
         }}>
         <View style={{backgroundColor: 'white', borderRadius: 15, padding: 30}}>
-          <ActivityIndicator size="large" color={PRIMARY_BLUE} />
+          <ActivityIndicator
+            size="large"
+            color={PRIMARY_BLUE}
+            animating={true}
+          />
         </View>
       </View>
     </Modal>

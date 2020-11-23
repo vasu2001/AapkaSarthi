@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {NavigationProp} from '@react-navigation/native';
 import WelcomeScreen from './Welcome';
 import {PRIMARY_BLUE, WHITE, BLUE} from '../utils/colors';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export interface IntroductionSlidesProps {
   navigation: NavigationProp<any>;
@@ -44,6 +45,20 @@ export const IntroductionSlides: React.FunctionComponent<IntroductionSlidesProps
   const getStarted = () => {
     navigation.navigate('Login');
   };
+
+  useEffect(() => {
+    AsyncStorage.getItem('firstOpen')
+      .then((firstOpen) => {
+        if (firstOpen) {
+          getStarted();
+        } else {
+          AsyncStorage.setItem('firstOpen', 'yes');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <>
