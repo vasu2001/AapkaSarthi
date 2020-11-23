@@ -3,19 +3,17 @@ import {Action} from 'redux';
 
 export const actionNames = {
   login: 'LOGIN',
+  signup: 'SIGNUP',
+  signout: 'SIGNOUT',
+  upgradePlan: 'UPGRADE_PLAN',
   newList: 'ADD_LIST',
-  submitCall: 'SUBMIT_CALL',
   deleteList: 'DELETE_LIST',
   changeActiveList: 'ACTIVE_LIST',
   deleteAll: 'DELETE_ALL',
-  upgradePlan: 'UPGRADE_PLAN',
-  signout: 'SIGNOUT',
   addToList: 'ADD_DATA_TO_LIST',
   updateMultiple: 'UPDATE_MULTIPLE_LIST',
-  signup: 'SIGNUP',
+  submitCall: 'SUBMIT_CALL',
 };
-
-const aa = 'asdfbn';
 
 export interface contactType {
   name: string;
@@ -40,7 +38,7 @@ export interface stateType {
   lastName: string | null;
   activeList: number;
   freePlan: boolean;
-  // phNo: string;
+  phone: string;
   callData: contactGroupType[];
 }
 
@@ -49,7 +47,7 @@ export interface loginActionPayload {
   firstName: string | null;
   lastName: string | null;
   email: string;
-  // phNo: string;
+  phone: string;
 }
 
 export interface loginActionType {
@@ -119,7 +117,7 @@ export interface signUpPayload {
   email: string;
   firstName: string;
   lastName: string;
-  phNo: string;
+  phone: string;
 }
 
 export interface signUpActionType {

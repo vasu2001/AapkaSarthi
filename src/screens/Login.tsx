@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, FunctionComponent} from 'react';
 import {
   View,
   Text,
@@ -7,48 +7,38 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {
-  BLUE,
-  GRAY_BACKGROUND,
-  GRAY,
-  RED,
-  GRAY_DARK,
-  GRAY_LIGHT,
-} from '../utils/colors';
+import {BLUE, GRAY_BACKGROUND, GRAY, RED} from '../utils/colors';
 import CustomInput from '../components/CustomInput';
 import {CustomButton} from '../components/CustomButton';
 import showSnackbar from '../utils/snackbar';
 import {useDispatch} from 'react-redux';
 import {LoadingModal} from '../components/LoadingModal';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {loginAction} from '../redux/actions/auth';
+import {sendOtp} from '../redux/actions/auth';
 
 export interface LoginScreenProps {
   navigation: StackNavigationProp<any>;
 }
 
-export const LoginScreen: React.FunctionComponent<LoginScreenProps> = ({
+export const LoginScreen: FunctionComponent<LoginScreenProps> = ({
   navigation,
 }) => {
-  const [email, setEmail] = useState('vasualternate+1@gmail.com');
-  const [password, setPassword] = useState('12345678');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
-  const mailFormat: RegExp = /^[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,4}$/;
   const dispatch = useDispatch();
 
   const login = (): void => {
-    if (!mailFormat.test(email.trim())) {
-      showSnackbar('Enter a valid email');
-      // } else if (password.length < 4) {
-      //   showSnackbar('Enter a valid password');
+    if (phone.length !== 10) {
+      showSnackbar('Enter a valid phone number');
     } else {
       setLoading(true);
       dispatch(
-        loginAction(
-          email.trim(),
-          password,
+        sendOtp(
+          phone,
+          false,
           () => {
             setLoading(false);
+            navigation.navigate('VerifyOtp', {phone});
           },
           () => {
             setLoading(false);
@@ -71,39 +61,22 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = ({
         />
         <View style={styles.container}>
           <CustomInput
-            value={email}
-            onChangeText={setEmail}
-            validation={(text: string): boolean => mailFormat.test(text.trim())}
-            placeholder="Email"
+            value={phone}
+            onChangeText={setPhone}
+            validation={(text: string): boolean => text.length === 10}
+            placeholder="Phone"
             placeholderTextColor="grey"
             style={styles.input}
-          />
-
-          <CustomInput
-            value={password}
-            onChangeText={setPassword}
-            validation={(text: string): boolean => text.length >= 4}
-            placeholder="Password"
-            placeholderTextColor="grey"
-            style={styles.input}
-            secureTextEntry
+            keyboardType="number-pad"
+            maxLength={10}
           />
 
           <CustomButton
-            text="Login"
+            text="Send OTP"
             onPress={login}
             style={styles.button}
             disabled={loading}
           />
-
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('ForgotPass');
-            }}>
-            <Text style={[styles.text0, {color: GRAY, marginBottom: 8}]}>
-              Forgot Password?
-            </Text>
-          </TouchableOpacity>
 
           <View style={styles.row}>
             <Text style={styles.text0}>Don't have an account? </Text>
@@ -152,10 +125,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   input: {
-    marginBottom: 25,
+    marginBottom: 20,
   },
   button: {
-    marginVertical: 15,
+    marginBottom: 25,
   },
   row: {
     flexDirection: 'row',

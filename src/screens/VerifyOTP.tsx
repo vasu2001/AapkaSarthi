@@ -1,45 +1,49 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, ImageBackground, Image} from 'react-native';
-import {GRAY_BACKGROUND} from '../utils/colors';
+import React, {useState, FunctionComponent} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
+import {BLUE, GRAY_BACKGROUND, GRAY, RED} from '../utils/colors';
 import CustomInput from '../components/CustomInput';
 import {CustomButton} from '../components/CustomButton';
 import showSnackbar from '../utils/snackbar';
 import {useDispatch} from 'react-redux';
 import {LoadingModal} from '../components/LoadingModal';
-import {resetPassAction} from '../redux/actions/auth';
-import {upgradePlan} from '../redux/actions/payment';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {loginAction, sendOtp, verifyAccount} from '../redux/actions/auth';
+import {NavigatorScreenParams} from '@react-navigation/native';
 
-export interface VerifyOtpScreenProps {
-  route: {params: {plan: number}};
+export interface LoginScreenProps {
+  navigation: StackNavigationProp<any>;
+  route: NavigatorScreenParams<any>;
 }
 
-export const VerifyOtpScreen: React.FunctionComponent<VerifyOtpScreenProps> = ({
+export const VerifyOtpScreen: FunctionComponent<LoginScreenProps> = ({
+  navigation,
   route,
 }) => {
+  const {phone, isregister} = route.params;
   const [otp, setOtp] = useState('');
-  const [password1, setPassword1] = useState('');
-  const [password2, setPassword2] = useState('');
   const [loading, setLoading] = useState(false);
-
   const dispatch = useDispatch();
 
-  const setPass = (): void => {
-    if (!otp) {
-      showSnackbar('Enter OTP');
-    } else if (password1.length < 4) {
-      showSnackbar('Password must have minimum 4 characters');
-    } else if (password1 !== password2) {
-      showSnackbar('Passwords donot match');
+  const login = (): void => {
+    if (otp.length !== 4) {
+      showSnackbar('Enter a valid OTP');
     } else {
       setLoading(true);
+      const dispatchFunc = isregister ? verifyAccount : loginAction;
+
       dispatch(
-        resetPassAction(
+        dispatchFunc(
+          phone,
           otp,
-          password1,
           () => {
-            if (route.params.plan === 1) {
-              dispatch(upgradePlan(setLoading));
-            }
+            setLoading(false);
           },
           () => {
             setLoading(false);
@@ -47,6 +51,23 @@ export const VerifyOtpScreen: React.FunctionComponent<VerifyOtpScreenProps> = ({
         ),
       );
     }
+  };
+
+  const resendOtp = () => {
+    setLoading(true);
+
+    dispatch(
+      sendOtp(
+        phone,
+        isregister,
+        () => {
+          setLoading(false);
+        },
+        () => {
+          setLoading(false);
+        },
+      ),
+    );
   };
 
   return (
@@ -64,39 +85,27 @@ export const VerifyOtpScreen: React.FunctionComponent<VerifyOtpScreenProps> = ({
           <CustomInput
             value={otp}
             onChangeText={setOtp}
-            validation={(): boolean => otp.trim().length === 4}
+            validation={(text: string): boolean => text.length === 4}
             placeholder="OTP"
             placeholderTextColor="grey"
             style={styles.input}
             keyboardType="number-pad"
-          />
-
-          <CustomInput
-            value={password1}
-            onChangeText={setPassword1}
-            validation={(text: string): boolean => text.length >= 4}
-            placeholder="New Password"
-            placeholderTextColor="grey"
-            style={styles.input}
-            secureTextEntry
-          />
-
-          <CustomInput
-            value={password2}
-            onChangeText={setPassword2}
-            validation={(text: string): boolean => text == password1}
-            placeholder="Re-enter Password"
-            placeholderTextColor="grey"
-            style={styles.input}
-            secureTextEntry
+            maxLength={4}
           />
 
           <CustomButton
-            text="Set Password"
-            onPress={setPass}
+            text={isregister ? 'Register' : 'Login'}
+            onPress={login}
             style={styles.button}
             disabled={loading}
           />
+
+          <View style={styles.row}>
+            <Text style={styles.text0}>Didn't get OTP? </Text>
+            <TouchableOpacity onPress={resendOtp}>
+              <Text style={styles.text1}>Resend OTP</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ImageBackground>
       <LoadingModal visible={loading} />
@@ -126,9 +135,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   input: {
-    marginBottom: 25,
+    marginBottom: 30,
   },
   button: {
-    marginVertical: 10,
+    marginBottom: 15,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    alignSelf: 'stretch',
+  },
+  text0: {
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 13,
+    color: 'black',
+  },
+  text1: {
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 15,
+    color: BLUE,
   },
 });

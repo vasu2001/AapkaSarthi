@@ -2,7 +2,6 @@ import {
   AppThunk,
   loginActionType,
   actionNames,
-  loginActionPayload,
   signUpActionType,
 } from '../utils';
 import axiosConfig from '../../utils/axiosConfig';
@@ -10,31 +9,24 @@ import showSnackbar from '../../utils/snackbar';
 
 const axios = axiosConfig();
 
-const login = (payload: loginActionPayload): loginActionType => {
-  return {
-    type: actionNames.login,
-    payload,
-  };
-};
-
 const signUp = (
   firstName: string,
   lastName: string,
   email: string,
-  phNo: string,
+  phone: string,
 ): signUpActionType => ({
   type: actionNames.signup,
   payload: {
     firstName,
     lastName,
     email,
-    phNo,
+    phone,
   },
 });
 
 export const loginAction = (
-  email: string,
-  password: string,
+  phone: string,
+  otp: string,
   successCallback: () => void,
   failCallback: () => void,
 ): AppThunk => async (dispatch) => {
@@ -43,21 +35,24 @@ export const loginAction = (
     const {
       data: {Claims},
     } = await axios.post('/accounts/login', {
-      UserName: email,
-      Password: password,
-      Source: 'MobileApp',
+      Mobile: phone,
+      OTP: otp,
+      // Source: 'MobileApp',
     });
-    // console.log(Claims);
+    console.log(Claims);
 
-    dispatch(
-      login({
+    const loginDispatch: loginActionType = {
+      type: actionNames.login,
+      payload: {
         userId: Claims.UserId,
         firstName: Claims.FirstName,
         lastName: Claims.LastName,
-        email,
-        // phNo: Claims.MobileNumber,
-      }),
-    );
+        email: Claims.Email,
+        phone,
+      },
+    };
+    dispatch(loginDispatch);
+
     successCallback();
   } catch (err) {
     console.log(JSON.stringify(err));
@@ -65,9 +60,7 @@ export const loginAction = (
     // console.log('showing login failed snackbar');
     setTimeout(() => {
       showSnackbar(
-        err.message == 'Network Error'
-          ? 'Network Error'
-          : 'Wrong email/password',
+        err.message == 'Network Error' ? 'Network Error' : 'Wrong OTP',
       );
     }, 250);
   }
@@ -106,56 +99,81 @@ export const signUpAction = (
   }
 };
 
-export const resetPassAction = (
-  otp: string,
-  password: string,
-  successCallback: () => void,
-  failCallback: () => void,
-): AppThunk => async (dispatch, getState) => {
-  try {
-    const {email} = getState();
-
-    await axios.post('/accounts/resetpassword', {
-      UserName: email,
-      Password: password,
-      ResetToken: otp,
-    });
-
-    dispatch(loginAction(email ?? '', password, successCallback, failCallback));
-  } catch (err) {
-    console.log(err);
-    failCallback();
-
-    setTimeout(() => {
-      showSnackbar('Some error occured');
-    }, 250);
-  }
-};
-
-export const forgotPassAction = (
-  email: string,
-  successCallback: () => void,
-  failCallback: () => void,
-): AppThunk => async () => {
-  try {
-    setTimeout(() => {
-      showSnackbar('OTP has been sent to your email');
-    }, 250);
-
-    successCallback();
-  } catch (err) {
-    console.log(err);
-
-    setTimeout(() => {
-      showSnackbar('Some error occured');
-    }, 250);
-    failCallback();
-  }
-};
-
 export const signout = (): AppThunk => (dispatch) => {
   dispatch({
     type: actionNames.signout,
     payload: null,
   });
+};
+
+export const sendOtp = (
+  phone: string,
+  isregister: boolean,
+  successCallback: () => void,
+  failCallback: () => void,
+): AppThunk => async (dispatch) => {
+  try {
+    const {data} = await axios.get(`/accounts/${phone}/otp`, {
+      params: isregister,
+    });
+
+    console.log(data);
+
+    if (data === 'InvalidUser') {
+      // console.log('fail');
+      setTimeout(() => {
+        showSnackbar('User not registered');
+      }, 250);
+
+      failCallback();
+    } else {
+      setTimeout(() => {
+        showSnackbar('One Time Verification code has been sent');
+      }, 250);
+
+      successCallback();
+    }
+  } catch (err) {
+    console.log(err);
+    setTimeout(() => {
+      showSnackbar('Some error occured');
+    }, 250);
+
+    failCallback();
+  }
+};
+
+export const verifyAccount = (
+  mobile: string,
+  otp: string,
+  successCallback: () => void,
+  failCallback: () => void,
+): AppThunk => async (dispatch) => {
+  try {
+    const {data} = await axios.get(`/accounts/verifyotp`, {
+      params: {
+        mobile,
+        otp,
+      },
+    });
+
+    if (data === 'InvalidOtp') {
+      setTimeout(() => {
+        showSnackbar('Wrong OTP');
+      }, 250);
+
+      failCallback();
+    } else {
+      // success
+
+      successCallback();
+    }
+  } catch (err) {
+    console.log(err);
+    setTimeout(() => {
+      showSnackbar('Some error occured');
+    }, 250);
+
+    failCallback();
+  }
 };

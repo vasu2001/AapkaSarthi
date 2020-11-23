@@ -8,7 +8,6 @@ import {useDispatch} from 'react-redux';
 import {LoadingModal} from '../components/LoadingModal';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {signUpAction} from '../redux/actions/auth';
-import SelectPlan from '../components/SelectPlan';
 
 export interface SignUpScreenProps {
   navigation: StackNavigationProp<any>;
@@ -20,9 +19,8 @@ export const SignUpScreen: React.FunctionComponent<SignUpScreenProps> = ({
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [phNo, setPhNo] = useState('');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
-  const [plan, setPlan] = useState(0);
 
   const mailFormat: RegExp = /^[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,4}$/;
   const dispatch = useDispatch();
@@ -30,9 +28,7 @@ export const SignUpScreen: React.FunctionComponent<SignUpScreenProps> = ({
   const signup = (): void => {
     if (firstName == '' || lastName == '') {
       showSnackbar('Enter your name');
-    } else if (!mailFormat.test(email.trim())) {
-      showSnackbar('Enter a valid email');
-    } else if (phNo.trim().length !== 10) {
+    } else if (phone.trim().length !== 10) {
       showSnackbar('Enter a valid phone number');
     } else {
       setLoading(true);
@@ -41,10 +37,10 @@ export const SignUpScreen: React.FunctionComponent<SignUpScreenProps> = ({
           firstName,
           lastName,
           email,
-          phNo,
+          phone,
           () => {
             setLoading(false);
-            navigation.navigate('VerifyOtp', {plan});
+            navigation.navigate('VerifyOtp', {phone, isregister: true});
           },
           () => {
             setLoading(false);
@@ -94,20 +90,14 @@ export const SignUpScreen: React.FunctionComponent<SignUpScreenProps> = ({
           />
 
           <CustomInput
-            value={phNo}
-            onChangeText={setPhNo}
+            value={phone}
+            onChangeText={setPhone}
             validation={(text: string): boolean => text.trim().length === 10}
             placeholder="Phone Number"
             placeholderTextColor="grey"
             style={styles.input}
             keyboardType="phone-pad"
             maxLength={10}
-          />
-
-          <SelectPlan
-            style={styles.selectPlan}
-            value={plan}
-            setValue={setPlan}
           />
 
           <CustomButton
