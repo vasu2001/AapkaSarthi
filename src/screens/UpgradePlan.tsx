@@ -16,19 +16,20 @@ import {CustomButton} from '../components/CustomButton';
 import {LoadingModal} from '../components/LoadingModal';
 import {upgradePlan} from '../redux/actions/payment';
 import showSnackbar from '../utils/snackbar';
+import moment from 'moment';
 
 export interface UpgradePlanProps {
   navigation: DrawerNavigationProp<any>;
 }
 
 export function UpgradePlan({navigation}: UpgradePlanProps) {
-  const {freePlan} = useSelector((state: stateType) => state);
+  const {freePlan, expiryDate} = useSelector((state: stateType) => state);
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
 
   const onUpgrade = () => {
-    if (freePlan) {
+    if (freePlan || moment(expiryDate).isBefore()) {
       setLoading(true);
       dispatch(upgradePlan(setLoading));
     } else {
@@ -62,6 +63,11 @@ export function UpgradePlan({navigation}: UpgradePlanProps) {
           style={[styles.planBox, !freePlan && styles.activePlanBox]}>
           {!freePlan && <Text style={styles.activeLabel}>Active</Text>}
           <Text>Premium Plan</Text>
+          {!freePlan && (
+            <Text style={styles.aboutTextMini}>
+              Expiring {moment(expiryDate).fromNow()}
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -127,5 +133,14 @@ const styles = StyleSheet.create({
   },
   upgradeButton: {
     margin: 10,
+  },
+
+  aboutTextMini: {
+    textAlign: 'justify',
+    fontFamily: 'Montserrat-Regular',
+    paddingHorizontal: 35,
+    color: GRAY,
+    marginBottom: 15,
+    fontSize: 12,
   },
 });

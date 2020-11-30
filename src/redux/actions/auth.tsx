@@ -6,6 +6,7 @@ import {
 } from '../utils';
 import axiosConfig from '../../utils/axiosConfig';
 import showSnackbar from '../../utils/snackbar';
+import moment from 'moment';
 
 const axios = axiosConfig();
 
@@ -33,25 +34,36 @@ export const loginAction = (
   // api call
   try {
     const {
-      data: {Claims},
+      data: {Claims, AllowLogin, Message, UserPlan},
     } = await axios.post('/accounts/login', {
       Mobile: phone,
       OTP: otp,
-      // Source: 'MobileApp',
     });
-    console.log(Claims);
+    // console.log('Login data', {Claims, AllowLogin, Message, UserPlan});
 
-    const loginDispatch: loginActionType = {
-      type: actionNames.login,
-      payload: {
-        userId: Claims.UserId,
-        firstName: Claims.FirstName,
-        lastName: Claims.LastName,
-        email: Claims.Email,
-        phone,
-      },
-    };
-    dispatch(loginDispatch);
+    if (AllowLogin) {
+      const expiryDate = moment(UserPlan.Expiry);
+      // const expiryDate = moment();
+
+      const loginDispatch: loginActionType = {
+        type: actionNames.login,
+        payload: {
+          userId: Claims.UserId,
+          firstName: Claims.FirstName,
+          lastName: Claims.LastName,
+          email: Claims.Email,
+          phone,
+          freePlan: expiryDate.isBefore() || !UserPlan.Expiry,
+          expiryDate,
+        },
+      };
+
+      dispatch(loginDispatch);
+    } else {
+      setTimeout(() => {
+        showSnackbar(Message);
+      }, 250);
+    }
 
     successCallback();
   } catch (err) {

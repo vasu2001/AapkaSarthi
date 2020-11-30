@@ -1,5 +1,6 @@
 import {ThunkAction} from 'redux-thunk';
 import {Action} from 'redux';
+import {Moment} from 'moment';
 
 export const actionNames = {
   login: 'LOGIN',
@@ -40,6 +41,7 @@ export interface stateType {
   freePlan: boolean;
   phone: string;
   callData: contactGroupType[];
+  expiryDate: Moment;
 }
 
 export interface loginActionPayload {
@@ -48,6 +50,8 @@ export interface loginActionPayload {
   lastName: string | null;
   email: string;
   phone: string;
+  freePlan: boolean;
+  expiryDate: Moment;
 }
 
 export interface loginActionType {

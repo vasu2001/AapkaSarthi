@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {
   stateType,
   actionType,
@@ -19,6 +20,7 @@ const initialState: stateType = {
   activeList: -1,
   freePlan: true,
   phone: '',
+  expiryDate: moment(null),
 };
 
 export default (state = initialState, action: actionType): stateType => {
@@ -93,6 +95,8 @@ export default (state = initialState, action: actionType): stateType => {
         ...newState.callData,
         ...(action.payload as contactGroupType[]),
       ];
+      // refreshing freePlan on every app upload a/o expiry date
+      newState.freePlan = state.freePlan || moment(state.expiryDate).isBefore();
       return newState;
 
     case actionNames.signup:

@@ -29,7 +29,7 @@ export const upgradePlan = (loading: (x: boolean) => void): AppThunk => async (
                 FormKeyValue: res,
               },
             );
-            // console.log(verifyRes.data);
+            // console.log('Verify data', verifyRes.data);
 
             if (verifyRes.data?.Status === 'Success') {
               dispatch({

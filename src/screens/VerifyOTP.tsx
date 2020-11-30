@@ -32,7 +32,7 @@ export const VerifyOtpScreen: FunctionComponent<LoginScreenProps> = ({
   const dispatch = useDispatch();
 
   const login = (): void => {
-    if (otp.length !== 4) {
+    if (otp.length !== 6) {
       showSnackbar('Enter a valid OTP');
     } else {
       setLoading(true);
@@ -81,16 +81,17 @@ export const VerifyOtpScreen: FunctionComponent<LoginScreenProps> = ({
           resizeMode="contain"
           style={styles.heading}
         />
+
         <View style={styles.container}>
           <CustomInput
             value={otp}
             onChangeText={setOtp}
-            validation={(text: string): boolean => text.length === 4}
+            validation={(text: string): boolean => text.length === 6}
             placeholder="OTP"
             placeholderTextColor="grey"
             style={styles.input}
             keyboardType="number-pad"
-            maxLength={4}
+            maxLength={6}
           />
 
           <CustomButton
