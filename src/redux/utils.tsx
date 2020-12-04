@@ -98,7 +98,10 @@ export interface deleteAllActionType {
   payload: null;
 }
 
-export type upgradePlanActionType = deleteAllActionType;
+export interface upgradePlanActionType {
+  type: string;
+  payload: Moment;
+}
 
 export type signoutActionType = deleteAllActionType;
 

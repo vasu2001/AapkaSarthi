@@ -1,8 +1,9 @@
+import moment from 'moment';
 import {NativeModules} from 'react-native';
 import axiosConfig from '../../utils/axiosConfig';
 import {mid, isStaging} from '../../utils/paytm';
 import showSnackbar from '../../utils/snackbar';
-import {AppThunk, actionNames} from '../utils';
+import {AppThunk, actionNames, upgradePlanActionType} from '../utils';
 
 const axios = axiosConfig();
 const AllInOneSDKManager = NativeModules.AllInOneSDKManager;
@@ -32,10 +33,11 @@ export const upgradePlan = (loading: (x: boolean) => void): AppThunk => async (
             // console.log('Verify data', verifyRes.data);
 
             if (verifyRes.data?.Status === 'Success') {
-              dispatch({
+              const upgradeDispatch: upgradePlanActionType = {
                 type: actionNames.upgradePlan,
-                payload: null,
-              });
+                payload: moment(verifyRes.data.UserPlan.Expiry),
+              };
+              dispatch(upgradeDispatch);
             } else {
               throw 'Verification failed';
             }

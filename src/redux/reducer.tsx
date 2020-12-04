@@ -9,6 +9,7 @@ import {
   loginActionPayload,
   addDataToListPayload,
   signUpActionType,
+  upgradePlanActionType,
 } from './utils';
 
 const initialState: stateType = {
@@ -77,7 +78,11 @@ export default (state = initialState, action: actionType): stateType => {
       return {...state, activeList: -1, callData: []};
 
     case actionNames.upgradePlan:
-      return {...state, freePlan: false};
+      return {
+        ...state,
+        freePlan: false,
+        expiryDate: (action as upgradePlanActionType).payload,
+      };
 
     case actionNames.signout:
       return initialState;
