@@ -54,7 +54,12 @@ export function UpgradePlan({navigation}: UpgradePlanProps) {
       <View style={styles.body}>
         <View style={[styles.planBox, freePlan && styles.activePlanBox]}>
           {freePlan && <Text style={styles.activeLabel}>Active</Text>}
-          <Text>Free Plan</Text>
+          <Text style={styles.headingText}>Free Plan</Text>
+
+          <Text style={styles.aboutText}>
+            Only single list allowed at a time
+          </Text>
+          <Text style={styles.aboutText}>25 contacts allowed per list</Text>
         </View>
 
         <TouchableOpacity
@@ -62,12 +67,16 @@ export function UpgradePlan({navigation}: UpgradePlanProps) {
           onPress={onUpgrade}
           style={[styles.planBox, !freePlan && styles.activePlanBox]}>
           {!freePlan && <Text style={styles.activeLabel}>Active</Text>}
-          <Text>Premium Plan</Text>
+          <Text style={styles.headingText}>Premium Plan</Text>
           {!freePlan && (
             <Text style={styles.aboutTextMini}>
               Expiring {moment(expiryDate).fromNow()}
             </Text>
           )}
+
+          <Text style={styles.aboutText}>Create unlimited lists</Text>
+          <Text style={styles.aboutText}>1000 contacts allowed per list</Text>
+          <Text style={styles.aboutText}>No ads</Text>
         </TouchableOpacity>
       </View>
 
@@ -135,6 +144,16 @@ const styles = StyleSheet.create({
     margin: 10,
   },
 
+  headingText: {
+    fontFamily: 'Montserrat-SemiBold',
+    color: 'black',
+    fontSize: 16,
+    marginBottom: 15,
+  },
+  aboutText: {
+    fontFamily: 'Montserrat-Regular',
+    fontSize: 14,
+  },
   aboutTextMini: {
     textAlign: 'justify',
     fontFamily: 'Montserrat-Regular',
@@ -142,5 +161,6 @@ const styles = StyleSheet.create({
     color: GRAY,
     marginBottom: 15,
     fontSize: 12,
+    marginTop: -15,
   },
 });

@@ -55,7 +55,7 @@ export const LoginScreen: FunctionComponent<LoginScreenProps> = ({
         style={styles.mainContainer}
         resizeMode="stretch">
         <Image
-          source={require('../assets/logo/beta-dark.png')}
+          source={require('../assets/logo/logo-dark.png')}
           resizeMode="contain"
           style={styles.heading}
         />
@@ -88,14 +88,14 @@ export const LoginScreen: FunctionComponent<LoginScreenProps> = ({
             </TouchableOpacity>
           </View>
 
-          <View style={{flexDirection: 'row', width: 220, marginTop: 10}}>
+          {/* <View style={{flexDirection: 'row', width: 220, marginTop: 10}}>
             <Text style={{color: RED}}>* </Text>
             <Text style={styles.tncText}>
               The Aapka Sarthi Auto Caller service is currently free since it is
               in the beta phase. The final version of the service, which is
               expected to be launched soon, will be a paid service.
             </Text>
-          </View>
+          </View> */}
         </View>
       </ImageBackground>
       <LoadingModal visible={loading} />

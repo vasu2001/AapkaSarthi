@@ -7,7 +7,7 @@ export function StaticHeader(props: StaticHeaderProps) {
   return (
     <View style={styles.header}>
       <Image
-        source={require('../assets/logo/beta-dark.png')}
+        source={require('../assets/logo/logo-dark.png')}
         style={styles.image}
         resizeMode="contain"
       />

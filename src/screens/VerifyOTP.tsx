@@ -1,4 +1,4 @@
-import React, {useState, FunctionComponent} from 'react';
+import React, {useState, FunctionComponent, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {BLUE, GRAY_BACKGROUND, GRAY, RED} from '../utils/colors';
+import {BLUE, GRAY_BACKGROUND, GRAY} from '../utils/colors';
 import CustomInput from '../components/CustomInput';
 import {CustomButton} from '../components/CustomButton';
 import showSnackbar from '../utils/snackbar';
@@ -23,12 +23,13 @@ export interface LoginScreenProps {
 }
 
 export const VerifyOtpScreen: FunctionComponent<LoginScreenProps> = ({
-  navigation,
   route,
 }) => {
   const {phone, isregister} = route.params;
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const timerRef = useRef<NodeJS.Timeout>();
   const dispatch = useDispatch();
 
   const login = (): void => {
@@ -62,6 +63,7 @@ export const VerifyOtpScreen: FunctionComponent<LoginScreenProps> = ({
         isregister,
         () => {
           setLoading(false);
+          startTimer();
         },
         () => {
           setLoading(false);
@@ -70,6 +72,33 @@ export const VerifyOtpScreen: FunctionComponent<LoginScreenProps> = ({
     );
   };
 
+  const startTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    setTimer(300);
+
+    timerRef.current = setInterval(() => {
+      setTimer((timer) => {
+        if (timer === 1) {
+          clearInterval(timerRef.current!);
+          timerRef.current = undefined;
+        }
+        return timer - 1;
+      });
+    }, 1000);
+  };
+
+  useEffect(() => {
+    startTimer();
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
+
   return (
     <>
       <ImageBackground
@@ -77,7 +106,7 @@ export const VerifyOtpScreen: FunctionComponent<LoginScreenProps> = ({
         style={styles.mainContainer}
         resizeMode="stretch">
         <Image
-          source={require('../assets/logo/beta-dark.png')}
+          source={require('../assets/logo/logo-dark.png')}
           resizeMode="contain"
           style={styles.heading}
         />
@@ -107,11 +136,25 @@ export const VerifyOtpScreen: FunctionComponent<LoginScreenProps> = ({
               <Text style={styles.text1}>Resend OTP</Text>
             </TouchableOpacity>
           </View>
+
+          <Text style={styles.timer}>
+            OTP exipiring in {formatSeconds(timer)}
+          </Text>
         </View>
       </ImageBackground>
       <LoadingModal visible={loading} />
     </>
   );
+};
+
+const formatSeconds = (timer: number): string => {
+  const seconds = (timer % 60).toString().padStart(2, '0');
+
+  if (timer < 60) {
+    return seconds + 's';
+  } else {
+    return `${Math.floor(timer / 60)}m ${seconds}s`;
+  }
 };
 
 const styles = StyleSheet.create({
@@ -156,5 +199,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-SemiBold',
     fontSize: 15,
     color: BLUE,
+  },
+  timer: {
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 13,
+    color: GRAY,
+    marginTop: 5,
   },
 });

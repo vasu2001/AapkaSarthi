@@ -1,25 +1,19 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  View,
-  Text,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import {Dimensions, StyleSheet, TouchableOpacity} from 'react-native';
 import {Intro1} from './Intro';
 import {ScrollView} from 'react-native-gesture-handler';
 import {CustomButton} from '../components/CustomButton';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {NavigationProp} from '@react-navigation/native';
 import WelcomeScreen from './Welcome';
-import {PRIMARY_BLUE, WHITE, BLUE} from '../utils/colors';
+import {PRIMARY_BLUE, WHITE} from '../utils/colors';
 import AsyncStorage from '@react-native-community/async-storage';
 
 export interface IntroductionSlidesProps {
   navigation: NavigationProp<any>;
 }
 
-const N = 10;
+const N = 11;
 const {width} = Dimensions.get('screen');
 
 export const IntroductionSlides: React.FunctionComponent<IntroductionSlidesProps> = ({
@@ -77,15 +71,19 @@ export const IntroductionSlides: React.FunctionComponent<IntroductionSlidesProps
           //   console.log(scrollPos);
         }}>
         <WelcomeScreen width={width} />
-        <Intro1 width={width} source={require('../assets/demo/screen1.webp')} />
-        <Intro1 width={width} source={require('../assets/demo/screen2.webp')} />
-        <Intro1 width={width} source={require('../assets/demo/screen3.webp')} />
-        <Intro1 width={width} source={require('../assets/demo/screen4.webp')} />
-        <Intro1 width={width} source={require('../assets/demo/screen5.webp')} />
-        <Intro1 width={width} source={require('../assets/demo/screen6.webp')} />
-        <Intro1 width={width} source={require('../assets/demo/screen7.webp')} />
-        <Intro1 width={width} source={require('../assets/demo/screen8.webp')} />
-        <Intro1 width={width} source={require('../assets/demo/screen9.webp')} />
+        <Intro1 width={width} source={require('../assets/demo/screen1.png')} />
+        <Intro1
+          width={width}
+          source={require('../assets/demo/screen1.1.png')}
+        />
+        <Intro1 width={width} source={require('../assets/demo/screen2.png')} />
+        <Intro1 width={width} source={require('../assets/demo/screen3.png')} />
+        <Intro1 width={width} source={require('../assets/demo/screen4.png')} />
+        <Intro1 width={width} source={require('../assets/demo/screen5.png')} />
+        <Intro1 width={width} source={require('../assets/demo/screen6.png')} />
+        <Intro1 width={width} source={require('../assets/demo/screen7.png')} />
+        <Intro1 width={width} source={require('../assets/demo/screen8.png')} />
+        <Intro1 width={width} source={require('../assets/demo/screen9.png')} />
       </ScrollView>
       {scrollPos > N - 1.01 && scrollPos < N - 0.99 && (
         <CustomButton

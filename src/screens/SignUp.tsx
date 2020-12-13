@@ -57,7 +57,7 @@ export const SignUpScreen: React.FunctionComponent<SignUpScreenProps> = ({
         style={styles.mainContainer}
         resizeMode="stretch">
         <Image
-          source={require('../assets/logo/beta-dark.png')}
+          source={require('../assets/logo/logo-dark.png')}
           resizeMode="contain"
           style={styles.heading}
         />

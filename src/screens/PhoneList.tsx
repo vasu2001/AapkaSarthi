@@ -85,7 +85,7 @@ export function PhoneList({navigation}: PhoneListProps) {
 
         <FlatList
           data={callData}
-          keyExtractor={({id}) => id}
+          keyExtractor={({id}) => id.toString()}
           renderItem={({item, index}) => (
             <PhoneGroupItem
               name={item.name ?? ''}

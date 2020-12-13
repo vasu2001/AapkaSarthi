@@ -10,6 +10,7 @@ import {
   addDataToListPayload,
   signUpActionType,
   upgradePlanActionType,
+  newUserActionType,
 } from './utils';
 
 const initialState: stateType = {
@@ -22,6 +23,7 @@ const initialState: stateType = {
   freePlan: true,
   phone: '',
   expiryDate: moment(null),
+  newUser: false,
 };
 
 export default (state = initialState, action: actionType): stateType => {
@@ -106,7 +108,11 @@ export default (state = initialState, action: actionType): stateType => {
 
     case actionNames.signup:
       const {payload} = action as signUpActionType;
-      return {...state, ...payload};
+      return {...state, ...payload, newUser: true};
+
+    case actionNames.setNewUser:
+      const {payload: newUser} = action as newUserActionType;
+      return {...state, newUser};
 
     default:
       return state;

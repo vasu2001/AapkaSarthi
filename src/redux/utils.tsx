@@ -14,6 +14,7 @@ export const actionNames = {
   addToList: 'ADD_DATA_TO_LIST',
   updateMultiple: 'UPDATE_MULTIPLE_LIST',
   submitCall: 'SUBMIT_CALL',
+  setNewUser: 'SET_NEW_USER',
 };
 
 export interface contactType {
@@ -42,6 +43,7 @@ export interface stateType {
   phone: string;
   callData: contactGroupType[];
   expiryDate: Moment;
+  newUser: boolean; //flag to be set in case of signup
 }
 
 export interface loginActionPayload {
@@ -132,6 +134,11 @@ export interface signUpActionType {
   payload: signUpPayload;
 }
 
+export interface newUserActionType {
+  type: string;
+  payload: boolean;
+}
+
 export type actionType =
   | newListActionType
   | loginActionType
@@ -143,7 +150,8 @@ export type actionType =
   | signoutActionType
   | addDataToListActionType
   | updateMultipleListsActionType
-  | signUpActionType;
+  | signUpActionType
+  | newUserActionType;
 
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,

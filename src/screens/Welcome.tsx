@@ -1,8 +1,5 @@
 import * as React from 'react';
-import {View, Text, StyleSheet, ImageBackground, StatusBar} from 'react-native';
-import {CustomButton} from '../components/CustomButton';
-import {NavigationProp} from '@react-navigation/native';
-import {BLUE, PRIMARY_BLUE} from '../utils/colors';
+import {View, Text, StyleSheet, ImageBackground} from 'react-native';
 
 interface WelcomeScreenProps {
   width: number;

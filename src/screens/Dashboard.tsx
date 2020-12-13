@@ -22,6 +22,8 @@ import {TimerModal} from '../components/TimerModal';
 import {LoadingModal} from '../components/LoadingModal';
 import {StaticHeader} from '../components/StaticHeader';
 import {submitCallAction} from '../redux/actions/core';
+import moment from 'moment';
+import {setNewUser} from '../redux/actions/auth';
 
 export interface DashboardProps {
   navigation: BottomTabNavigationProp<any>;
@@ -38,7 +40,8 @@ export function Dashboard({navigation}: DashboardProps) {
   let timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const state = useSelector((state: stateType) => state);
-  const activeList = state.activeList;
+  const {activeList, expiryDate, freePlan, newUser} = state;
+  const daysRem = moment(expiryDate).diff(moment(), 'd') + 1;
 
   let phoneList = state.callData[activeList]?.list ?? [];
   const dispatch = useDispatch();
@@ -51,8 +54,15 @@ export function Dashboard({navigation}: DashboardProps) {
   const [frequency, setFrequency] = useState(initFrequency);
   const totalNo = frequency.rescheduled + frequency.done + frequency.upcoming;
 
-  //state useffect listeners for getting end call event
+  //state useffect listeners for getting end call event and open plan if new user
   useEffect(() => {
+    if (newUser) {
+      navigation.navigate('Settings', {
+        screen: 'Upgrade Plan',
+      });
+      dispatch(setNewUser(false));
+    }
+
     nextCall();
     const handler = (state: AppStateStatus) => {
       // console.log(state, phoneCallInProgress);
@@ -181,6 +191,24 @@ export function Dashboard({navigation}: DashboardProps) {
     setActiveIndex(prevIndex.current);
   };
 
+  const pieChartSections = [
+    {
+      percentage:
+        totalNo > 0 ? Math.floor((frequency.rescheduled / totalNo) * 100) : 0,
+      color: PINK,
+    },
+    {
+      percentage:
+        totalNo > 0 ? Math.floor((frequency.done / totalNo) * 100) : 0,
+      color: PURPLE,
+    },
+    {
+      percentage:
+        totalNo > 0 ? Math.floor((frequency.upcoming / totalNo) * 100) : 0,
+      color: BLUE,
+    },
+  ];
+
   return (
     <>
       <CallFeedbackModal
@@ -215,28 +243,7 @@ export function Dashboard({navigation}: DashboardProps) {
         <Pie
           radius={70}
           innerRadius={45}
-          sections={[
-            {
-              percentage:
-                totalNo > 0
-                  ? Math.floor((frequency.rescheduled / totalNo) * 100)
-                  : 0,
-              color: PINK,
-            },
-            {
-              percentage:
-                totalNo > 0 ? Math.floor((frequency.done / totalNo) * 100) : 0,
-              color: PURPLE,
-            },
-            {
-              percentage:
-                totalNo > 0
-                  ? Math.floor((frequency.upcoming / totalNo) * 100)
-                  : 0,
-              color: BLUE,
-            },
-          ]}
-          // dividerSize={6}
+          sections={pieChartSections}
           strokeCap={'butt'}
         />
 
@@ -299,6 +306,20 @@ export function Dashboard({navigation}: DashboardProps) {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {!freePlan && daysRem <= 3 && (
+        <TouchableOpacity
+          style={styles.renewButton}
+          onPress={() =>
+            navigation.navigate('Settings', {
+              screen: 'Upgrade Plan',
+            })
+          }>
+          <Text style={styles.renewText}>
+            Plan expiring in {daysRem} days. Renew
+          </Text>
+        </TouchableOpacity>
+      )}
     </>
   );
 }
@@ -377,5 +398,21 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
     textDecorationLine: 'underline',
     fontSize: 17,
+  },
+  renewButton: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: 'red',
+    paddingVertical: 7,
+    paddingHorizontal: 15,
+    borderRadius: 15,
+    margin: 10,
+    elevation: 2,
+  },
+  renewText: {
+    color: 'white',
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 13,
   },
 });

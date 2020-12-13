@@ -175,10 +175,14 @@ export const verifyAccount = (
       }, 250);
 
       failCallback();
-    } else {
+    } else if (data === 'Success') {
       // success
-
-      successCallback();
+      dispatch(loginAction(mobile, otp, successCallback, failCallback));
+    } else {
+      setTimeout(() => {
+        showSnackbar('Some error occured');
+      }, 250);
+      failCallback();
     }
   } catch (err) {
     console.log(err);
@@ -189,3 +193,9 @@ export const verifyAccount = (
     failCallback();
   }
 };
+
+export const setNewUser = (payload: boolean): AppThunk => (dispatch) =>
+  dispatch({
+    type: actionNames.setNewUser,
+    payload,
+  });

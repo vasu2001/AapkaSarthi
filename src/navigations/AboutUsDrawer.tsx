@@ -42,7 +42,13 @@ export function AboutUsDrawer() {
   );
 }
 
-const DrawerContent = (props: DrawerContentComponentProps<any>) => {
+interface DrawerContentProps {
+  freePlan: boolean;
+}
+
+const DrawerContent = (
+  props: DrawerContentComponentProps<DrawerContentProps>,
+) => {
   // console.log(props.state.index);
   const {freePlan} = props;
 
