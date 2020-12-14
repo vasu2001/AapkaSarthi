@@ -3,6 +3,8 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useDispatch, useSelector} from 'react-redux';
+import {RouteProp} from '@react-navigation/native';
+import moment from 'moment';
 
 import {
   GRAY_DARK,
@@ -16,24 +18,41 @@ import {CustomButton} from '../components/CustomButton';
 import {LoadingModal} from '../components/LoadingModal';
 import {upgradePlan} from '../redux/actions/payment';
 import showSnackbar from '../utils/snackbar';
-import moment from 'moment';
 
 export interface UpgradePlanProps {
   navigation: DrawerNavigationProp<any>;
+  route: RouteProp<any, any>;
 }
 
-export function UpgradePlan({navigation}: UpgradePlanProps) {
+export function UpgradePlan({navigation, route}: UpgradePlanProps) {
   const {freePlan, expiryDate} = useSelector((state: stateType) => state);
   const dispatch = useDispatch();
+  const newUser: boolean | undefined = route.params?.newUser;
+
+  console.log(newUser);
 
   const [loading, setLoading] = useState(false);
+  const [selected, setSelected] = useState(newUser ? -1 : freePlan ? 0 : 1);
 
   const onUpgrade = () => {
     if (freePlan || moment(expiryDate).isBefore()) {
       setLoading(true);
       dispatch(upgradePlan(setLoading));
     } else {
-      showSnackbar('Current plan not expired');
+      showSnackbar('Current plan expring ' + moment(expiryDate).fromNow());
+    }
+  };
+
+  const proceedSignup = () => {
+    if (selected === 1) {
+      setLoading(true);
+      dispatch(
+        upgradePlan(setLoading, () => {
+          navigation.navigate('Home');
+        }),
+      );
+    } else {
+      navigation.navigate('Home');
     }
   };
 
@@ -52,23 +71,27 @@ export function UpgradePlan({navigation}: UpgradePlanProps) {
       <LoadingModal visible={loading} />
 
       <View style={styles.body}>
-        <View style={[styles.planBox, freePlan && styles.activePlanBox]}>
-          {freePlan && <Text style={styles.activeLabel}>Active</Text>}
-          <Text style={styles.headingText}>Free Plan</Text>
+        <TouchableOpacity
+          disabled={!newUser}
+          onPress={() => setSelected(0)}
+          style={[styles.planBox, selected === 0 && styles.activePlanBox]}>
+          {selected === 0 && <Text style={styles.activeLabel}>Active</Text>}
 
+          <Text style={styles.headingText}>Free Plan</Text>
           <Text style={styles.aboutText}>
             Only single list allowed at a time
           </Text>
           <Text style={styles.aboutText}>25 contacts allowed per list</Text>
-        </View>
+        </TouchableOpacity>
 
         <TouchableOpacity
-          disabled={!freePlan}
-          onPress={onUpgrade}
-          style={[styles.planBox, !freePlan && styles.activePlanBox]}>
-          {!freePlan && <Text style={styles.activeLabel}>Active</Text>}
+          disabled={!newUser && !freePlan}
+          onPress={newUser ? () => setSelected(1) : onUpgrade}
+          style={[styles.planBox, selected === 1 && styles.activePlanBox]}>
+          {selected === 1 && <Text style={styles.activeLabel}>Active</Text>}
+
           <Text style={styles.headingText}>Premium Plan</Text>
-          {!freePlan && (
+          {!newUser && selected === 1 && (
             <Text style={styles.aboutTextMini}>
               Expiring {moment(expiryDate).fromNow()}
             </Text>
@@ -82,8 +105,9 @@ export function UpgradePlan({navigation}: UpgradePlanProps) {
 
       <CustomButton
         style={styles.upgradeButton}
-        text={freePlan ? 'Upgrade Plan' : 'Renew Plan'}
-        onPress={onUpgrade}
+        text={newUser ? 'Proceed' : freePlan ? 'Upgrade Plan' : 'Renew Plan'}
+        onPress={newUser ? proceedSignup : onUpgrade}
+        disabled={selected === -1}
       />
     </>
   );

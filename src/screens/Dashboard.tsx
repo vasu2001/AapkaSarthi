@@ -41,7 +41,7 @@ export function Dashboard({navigation}: DashboardProps) {
 
   const state = useSelector((state: stateType) => state);
   const {activeList, expiryDate, freePlan, newUser} = state;
-  const daysRem = moment(expiryDate).diff(moment(), 'd') + 1;
+  const daysRem = moment(expiryDate).diff(moment(), 'd');
 
   let phoneList = state.callData[activeList]?.list ?? [];
   const dispatch = useDispatch();
@@ -59,6 +59,7 @@ export function Dashboard({navigation}: DashboardProps) {
     if (newUser) {
       navigation.navigate('Settings', {
         screen: 'Upgrade Plan',
+        params: {newUser: true},
       });
       dispatch(setNewUser(false));
     }
