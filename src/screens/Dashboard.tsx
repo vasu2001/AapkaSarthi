@@ -94,7 +94,7 @@ export function Dashboard({navigation}: DashboardProps) {
     }
     setActiveIndex(newIndex);
     console.log('list change activeIndex ' + newIndex);
-  }, [activeList]);
+  }, [activeList, state.callData[activeIndex]?.loaded ?? false]);
 
   //update frequency as the calls are being made
   useEffect(() => {
