@@ -10,11 +10,10 @@ import {
 } from 'react-native';
 import {CustomButton} from '../components/CustomButton';
 import {useSelector, useDispatch} from 'react-redux';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import Pie from 'react-native-pie';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 
-import {GRAY_BACKGROUND, GRAY, PINK, PURPLE, BLUE, RED} from '../utils/colors';
+import {GRAY_BACKGROUND, GRAY, PINK, PURPLE, BLUE} from '../utils/colors';
 import {CallFeedbackModal} from '../components/CallFeeddackModal';
 import {stateType} from '../redux/utils';
 import showSnackbar from '../utils/snackbar';
@@ -23,13 +22,9 @@ import {LoadingModal} from '../components/LoadingModal';
 import {StaticHeader} from '../components/StaticHeader';
 import {submitCallAction} from '../redux/actions/core';
 import moment from 'moment';
-import {setNewUser} from '../redux/actions/auth';
+import {useNavigation} from '@react-navigation/native';
 
-export interface DashboardProps {
-  navigation: BottomTabNavigationProp<any>;
-}
-
-export function Dashboard({navigation}: DashboardProps) {
+export function Dashboard() {
   const [modal, setModal] = useState(false);
   const [timerModal, setTimerModal] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -45,6 +40,7 @@ export function Dashboard({navigation}: DashboardProps) {
 
   let phoneList = state.callData[activeList]?.list ?? [];
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const initFrequency = {
     rescheduled: 0,
@@ -54,16 +50,21 @@ export function Dashboard({navigation}: DashboardProps) {
   const [frequency, setFrequency] = useState(initFrequency);
   const totalNo = frequency.rescheduled + frequency.done + frequency.upcoming;
 
-  //state useffect listeners for getting end call event and open plan if new user
+  // open plan if new user
   useEffect(() => {
+    console.log({newUser});
     if (newUser) {
-      navigation.navigate('Settings', {
-        screen: 'Upgrade Plan',
-        params: {newUser: true},
-      });
-      dispatch(setNewUser(false));
+      setTimeout(() => {
+        navigation.navigate('Settings', {
+          screen: 'Upgrade Plan',
+          params: {newUser},
+        });
+      }, 250);
     }
+  }, []);
 
+  // state useffect listeners for getting end call event
+  useEffect(() => {
     nextCall();
     const handler = (state: AppStateStatus) => {
       // console.log(state, phoneCallInProgress);
@@ -83,7 +84,7 @@ export function Dashboard({navigation}: DashboardProps) {
     };
   }, []);
 
-  //useEffect hook to reset the data when list changes
+  // useEffect hook to reset the data when list changes
   useEffect(() => {
     let newIndex = -1;
     for (let i = 0; i < phoneList.length; i++) {

@@ -2,7 +2,7 @@ import moment from 'moment';
 import {NativeModules} from 'react-native';
 import {call} from 'react-native-reanimated';
 import axiosConfig from '../../utils/axiosConfig';
-import {mid, isStaging} from '../../utils/paytm';
+import {mid, isStaging, paytmCallback} from '../../utils/paytm';
 import showSnackbar from '../../utils/snackbar';
 import {AppThunk, actionNames, upgradePlanActionType} from '../utils';
 
@@ -75,7 +75,7 @@ export const upgradePlan = (
       mid,
       TransactionToken.toString(),
       '100.00',
-      `https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=${OrderGuid.toString()}`,
+      `${paytmCallback}?ORDER_ID=${OrderGuid.toString()}`,
       isStaging,
       displayResult,
     );

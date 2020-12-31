@@ -1,5 +1,5 @@
 import {DrawerNavigationProp} from '@react-navigation/drawer';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useDispatch, useSelector} from 'react-redux';
@@ -18,6 +18,7 @@ import {CustomButton} from '../components/CustomButton';
 import {LoadingModal} from '../components/LoadingModal';
 import {upgradePlan} from '../redux/actions/payment';
 import showSnackbar from '../utils/snackbar';
+import {setNewUser} from '../redux/actions/auth';
 
 export interface UpgradePlanProps {
   navigation: DrawerNavigationProp<any>;
@@ -29,7 +30,12 @@ export function UpgradePlan({navigation, route}: UpgradePlanProps) {
   const dispatch = useDispatch();
   const newUser: boolean | undefined = route.params?.newUser;
 
-  console.log(newUser);
+  // console.log({newUser});
+  useEffect(() => {
+    if (newUser) {
+      dispatch(setNewUser(false));
+    }
+  }, []);
 
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(newUser ? -1 : freePlan ? 0 : 1);
@@ -44,15 +50,20 @@ export function UpgradePlan({navigation, route}: UpgradePlanProps) {
   };
 
   const proceedSignup = () => {
+    const resetAction = {
+      index: 0,
+      routes: [{name: 'Home'}],
+    };
+
     if (selected === 1) {
       setLoading(true);
       dispatch(
         upgradePlan(setLoading, () => {
-          navigation.navigate('Home');
+          navigation.reset(resetAction);
         }),
       );
     } else {
-      navigation.navigate('Home');
+      navigation.reset(resetAction);
     }
   };
 
@@ -72,7 +83,7 @@ export function UpgradePlan({navigation, route}: UpgradePlanProps) {
 
       <View style={styles.body}>
         <TouchableOpacity
-          disabled={!newUser}
+          // disabled={!newUser}
           onPress={() => setSelected(0)}
           style={[styles.planBox, selected === 0 && styles.activePlanBox]}>
           {selected === 0 && <Text style={styles.activeLabel}>Active</Text>}
@@ -86,12 +97,14 @@ export function UpgradePlan({navigation, route}: UpgradePlanProps) {
 
         <TouchableOpacity
           disabled={!newUser && !freePlan}
-          onPress={newUser ? () => setSelected(1) : onUpgrade}
+          onPress={() => setSelected(1)}
           style={[styles.planBox, selected === 1 && styles.activePlanBox]}>
-          {selected === 1 && <Text style={styles.activeLabel}>Active</Text>}
+          {selected === 1 && (newUser || !freePlan) && (
+            <Text style={styles.activeLabel}>Active</Text>
+          )}
 
           <Text style={styles.headingText}>Premium Plan</Text>
-          {!newUser && selected === 1 && (
+          {!newUser && !freePlan && (
             <Text style={styles.aboutTextMini}>
               Expiring {moment(expiryDate).fromNow()}
             </Text>
@@ -107,7 +120,7 @@ export function UpgradePlan({navigation, route}: UpgradePlanProps) {
         style={styles.upgradeButton}
         text={newUser ? 'Proceed' : freePlan ? 'Upgrade Plan' : 'Renew Plan'}
         onPress={newUser ? proceedSignup : onUpgrade}
-        disabled={selected === -1}
+        disabled={selected === -1 || (!newUser && selected !== 1)}
       />
     </>
   );
