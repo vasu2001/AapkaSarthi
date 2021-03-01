@@ -34,7 +34,7 @@ export function AddNewList({route, navigation}: AddNewListProps) {
       showSnackbar('Enter valid data');
     } else {
       if (list[details.phNo]) {
-        showSnackbar('Dulicates not allowed');
+        showSnackbar('Duplicates not allowed');
       } else {
         list[details.phNo] = details.name;
         setDetails({name: '', phNo: ''});

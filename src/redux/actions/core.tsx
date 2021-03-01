@@ -331,9 +331,12 @@ export const deleteAllAction = (callback: () => void): AppThunk => async (
   callback();
 };
 
-export const updateLists = (): AppThunk => async (dispatch, getState) => {
+export const updateLists = (callback: () => void): AppThunk => async (
+  dispatch,
+  getState,
+) => {
   try {
-    const {userId, callData} = getState();
+    const {userId, callData, activeList} = getState();
 
     const res = await axios.get(`/users/${userId?.toString()}/associates`);
     let listRes: {GroupId: string; GroupName: string}[] =
@@ -342,7 +345,6 @@ export const updateLists = (): AppThunk => async (dispatch, getState) => {
     listRes = listRes.filter(
       (rec) => callData.find((e) => e.id == rec.GroupId) === undefined,
     );
-
     // console.log(userId);
     // console.log(listRes);
 
@@ -357,7 +359,14 @@ export const updateLists = (): AppThunk => async (dispatch, getState) => {
         }),
       ),
     });
+
+    if (listRes.length > 0 && activeList === -1) {
+      dispatch(changeActiveListAction(0, callback));
+    } else {
+      callback();
+    }
   } catch (err) {
     console.log(err);
+    callback();
   }
 };

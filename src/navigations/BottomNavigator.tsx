@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, StyleSheet, StatusBar} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -10,6 +10,7 @@ import {ScheduledList} from '../screens/ScheduledList';
 import {AboutUsDrawer} from './AboutUsDrawer';
 import {useDispatch} from 'react-redux';
 import {updateLists} from '../redux/actions/core';
+import {LoadingModal} from '../components/LoadingModal';
 
 export interface BottomNavigatorProps {}
 const Tab = createBottomTabNavigator();
@@ -17,12 +18,16 @@ const Tab = createBottomTabNavigator();
 export function BottomNavigator() {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(updateLists());
+    setLoading(true);
+    dispatch(updateLists(() => setLoading(false)));
   }, []);
+
+  const [loading, setLoading] = useState(false);
 
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="white" />
+      <LoadingModal visible={loading} />
       <Tab.Navigator
         tabBarOptions={{
           activeTintColor: WHITE,

@@ -43,9 +43,9 @@ export function UpgradePlan({navigation, route}: UpgradePlanProps) {
   const onUpgrade = () => {
     if (freePlan || moment(expiryDate).isBefore()) {
       setLoading(true);
-      dispatch(upgradePlan(setLoading));
+      dispatch(upgradePlan(setLoading, () => navigation.goBack()));
     } else {
-      showSnackbar('Current plan expring ' + moment(expiryDate).fromNow());
+      showSnackbar('Current plan expiring ' + moment(expiryDate).fromNow());
     }
   };
 
@@ -107,6 +107,7 @@ export function UpgradePlan({navigation, route}: UpgradePlanProps) {
           {!newUser && !freePlan && (
             <Text style={styles.aboutTextMini}>
               Expiring {moment(expiryDate).fromNow()}
+              {`\nYou can renew your premium plan for free uptil 30th April, 2021`}
             </Text>
           )}
 
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   aboutTextMini: {
-    textAlign: 'justify',
+    textAlign: 'center',
     fontFamily: 'Montserrat-Regular',
     paddingHorizontal: 35,
     color: GRAY,

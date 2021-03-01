@@ -62,6 +62,11 @@ export const upgradePlan = (
       loading(false);
     };
 
+    // dispatch({
+    //   type: actionNames.upgradePlan,
+    //   payload: moment().add(1, 'M'),
+    // });
+
     const {
       data: {TransactionToken, OrderGuid, OrderId},
     } = await axios.post(`/users/${userId}/orders`, {
